@@ -1,0 +1,14 @@
+# Java
+**/target/
+**.class
+.mvn/
+
+# Node/Angular
+**/node_modules/
+dist/
+.angular/
+
+# IDE
+.idea/
+*.iml
+.vscode/

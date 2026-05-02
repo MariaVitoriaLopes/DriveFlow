@@ -1,0 +1,90 @@
+1. Pré-requisitos (Instalar antes de tudo)
+
+Certifiquem-se de ter instalado:
+
+    JDK 17 ou superior.
+
+    Node.js v18+ (para o Angular).
+
+    Docker Desktop (Fundamental para o banco de dados).
+
+    IntelliJ IDEA (Community ou Ultimate).
+
+2. Clonando e Abrindo o Projeto
+
+    Abram o terminal ou o Git Bash e digitem:
+    Bash
+
+    git clone https://github.com/MariaVitoriaLopes/DriveFlow.git
+
+    Abram o IntelliJ.
+
+    Vão em File > Open e selecionem a pasta raiz do projeto que vocês acabaram de clonar.
+
+3. Subindo o Banco de Dados (Docker)
+
+UTILIZEM O CONSOLE DO INTELIJ NÃO É NECESSÁRIO O PG ADMIN
+
+O banco de dados roda dentro de um container.
+
+    Certifique-se de que o Docker Desktop está aberto e rodando.
+
+    No IntelliJ,abram o terminal na raiz do projeto e rodem : docker-compose up -d
+
+    Aguardem o IntelliJ baixar a imagem e mostrar que o container postgres_local está "Running".
+
+4. Configurando o Backend (Java + Spring)
+
+    No IntelliJ, naveguem até a pasta backend.
+
+    Se o IntelliJ não reconhecer como um projeto Java automaticamente, cliquem com o botão direito no arquivo pom.xml e selecionem "Add as Maven Project".
+
+    Abram o arquivo src/main/java/.../BackendApplication.java.
+
+    Cliquem no ícone de Play verde ao lado do nome da classe para rodar.
+
+        Atenção: Se der erro de conexão, verifiquem se o Docker (passo 3) está rodando.
+
+5. Configurando o Frontend (Angular)
+
+    Abram o Terminal dentro do IntelliJ (fica na barra inferiora esquerda ou deem um Alt+F12).
+
+    Digitem os seguintes comandos em ordem:
+    Bash
+
+    cd frontend
+    npm install
+
+    Após terminar a instalação (pode demorar uns 2 min), digitem:
+    Bash
+
+    npm start
+
+    (ou ng serve)
+
+    O terminal dirá:  Angular Live Development Server is listening on localhost:4200 .
+
+6. Testando se tudo funciona
+
+Abram o navegador e testem as duas pontas:
+
+    Frontend: Acessem http://localhost:4200 (vai aparecer a tela de confirmacao q eu mandei foto).
+
+    Backend: Acessem http://localhost:8081/api/status ( deve aparecer a mensagem de sucesso do teste Controller).
+
+📂 Estrutura que vocês vão ver:
+
+
+PROJETO_RAIZ/
+├── backend/           <-- Código Java (Trabalhamos aqui para criar tabelas/regras)
+├── frontend/          <-- Código Angular (Trabalhamos aqui para criar as telas)
+├── docker-compose.yml <-- "Manual" do Banco de Dados (Não mexer)
+└── .gitignore         <-- Filtro para o Git (Não mexer)
+
+💡 Dicas de Trabalho em Equipe:
+
+    Sempre deem git pull antes de começar a trabalhar para pegar as atualizações das colegas.
+
+    Não subam a pasta node_modules ou target (o arquivo .gitignore já cuida disso, mas fiquem atentas).
+
+    Se o banco der erro estranho: cliquem no Docker Desktop, apaguem o container e deem "Play" no docker-compose.yml de novo.
