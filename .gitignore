@@ -1,14 +1,14 @@
 # Java
-**/target/
-**.class
-.mvn/
+backend/target/
+backend/.mvn/
+backend/.idea/
+*.class
 
-# Node/Angular
-**/node_modules/
-dist/
-.angular/
+# Angular
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
 
-# IDE
-.idea/
-*.iml
-.vscode/
+# Docker & Sistema
+.DS_Store
+.env
