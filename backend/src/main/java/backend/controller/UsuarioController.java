@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "http://localhost:4200") // Permite o Angular acessar
+@RequestMapping("/api")
 public class UsuarioController {
 
     @Autowired

@@ -27,7 +27,7 @@ public class Usuario {
     private String telefone;
 
     @Column(name = "perfil", nullable = false)
-    private String perfil; // ALUNO, INSTRUTOR, ADMIN
+    private String perfil;
 
     @Column(name = "data_cadastro")
     private LocalDateTime dataCadastro = LocalDateTime.now();

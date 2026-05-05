@@ -16,7 +16,7 @@ public class Documento {
     @JoinColumn(name = "id_instrutor", nullable = false)
     private Instrutor instrutor;
 
-    private String tipoDocumento; // Ex: "CNH", "CERTIFICADO_DETRAN"
+    private String tipoDocumento;
     private String urlArquivo;
 
     private LocalDateTime dataEnvio = LocalDateTime.now();
