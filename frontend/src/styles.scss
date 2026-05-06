@@ -1,1 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family:  'DM Sans', system-ui, sans-serif;;
+}
+
+.header-desktop{
+  display: flex;
+}
+
+.header-mobile{
+  display: none;
+}
+
+
+
+@media (min-width: 300px) and (max-width: 1000px) {
+  .header-desktop{
+  display: none;
+}
+.header-mobile{
+  display: flex;
+}
+}

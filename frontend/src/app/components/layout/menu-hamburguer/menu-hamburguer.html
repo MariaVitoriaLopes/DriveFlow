@@ -1,0 +1,28 @@
+<!-- hamburger-menu.component.html -->
+<header>
+    <picture>
+      <a routerLink="/">
+        <img src="/logos-svg/logo_tertiary_white.svg" alt="Logo">
+      </a>
+    </picture>
+
+    <div class="menu-icon" (click)="toggleMenu()">
+  <span class="bar"></span>
+  <span class="bar"></span>
+  <span class="bar"></span>
+</div>
+
+<nav [class.open]="menuOpen" class="menu">
+    <ul>
+      <li><a [routerLink]="['/']" fragment="pqExistimos">Porque existimos</a></li>
+      <li><a [routerLink]="['/']" fragment="funcionalidades">Funcionalidades</a></li>
+      <li><a [routerLink]="['/']" fragment="vantagens">Vantagens</a></li>
+      <li><a [routerLink]="['/']" fragment="perFreq">Perguntas frequentes</a></li>
+    </ul>
+
+    <div class="ajusteBtns">
+      <a routerLink="/login">Login</a>
+      <a routerLink="/cadastro">Cadastro</a>
+    </div>
+</nav>
+</header>

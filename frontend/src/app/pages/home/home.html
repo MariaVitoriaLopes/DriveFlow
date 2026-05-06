@@ -1,0 +1,311 @@
+<section class="banner">
+    <div class="home__boxes">
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+    </div>
+
+    <div class="ajusteText">
+        <div class="conteudo">
+            <h1 [style.opacity]="opacidade()" [class.animar]="animando()">
+                {{ fraseAtual }}
+            </h1>
+            <p>Agende aulas de direção com instrutores certificados e autônomos na sua cidade. Compare preços, veja
+                avaliações e acompanhe sua evolução aula a aula.</p>
+            <div class="btnsAjuste">
+                <a href="">Encontrar um instrutor</a>
+                <a href="">Sou instrutor autônomo</a>
+            </div>
+            <ul>
+                <li>Instrutores verificados</li>
+                <li>Agendamento online</li>
+                <li>Histórico de aulas</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="cardPqExistimos" id="pqExistimos">
+    <div class="ajustePqExistimos">
+        <div class="texto">
+            <h1>Porque nós existimos</h1>
+            <p class="desc">
+                Em dezembro de 2025 uma nova lei criou a figura do instrutor de direção autônomo. Agora, alunos podem
+                contratar aulas diretamente com um instrutor certificado em sua região — sem depender de autoescolas.
+            </p>
+
+            <div class="cards">
+                <div class="paraAlunos">
+                    <p class="svgP">
+                        <svg class="meu-svg" height="100" width="100" xmlns="http://www.w3.org/2000/svg">
+                            <circle class="circulo" r="25" cx="50" cy="50" />
+                        </svg>
+                        Para alunos
+                    </p>
+                    <p class="paragrafo">Sem opção estruturada para encontrar instrutores independentes confiáveis</p>
+                </div>
+                <div class="paraInstrutores">
+                    <p class="svgP">
+                        <svg class="meu-svg" height="100" width="100" xmlns="http://www.w3.org/2000/svg">
+                            <circle class="circulo" r="25" cx="50" cy="50" />
+                        </svg>
+                        Para instrutores
+                    </p>
+                    <p class="paragrafo">Sem plataforma centralizada para divulgar seus serviços e captar alunos</p>
+                </div>
+            </div>
+        </div>
+        <picture class="imgpqExistimos">
+            <img src="/images/onde-tirar-carteira-de-motorista-internacional.jpg" alt="">
+        </picture>
+    </div>
+</section>
+
+<section class="passo-a-passo">
+    <div class="toggle">
+        <button [class.ativo]="tipoUsuario === 'aluno'" (click)="selecionar('aluno')">
+            Sou aluno
+        </button>
+
+        <button [class.ativo]="tipoUsuario === 'instrutor'" (click)="selecionar('instrutor')">
+            Sou instrutor
+        </button>
+    </div>
+
+    @if (tipoUsuario === 'aluno') {
+    <div class="alunoPasso">
+        <hr>
+        <div class="passo">
+            <svg class="meu-svg" height="100" width="100" xmlns="http://www.w3.org/2000/svg">
+                <circle class="circulo" r="25" cx="50" cy="50" />
+                <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" font-size="16" fill="black"
+                    font-weight="bold">
+                    1
+                </text>
+            </svg>
+            <h1>Busque</h1>
+            <p>Encontre instrutores na sua cidade com filtros</p>
+        </div>
+        <div class="passo">
+            <svg class="meu-svg" height="100" width="100" xmlns="http://www.w3.org/2000/svg">
+                <circle class="circulo" r="25" cx="50" cy="50" />
+                <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" font-size="16" fill="black"
+                    font-weight="bold">
+                    2
+                </text>
+            </svg>
+            <h1>Agende</h1>
+            <p>Escolha data e horário na agenda do instrutor</p>
+        </div>
+        <div class="passo">
+            <svg class="meu-svg" height="100" width="100" xmlns="http://www.w3.org/2000/svg">
+                <circle class="circulo" r="25" cx="50" cy="50" />
+                <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" font-size="16" fill="black"
+                    font-weight="bold">
+                    3
+                </text>
+            </svg>
+            <h1>Acompanhe</h1>
+            <p>Veja seu histórico e registros de desempenho</p>
+        </div>
+    </div>
+    }
+
+    @if (tipoUsuario === 'instrutor') {
+    <div class="instrutorPasso">
+        <hr>
+        <div class="passo">
+            <svg class="meu-svg" height="100" width="100" xmlns="http://www.w3.org/2000/svg">
+                <circle class="circulo" r="25" cx="50" cy="50" />
+                <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" font-size="16" fill="black"
+                    font-weight="bold">
+                    1
+                </text>
+            </svg>
+            <h1>Ofereça suas aulas</h1>
+            <p>Cadastre-se e insira suas especializações.</p>
+        </div>
+        <div class="passo">
+            <svg class="meu-svg" height="100" width="100" xmlns="http://www.w3.org/2000/svg">
+                <circle class="circulo" r="25" cx="50" cy="50" />
+                <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" font-size="16" fill="black"
+                    font-weight="bold">
+                    2
+                </text>
+            </svg>
+            <h1>Defina sua agenda</h1>
+            <p>Escolha seus horários disponíveis.</p>
+        </div>
+        <div class="passo">
+            <svg class="meu-svg" height="100" width="100" xmlns="http://www.w3.org/2000/svg">
+                <circle class="circulo" r="25" cx="50" cy="50" />
+                <text x="50" y="50" text-anchor="middle" dominant-baseline="middle" font-size="16" fill="black"
+                    font-weight="bold">
+                    3
+                </text>
+            </svg>
+            <h1>Acompanhe o progresso</h1>
+            <p>Gerencie suas aulas e avalie o desempenho.</p>
+        </div>
+    </div>
+    }
+</section>
+
+<section class="funcionalidades" id="funcionalidades">
+    <h1>Funcionalizades</h1>
+    <div class="cardsFuncionalidades">
+        <div class="fCards">
+            <picture>
+                <img src="/images/Marcadores-1.jpg" alt="">
+            </picture>
+            <h6>Busca por localização</h6>
+            <p>Veja instrutores disponíveis perto de você no mapa, com valor da aula e tipo de veículo</p>
+        </div>
+        <div class="fCards">
+            <picture>
+                <img src="/images/agendamento.png" alt="">
+            </picture>
+            <h6>Agendamento inteligente</h6>
+            <p>Agende conforme a disponibilidade real do instrutor, sem ligações ou mensagens</p>
+        </div>
+        <div class="fCards">
+            <picture>
+                <img src="/images/ata-desempenho.png" alt="">
+            </picture>
+            <h6>Ata de desempenho</h6>
+            <p>Instrutor registra observações após cada aula. Aluno acompanha sua evolução</p>
+        </div>
+        <div class="fCards">
+            <picture>
+                <img src="/images/digital-authentication.png" alt="">
+            </picture>
+            <h6>Credenciais verificadas</h6>
+            <p>Todos os instrutores passam por verificação antes de aparecerem na plataforma</p>
+        </div>
+    </div>
+</section>
+
+<section class="para-alguem" id="vantagens">
+    @if (tipoUsuario === 'instrutor') {
+    <div class="para-instrutores">
+        <picture class="instrutor">
+            <img src="/images/paraInstrutores.jpg" alt="">
+        </picture>
+        <div>
+            <h1>Para instrutores</h1>
+            <ul>
+                <li>Alcance alunos na sua região</li>
+                <li>Gerencie sua agenda com facilidade</li>
+                <li>Construa sua reputaçao online</li>
+                <li>Registre atas de aulas digitalmente</li>
+                <li>Trabalhe com total autonomia</li>
+            </ul>
+
+            <p>Aluno <button (click)="selecionar('aluno')">&gt;</button></p>
+        </div>
+    </div>
+    }
+
+    @if (tipoUsuario === 'aluno') {
+    <div class="para-instrutores">
+        <picture class="aluno">
+            <img src="/images/paraAlunos.jpg" alt="">
+        </picture>
+        <div>
+            <h1>Para Alunos</h1>
+            <ul>
+                <li>Alcance alunos na sua região</li>
+                <li>Gerencie sua agenda com facilidade</li>
+                <li>Construa sua reputaçao online</li>
+                <li>Registre atas de aulas digitalmente</li>
+                <li>Trabalhe com total autonomia</li>
+            </ul>
+
+            <p>Instrutor <button (click)="selecionar('instrutor')">&gt;</button></p>
+        </div>
+    </div>
+    }
+</section>
+
+<section class="perguntasFreq" id="perFreq">
+    <h1>Perguntas Frequentes</h1>
+
+    <div class="perguntas">
+
+        <!-- PERGUNTA 1 -->
+        <div class="pergunta">
+            <div class="titulo" [class.ativa]="perguntaAberta === 0" (click)="toggle(0)">
+                Como funciona o processo de verificação dos instrutores?
+            </div>
+
+            @if (perguntaAberta === 0) {
+            <div class="resposta">
+                Todos os instrutores passam por um processo rigoroso de verificação,
+                incluindo análise de documentos e validação de certificações.
+            </div>
+            }
+        </div>
+
+        <!-- PERGUNTA 2 -->
+        <div class="pergunta">
+            <div class="titulo" [class.ativa]="perguntaAberta === 1" (click)="toggle(1)">
+                Posso cancelar ou reagendar uma aula?
+            </div>
+
+            @if (perguntaAberta === 1) {
+            <div class="resposta">
+                Sim, você pode cancelar ou reagendar diretamente pela plataforma,
+                respeitando a política do instrutor.
+            </div>
+            }
+        </div>
+
+        <!-- PERGUNTA 3 -->
+        <div class="pergunta">
+            <div class="titulo" [class.ativa]="perguntaAberta === 2" (click)="toggle(2)">
+                Como são calculados os preços das aulas?
+            </div>
+
+            @if (perguntaAberta === 2) {
+            <div class="resposta">
+                Os preços são definidos pelos instrutores com base na experiência,
+                localização e tipo de veículo.
+            </div>
+            }
+        </div>
+
+        <!-- PERGUNTA 4 -->
+        <div class="pergunta">
+            <div class="titulo" [class.ativa]="perguntaAberta === 3" (click)="toggle(3)">
+                O que acontece se eu tiver um problema durante a aula?
+            </div>
+
+            @if (perguntaAberta === 3) {
+            <div class="resposta">
+                Entre em contato com o suporte imediatamente. Nossa equipe está pronta
+                para ajudar e resolver qualquer situação.
+            </div>
+            }
+        </div>
+
+    </div>
+</section>
