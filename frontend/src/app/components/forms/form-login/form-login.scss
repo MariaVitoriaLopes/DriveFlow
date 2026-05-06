@@ -1,0 +1,51 @@
+label {
+  display: block;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+input[type="email"], input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+}
+
+.input-icon {
+  position: relative;
+}
+
+.input-icon .icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.termos {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  font-size: 13px;
+}
+
+.btn-criar {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  background: #111;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-criar:hover {
+  background-color: #7008E7;
+  color: #fff;
+  text-decoration: underline;
+}
+

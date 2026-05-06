@@ -1,30 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
+import { Component, signal } from '@angular/core';
+import { RouterOutlet} from '@angular/router';
+import { Header } from './components/layout/header/header';
+import { Footer } from './components/layout/footer/footer';
+import { MenuHamburguer } from './components/layout/menu-hamburguer/menu-hamburguer';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  // Adicionamos o CommonModule e HttpClientModule para o HTML e o código funcionarem
-  imports: [CommonModule, HttpClientModule],
-  templateUrl: './app.component.html',
-  styleUrl: './app.scss'
+  imports: [RouterOutlet, Header, Footer, MenuHamburguer],
+  templateUrl: './app.html',
+  styleUrl: './app.css',
 })
-export class App implements OnInit {
-  // Agora a variável existe dentro da classe "App" que o HTML usa
-  respostaDoBack: string = 'Tentando conectar ao Java...';
-
-  constructor(private http: HttpClient) {}
-
-  ngOnInit() {
-    // Faz a chamada para o seu Backend na porta 8081
-    this.http.get('http://localhost:8081/api/status', { responseType: 'text' })
-      .subscribe({
-        next: (dados) => this.respostaDoBack = dados,
-        error: (erro) => {
-          console.error(erro);
-          this.respostaDoBack = 'Erro ao falar com o Backend!';
-        }
-      });
-  }
+export class App {
+  protected readonly title = signal('driveFlow');
 }
+
