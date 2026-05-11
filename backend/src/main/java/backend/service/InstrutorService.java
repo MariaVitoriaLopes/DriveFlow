@@ -5,7 +5,6 @@ import backend.model.Instrutor;
 import backend.model.Usuario;
 import backend.repository.InstrutorRepository;
 import backend.repository.UsuarioRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

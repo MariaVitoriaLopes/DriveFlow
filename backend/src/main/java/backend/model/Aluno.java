@@ -1,24 +1,20 @@
 package backend.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
-@Entity
-@Table(name = "alunos")
 @Data
+@Document(collection = "alunos")
 public class Aluno {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idAluno;
+    private String id;
 
-
-    @OneToOne
-    @JoinColumn(name = "id_usuario", unique = true, nullable = false)
+    @DBRef // Cria a referência para o documento do Usuario
     private Usuario usuario;
 
     private String cidade;
-
-
     private String telefone;
 }
