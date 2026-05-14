@@ -1,0 +1,84 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #FAFAFA;
+    height: 100vh;
+}
+
+header picture {
+    width: 100%;
+}
+
+header picture a img {
+    width: 60%;
+    height: auto;
+}
+
+nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+    text-decoration: none;
+    width: 85%;
+    font-size: 15px;
+}
+nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.linkAgendamento {
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 2vh;
+    /* font-size: 10px; */
+    gap: 2vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #7008e70a;
+}
+
+.linkAgendamento button {
+    background-color: #7008E7;
+    color: #fff;
+    padding: 1vh 0vh;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.ajuda {
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 2vh;
+    /* font-size: 10px; */
+    gap: 2vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #7008e70a;
+}
+
+.ajuda a{
+    color: #7008E7;
+}
+
+.ajuda p .ajuda a .linkAgendamento p {
+    font-size: 13px; 
+}
+
+a {
+    width: 100%;
+    color: #E7000B;
+    cursor: pointer;
+}

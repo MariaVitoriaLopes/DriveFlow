@@ -1,0 +1,45 @@
+<form [formGroup]="form">
+    <!-- Nome -->
+    <label>Nome:</label>
+    <input type="text" placeholder="Seu nome completo ...">
+
+    <label>CPF:</label>
+    <input type="text" formControlName="cpf" maxlength="14" placeholder="Insira somente os numeros do seu CPF ...">
+
+    <label>E-mail:</label>
+    <input type="email" placeholder="nome@email.com">
+
+    <!-- Senha -->
+    <label>Senha:</label>
+    <div class="input-icon">
+      <input type="password" formControlName="senha" placeholder="Escolha uma senha segura">
+      <span class="icon">👁️</span>
+    </div>
+
+    <!-- Critérios -->
+    <ul class="requisitos">
+      <li [class.ok]="temTamanho()">Minimo 8 caracteres</li>
+      <li [class.ok]="temMaiuscula()">1 letra maiuscula</li>
+      <li [class.ok]="temMinuscula()">1 letra minuscula</li>
+      <li [class.ok]="temNumero()">numeros</li>
+      <li [class.ok]="temEspecial()">Caracteres especiais</li>
+    </ul>
+
+    <!-- Confirmar Senha -->
+    <label>Repita a senha:</label>
+    <div class="input-icon">
+      <input type="password" placeholder="Insira a mesma senha">
+      <span class="icon">👁️</span>
+    </div>
+
+    <!-- Termos -->
+    <div class="termos">
+      <input type="checkbox">
+      <span>Concordo com os termos</span>
+    </div>
+
+    <!-- Botão de criação de conta -->
+    <button class="btn-criar" [ngClass]="{ 'btn-instrutor': isInstrutor }">
+      Criar conta como {{ isInstrutor ? 'Instrutor' : 'Aluno' }}
+    </button>
+</form>

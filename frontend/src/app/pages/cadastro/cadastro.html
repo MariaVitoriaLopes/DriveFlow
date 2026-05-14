@@ -1,0 +1,60 @@
+<app-header></app-header>
+
+<section class="banner">
+    <div class="home__boxes">
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+        <div class="home__box"></div>
+    </div>
+
+  <div class="login-overlay">
+    <div class="login-card">
+      <div class="ajusteCheck">
+        <!-- Checkbox para selecionar o tipo de usuário -->
+        <input type="checkbox" id="instrutorCheckbox" (change)="onTipoChange($event)">
+        <label for="instrutorCheckbox">Sou instrutor</label>
+      </div>
+
+      <div class="lado-direito">
+        <!-- Título dinâmico com base no checkbox -->
+        <h1>Olá {{ isInstrutor ? 'Instrutor' : 'Aluno' }}! Crie sua conta</h1>
+
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </p>
+
+        <!-- Passando isInstrutor para o componente filho -->
+        <app-form-cadastro [isInstrutor]="isInstrutor"></app-form-cadastro>
+
+        <button class="google-btn">
+          <img src="/icons/googleIcon.png" alt="">
+          Entrar com minha conta Google
+        </button>
+
+        <a routerLink="/login" class="link-login">Entrar na minha conta</a>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<app-footer></app-footer>

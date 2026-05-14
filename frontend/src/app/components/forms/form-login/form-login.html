@@ -1,0 +1,19 @@
+<form [formGroup]="form">
+
+      <!-- EMAIL -->
+      <label>E-mail</label>
+      <input type="email" placeholder="nome@email.com">
+
+      <!-- SENHA -->
+      <label>Senha</label>
+      <div class="input-icon">
+        <input type="password" formControlName="senha" placeholder="Escolha uma senha segura">
+        <span class="icon">👁️</span>
+      </div>
+
+      <!-- BOTÃO -->
+      <button class="btn-criar" [disabled]="form.invalid">
+        Entrar na minha conta
+      </button>
+
+</form>
