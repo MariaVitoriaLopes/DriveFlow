@@ -1,0 +1,187 @@
+<app-header-instrutor></app-header-instrutor>
+
+<section class="agenda-page">
+  <h2>Agenda</h2>
+
+  <div class="content">
+    <div class="card calendar-card">
+      <div class="year">{{ anoAtual }}</div>
+
+      <div class="calendar-header">
+        <button>‹</button>
+        <strong>{{ mesAtual }}</strong>
+        <button>›</button>
+      </div>
+
+      <div class="week-days">
+        <span>D</span>
+        <span>S</span>
+        <span>T</span>
+        <span>Q</span>
+        <span>Q</span>
+        <span>S</span>
+        <span>S</span>
+      </div>
+
+      <div class="calendar-days">
+        @for (dia of diasCalendario; track $index) {
+          <div class="day">
+            @if (dia) {
+              <span [class.today]="dia === diaAtual">
+                {{ dia }}
+              </span>
+
+              @if (temAula(dia)) {
+                <small></small>
+              }
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="card today-card">
+      <div class="today-header">
+        <h3>Agenda de hoje</h3>
+        <div class="count">4</div>
+      </div>
+
+      <div class="schedule-list">
+        @for (aula of aulasHoje; track $index) {
+          <div class="schedule-item" [class.with-student]="aula.aluno">
+            <span>{{ aula.horario }}</span>
+
+            @if (aula.aluno) {
+              <div class="avatar"></div>
+              <p>{{ aula.aluno }}</p>
+              <button>⋮</button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="card student-card">
+      <div class="student-icons">
+        <span>♔</span>
+        <span>☏</span>
+      </div>
+
+      <div class="student-header">
+        <div class="avatar big"></div>
+
+        <div>
+          <h3>Ana</h3>
+          <small>Primeira aula</small>
+        </div>
+      </div>
+
+      <p><strong>Horário:</strong> 08:00</p>
+
+      <p>
+        <strong>Local de encontro:</strong>
+        Av. Paulista, 1000, Bela Vista, São Paulo - SP
+      </p>
+
+      <div class="actions">
+        <button class="cancel">Cancelar aula</button>
+        <button class="start">Iniciar aula</button>
+      </div>
+    </div>
+
+    <div class="middle-column">
+      <div class="card availability">
+        <span>Disponibilidade para novas aulas</span>
+
+        <label class="switch">
+          <input type="checkbox" checked />
+          <span></span>
+        </label>
+      </div>
+
+      <div class="card summary-card">
+        <h3>Resumo da sua agenda</h3>
+
+        <div class="dots-week">
+          <div>
+            <span>Dom</span>
+            <small></small>
+          </div>
+          <div>
+            <span>Seg</span>
+            <small></small>
+          </div>
+          <div>
+            <span>Ter</span>
+            <small></small>
+          </div>
+          <div>
+            <span>Qua</span>
+            <small></small>
+          </div>
+          <div>
+            <span>Qui</span>
+            <small class="strong"></small>
+          </div>
+          <div>
+            <span>Sex</span>
+            <small class="strong"></small>
+          </div>
+          <div>
+            <span>Sáb</span>
+            <small class="dark"></small>
+          </div>
+        </div>
+
+        <div class="inputs">
+          <label>
+            Duração das aulas
+            <input type="text" value="60 minutos" readonly />
+          </label>
+
+          <label>
+            Intervalos entre aulas
+            <input type="text" value="15 minutos" readonly />
+          </label>
+        </div>
+
+        <button class="edit">Editar agenda</button>
+      </div>
+    </div>
+
+    <div class="card hours-card">
+      <h3>Horários</h3>
+
+      <div class="hours-table">
+        <div class="table-head">
+          <span>Dias</span>
+          <span>Início</span>
+          <span>Fim</span>
+          <span>Bloqueio</span>
+        </div>
+
+        @for (item of horarios; track $index) {
+          <div class="table-row">
+            <span>{{ item.dia }}</span>
+            <span>{{ item.inicio }}</span>
+            <span>{{ item.fim }}</span>
+            <input type="checkbox" [checked]="item.bloqueio" />
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="card breaks-card">
+      <h3>Folgas</h3>
+
+      <div class="break-list">
+        @for (folga of folgas; track $index) {
+          <div class="break-item">
+            <strong>{{ folga }}</strong>
+            <span>{{ mesAtual }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>
