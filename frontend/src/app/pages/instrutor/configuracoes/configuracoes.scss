@@ -1,0 +1,401 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+app-header-instrutor {
+    width: 15%;
+}
+
+.config-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px;
+
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+      width: 85%;
+
+  background: #f5f5f7;
+}
+
+// ======================
+// SIDEBAR
+// ======================
+
+.sidebar {
+  position: sticky;
+  top: 20px;
+
+  height: fit-content;
+
+  background: white;
+  border-radius: 24px;
+
+  padding: 32px 20px;
+
+  border: 1px solid #dcdcdc;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .avatar {
+    width: 140px;
+    height: 140px;
+
+    border-radius: 50%;
+    border: 5px solid #6c2cff;
+
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2f2f2f;
+  }
+
+  p {
+    margin-top: 6px;
+    color: #7b7b7b;
+    font-size: 18px;
+  }
+
+  .status {
+    margin-top: 12px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #6c2cff;
+    font-weight: 600;
+
+    span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #6c2cff;
+    }
+  }
+}
+
+.menu {
+  margin-top: 40px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  button {
+    width: 100%;
+    border: none;
+    background: transparent;
+
+    padding: 16px;
+    border-radius: 14px;
+
+    text-align: left;
+
+    font-size: 18px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.2s;
+
+    color: #2d2d2d;
+
+    &:hover {
+      background: #f2f2f2;
+    }
+
+    &.active {
+      background: #f1ecff;
+      color: #6c2cff;
+    }
+  }
+}
+
+.delete-btn {
+  margin-top: 40px;
+
+  width: 100%;
+  height: 56px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: #ff1c1c;
+  color: white;
+
+  font-size: 18px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+// ======================
+// CARD
+// ======================
+
+.content-card {
+  background: white;
+  border-radius: 24px;
+
+  border: 1px solid #dcdcdc;
+
+  padding: 40px;
+}
+
+form {
+  width: 100%;
+}
+
+h1 {
+  font-size: 40px;
+  margin-bottom: 30px;
+  color: #2d2d2d;
+}
+
+// ======================
+// FOTO
+// ======================
+
+.photo-area {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+
+  margin-bottom: 40px;
+
+  .photo-preview {
+    width: 120px;
+    height: 120px;
+
+    border-radius: 50%;
+    background: #d9d9d9;
+  }
+
+  p {
+    margin-top: 12px;
+    max-width: 500px;
+
+    color: #666;
+    font-size: 15px;
+  }
+}
+
+.photo-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  height: 48px;
+  padding: 0 24px;
+
+  border: none;
+  border-radius: 12px;
+
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  &.dark {
+    background: #3f3f48;
+  }
+
+  &.gray {
+    background: #7b7b85;
+  }
+}
+
+// ======================
+// FORM
+// ======================
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  grid-column: span 6;
+
+  &.full {
+    grid-column: span 12;
+  }
+
+  &.small {
+    grid-column: span 3;
+  }
+
+  label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d2d2d;
+  }
+
+  input {
+    width: 100%;
+    height: 58px;
+
+    border-radius: 12px;
+    border: 1px solid #cfcfcf;
+
+    padding: 0 18px;
+
+    font-size: 16px;
+
+    outline: none;
+
+    transition: 0.2s;
+
+    &:focus {
+      border-color: #6c2cff;
+    }
+  }
+}
+
+.senha {
+  grid-column: span 7;
+}
+
+.reset-btn {
+  height: 58px;
+
+  margin-top: 34px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #7c7c86;
+  color: white;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+// ======================
+// CHECKBOX
+// ======================
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  font-size: 18px;
+  font-weight: 500;
+
+  input {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// ======================
+// ACTIONS
+// ======================
+
+.actions {
+  margin-top: 40px;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+
+  button {
+    height: 58px;
+    padding: 0 28px;
+
+    border: none;
+    border-radius: 14px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+  }
+
+  .discard {
+    background: #8a8a96;
+    color: white;
+  }
+
+  .save {
+    background: #6c2cff;
+    color: white;
+  }
+}
+
+// ======================
+// RESPONSIVO
+// ======================
+
+@media (max-width: 1100px) {
+
+  .config-page {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: relative;
+    top: 0;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .content-card {
+    padding: 24px;
+  }
+
+  h1 {
+    font-size: 30px;
+  }
+
+  .photo-area {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .field,
+  .field.full,
+  .field.small,
+  .senha {
+    grid-column: span 1;
+  }
+
+  .actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+}
