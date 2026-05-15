@@ -1,34 +1,27 @@
 package backend.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Entity
-@Table(name = "aulas")
 @Data
+@Document(collection = "aulas")
 public class Aula {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idAula;
 
-    @ManyToOne
-    @JoinColumn(name = "id_aluno", nullable = false)
+    @Id
+    private String id;
+
+    @DBRef
     private Aluno aluno;
 
-    @ManyToOne
-    @JoinColumn(name = "id_instrutor", nullable = false)
+    @DBRef
     private Instrutor instrutor;
 
-    @Column(name = "data_aula", nullable = false)
     private LocalDate dataAula;
-
-    @Column(name = "horario", nullable = false)
     private LocalTime horario;
-
-    @Column(name = "local_encontro")
     private String localEncontro;
-
     private String status = "AGENDADA";
 }

@@ -1,24 +1,20 @@
 package backend.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
-@Entity
-@Table(name = "alunos")
 @Data
+@Document(collection = "alunos")
 public class Aluno {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idAluno;
+    private String id;
 
-    // Relacionamento 1:1 com a tabela de usuários para pegar nome, email, cpf, etc.
-    @OneToOne
-    @JoinColumn(name = "id_usuario", unique = true, nullable = false)
+    @DBRef // Cria a referência para o documento do Usuario
     private Usuario usuario;
 
     private String cidade;
-
-    // Conforme o seu modelo, o aluno pode ter um telefone específico ou usar o do usuário
     private String telefone;
 }

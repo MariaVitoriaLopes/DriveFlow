@@ -1,25 +1,28 @@
 package backend.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
-@Entity
-@Table(name = "instrutores")
 @Data
+@Document(collection = "instrutores") // Substitui @Entity e @Table
 public class Instrutor {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idInstrutor;
 
-    @OneToOne
-    @JoinColumn(name = "id_usuario", unique = true, nullable = false)
+    @Id
+    private String id;
+
+
+    @DBRef
     private Usuario usuario;
 
     private String regiao;
 
-    @Column(name = "preco_aula")
     private Double precoAula;
 
-    @Column(name = "status_validacao")
     private String statusValidacao = "PENDENTE";
+
+    private String numCredencial;
+
+
 }

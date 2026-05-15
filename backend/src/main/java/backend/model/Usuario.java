@@ -1,34 +1,21 @@
 package backend.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "usuarios")
 @Data
+@Document(collection = "usuarios") // Isso substitui o @Entity e @Table
 public class Usuario {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idUsuario;
+    private String id;
 
-    @Column(nullable = false)
     private String nome;
-
-    @Column(unique = true, nullable = false)
-    private String cpf;
-
-    @Column(unique = true, nullable = false)
     private String email;
-
-    @Column(nullable = false)
     private String senha;
-
-    private String telefone;
-
-    @Column(name = "perfil", nullable = false)
-    private String perfil; // ALUNO, INSTRUTOR, ADMIN
-
-    @Column(name = "data_cadastro")
+    private String cpf;
+    private String perfil;
     private LocalDateTime dataCadastro = LocalDateTime.now();
 }
