@@ -8,6 +8,7 @@
     height: 105vh;
     background-repeat: no-repeat;
     background-size: cover;
+  background-color: #2F0D68;
 }
 
 .home__boxes {
@@ -19,12 +20,13 @@
 }
 
 .home__box {
-    background: linear-gradient(-90deg, hsl(0deg 0% 100% / 40%) 0%,
-            hsl(0deg 0% 100% / 40%) 17%,
-            hsl(0deg 0% 49.75% / 10%) 100%);
-    box-shadow: inset 0 2px 4px hsla(0, 0%, 100%, 15);
+  background: linear-gradient( -90deg, hsla(0, 0%, 0%, 0.4) 0%,
+  hsla(0, 0%, 0%, 0.4) 17%,
+  hsla(0, 0%, 0%, 0.1) 100%);
+  box-shadow: inset 15px 0px 20px hsla(0, 0%, 0%, 0.33);
 
-    backdrop-filter: blur(50px);
+  backdrop-filter: blur(50px);
+
 }
 
 /* SOBREPOSIÇÃO */
@@ -51,7 +53,8 @@ div.ajusteCheck{
 /* CARD */
 .login-card {
     width: 40%;
-    height: 90vh;
+    padding: 40px 20px;
+    height: auto;
     background: white;
     border-radius: 12px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
@@ -79,14 +82,6 @@ h1 {
         opacity: 1;
         transform: translateY(0) scale(1);
     }
-}
-
-.login-card {
-  background: #f1f1f1;
-  padding: 40px;
-  border-radius: 20px;
-  width: 35%;
-  margin: auto;
 }
 
 
@@ -155,6 +150,14 @@ h1 {
 
   .login-card {
     width: 90%;
-    height: 95vh;
+    height: auto;
 }
+}
+
+@media scree and (max-width: 1920px) {
+
+.banner{
+  height: 120vh;
+}
+
 }
