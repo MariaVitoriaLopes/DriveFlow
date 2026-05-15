@@ -1,0 +1,34 @@
+<header>
+    <picture>
+      <a routerLink="/">
+        <img src="/logos-svg/logo_primary_black.svg" alt="Logo">
+      </a>
+    </picture>
+
+    <nav>
+        <a routerLink="/instrutor/dashboard">Dashboard</a>
+        <a routerLink="/instrutor/agenda">Agenda</a>
+        <a routerLink="/instrutor/aulas">Aulas</a>
+        <a routerLink="/instrutor/alunos">Alunos</a>
+        <hr>
+        <a routerLink="/instrutor/notificacoes">notificações</a>
+        <a routerLink="/instrutor/documentos">Documentos</a>
+        <a routerLink="/instrutor/configuracoes">Configurações</a>
+    </nav>
+
+    <div class="linkAgendamento">
+        <h5>Link de agendamento</h5>
+        <p>Compartilhe esse link e atraia alunos direamente para seu perfil</p>
+        <button (click)="compartilhar()">
+            Copiar link
+        </button>
+    </div>
+
+    <div class="ajuda">
+        <h5>Precisa de ajuda?</h5>
+        <p>Entre em contato conosco em caso de dúvidas</p>
+        <a href="">Suporte ao instrutor</a>
+    </div>
+
+    <a href="">Encerrar sessão</a>
+</header>

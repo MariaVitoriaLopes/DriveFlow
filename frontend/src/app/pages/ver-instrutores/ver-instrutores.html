@@ -1,0 +1,101 @@
+<app-header></app-header>
+
+<section class="instrutores-page">
+
+  <div class="top-search">
+    <input
+      type="text"
+      placeholder="Pesquise um instrutor"
+    />
+
+    <span>🔍</span>
+  </div>
+
+  <p class="results">
+    6 resultados de pesquisa para: “{{ pesquisa }}”
+  </p>
+
+  <div class="filters">
+
+    @for (categoria of categorias; track $index) {
+
+      <button
+        class="filter-btn"
+        [class.active]="categoria.ativa"
+        (click)="toggleCategoria(categoria)">
+
+        {{ categoria.nome }}
+
+      </button>
+
+    }
+
+  </div>
+
+  <div class="cards">
+
+    @for (instrutor of instrutores; track $index) {
+
+      <div class="card">
+
+        <div class="image-area">
+
+          <img
+            [src]="instrutor.foto"
+            alt="Instrutor"
+          />
+
+          <span class="tag">
+            Capa
+          </span>
+
+        </div>
+
+        <div class="info">
+
+          <div class="top-info">
+
+            <div class="profile">
+              <img
+                [src]="instrutor.avatar"
+                alt="Avatar"
+              />
+
+              <div>
+                <h3>{{ instrutor.nome }}</h3>
+
+                <small>
+                  {{ instrutor.categoria }}
+                </small>
+              </div>
+            </div>
+
+            <div class="rating">
+              {{ instrutor.nota }} ★
+            </div>
+
+          </div>
+
+          <p>
+            {{ instrutor.descricao }}
+          </p>
+
+          <button class="more">
+            Ver mais
+          </button>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+  <button class="register">
+    Crie sua conta e encontre o instrutor para você!
+  </button>
+
+</section>
+
+<app-footer></app-footer>

@@ -1,10 +1,18 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Header } from '../../components/layout/header/header';
+import { Footer } from '../../components/layout/footer/footer';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule], // 👈 AQUI
+  imports: [
+    CommonModule,
+    Header,
+    Footer,
+    RouterLink
+], // 👈 AQUI
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
