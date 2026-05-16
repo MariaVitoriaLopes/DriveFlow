@@ -1,16 +1,19 @@
-<form [formGroup]="form" (ngSubmit)="onLogin()">
+<form [formGroup]="form" (ngSubmit)="entrar()">
 
-  <label>E-mail</label>
-  <input type="email" formControlName="email" placeholder="nome@email.com">
+      <!-- EMAIL -->
+      <label>E-mail</label>
+      <input type="email" placeholder="nome@email.com">
 
-  <label>Senha</label>
-  <div class="input-icon">
-    <input type="password" formControlName="senha" placeholder="Escolha uma senha segura">
-    <span class="icon">👁️</span>
-  </div>
+      <!-- SENHA -->
+      <label>Senha</label>
+      <div class="input-icon">
+        <input type="password" formControlName="senha" placeholder="Escolha uma senha segura">
+        <span class="icon">👁️</span>
+      </div>
 
-  <button type="submit" class="btn-criar" [disabled]="form.invalid">
-    Entrar na minha conta
-  </button>
+      <!-- BOTÃO -->
+      <button class="btn-criar" [disabled]="form.invalid">
+        Entrar na minha conta
+      </button>
 
 </form>
