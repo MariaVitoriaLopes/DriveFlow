@@ -12,7 +12,7 @@ public class Aluno {
     @Id
     private String id;
 
-    @DBRef // Cria a referência para o documento do Usuario
+    @DBRef
     private Usuario usuario;
     private String cidade;
     private String telefone;

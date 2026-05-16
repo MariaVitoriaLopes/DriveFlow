@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http'; // 1. IMPORTANTE: Importar o cliente HTTP
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-form-cadastro',
-  standalone: true, // Garante que é um componente standalone moderno
+  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule
@@ -17,9 +17,9 @@ export class FormCadastro implements OnInit {
   @Input() isInstrutor: boolean = false;
 
   private fb = inject(FormBuilder);
-  private http = inject(HttpClient); // 2. Injetar o HttpClient para enviar os dados
+  private http = inject(HttpClient);
 
-  // 3. Adicionados os campos 'nome' e 'email' para combinar com o banco NoSQL
+
   form = this.fb.group({
     nome: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
@@ -40,10 +40,10 @@ export class FormCadastro implements OnInit {
     this.isInstrutor = event.target.checked;
   }
 
-  // 4. ESSA FUNÇÃO VAI ENVIAR O JSON PARA O JAVA
+
   onSubmit() {
     if (this.form.valid) {
-      // Monta o JSON misturando o formulário com a regra de perfil que o Java espera
+
       const dadosParaEnviar = {
         nome: this.form.value.nome,
         email: this.form.value.email,
@@ -54,7 +54,7 @@ export class FormCadastro implements OnInit {
 
       console.log('Enviando para o MongoDB através do Java:', dadosParaEnviar);
 
-      // Dispara o POST para o Controller do seu Backend
+
       this.http.post('http://localhost:8081/api/usuarios/cadastro', dadosParaEnviar)
         .subscribe({
           next: (resposta) => {
@@ -71,7 +71,7 @@ export class FormCadastro implements OnInit {
     }
   }
 
-  // Seus métodos de validação visual de senha continuam iguaizinhos abaixo:
+
   get searchSenha() {
     return this.form.get('senha');
   }

@@ -1,45 +1,65 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../../services/auth.service';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-form-login',
-  imports: [ReactiveFormsModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './form-login.html',
   styleUrl: './form-login.scss',
 })
 export class FormLogin {
+  private fb = inject(FormBuilder);
+  private http = inject(HttpClient);
+  private router = inject(Router);
 
-  form;
+  form = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    senha: ['', [Validators.required, Validators.minLength(8)]],
+  });
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService
-  ) {
-    this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      senha: ['', [Validators.required, Validators.minLength(8)]]
-    });
-  }
 
-  entrar(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
+  onLogin() {
+    if (this.form.valid) {
+      const credenciais = {
+        email: this.form.value.email,
+        senha: this.form.value.senha
+      };
+
+      console.log('Enviando dados de login para o Java:', credenciais);
+
+
+      this.http.post('http://localhost:8081/api/usuarios/login', credenciais)
+        .subscribe({
+          next: (usuarioLogado: any) => {
+
+            alert(`Bem-vindo de volta, ${usuarioLogado.nome}!`);
+
+
+            localStorage.setItem('usuario', JSON.stringify(usuarioLogado));
+
+
+            if (usuarioLogado.perfil === 'INSTRUTOR') {
+              console.log('Navegando para o painel do Instrutor...');
+              this.router.navigate(['/instrutor/dashboard']);
+            } else {
+              console.log('Navegando para o painel do Aluno...');
+              this.router.navigate(['/dashboard-aluno']); // Ajuste para sua rota real
+            }
+          },
+          error: (erro) => {
+            console.error('Erro na autenticação:', erro);
+            alert('E-mail ou senha incorretos! Verifique os dados.');
+          }
+        });
+    } else {
+      alert('Por favor, preencha os campos corretamente.');
     }
-
-    const dadosLogin = {
-      email: this.form.value.email!,
-      senha: this.form.value.senha!
-    };
-
-    this.authService.login(dadosLogin).subscribe({
-      next: (resposta) => {
-        console.log('Login deu certo:', resposta);
-      },
-      error: (erro) => {
-        console.log('Erro no login:', erro);
-      }
-    });
   }
 }

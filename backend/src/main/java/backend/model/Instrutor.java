@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 @Data
-@Document(collection = "instrutores") // Substitui @Entity e @Table
+@Document(collection = "instrutores")
 public class Instrutor {
 
     @Id
