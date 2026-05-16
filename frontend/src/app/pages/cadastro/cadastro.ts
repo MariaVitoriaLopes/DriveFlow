@@ -20,7 +20,6 @@ import { Footer } from '../../components/layout/footer/footer';
 export class Cadastro {
   isInstrutor: boolean = false;
 
-  // Método para alterar o valor de isInstrutor
   onTipoChange(event: any) {
     this.isInstrutor = event.target.checked;
   }

@@ -14,7 +14,6 @@ public class Aluno {
 
     @DBRef // Cria a referência para o documento do Usuario
     private Usuario usuario;
-
     private String cidade;
     private String telefone;
 }
