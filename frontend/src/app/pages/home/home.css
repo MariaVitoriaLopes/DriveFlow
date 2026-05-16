@@ -686,7 +686,7 @@ section.para-alguem {
 }
 
 /* TELAS GRANDES (opcional) */
-@media screen and (max-width: 1920px) {
+@media screen and (min-width: 1920px) and (min-height: 1081px) {
     div.cards {
         display: grid;
         gap: 0vh;

@@ -52,7 +52,7 @@ div.ajusteCheck{
 
 /* CARD */
 .login-card {
-    width: 40%;
+    width: 35%;
     padding: 40px 20px;
     height: auto;
     background: white;
@@ -88,6 +88,7 @@ h1 {
 .lado-direito{
   display: flex;
   flex-direction: column;
+  width: 80%;
 }
 
 .lado-direito h1 {
