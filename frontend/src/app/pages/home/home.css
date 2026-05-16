@@ -8,6 +8,7 @@
     height: 90vh;
     background-repeat: no-repeat;
     background-size: cover;
+    background-color: #2F0D68;
 }
 
 .home__boxes {
@@ -19,12 +20,10 @@
 }
 
 .home__box {
-    background: linear-gradient(-90deg, hsl(0deg 0% 100% / 40%) 0%,
-            hsl(0deg 0% 100% / 40%) 17%,
-            hsl(0deg 0% 49.75% / 10%) 100%);
-    box-shadow: inset 0 2px 4px hsla(0, 0%, 100%, 15);
-
-    backdrop-filter: blur(50px);
+    background: linear-gradient(-90deg, hsla(0, 0%, 0%, 0) 0%, hsla(0, 0%, 21.6%, 0) 17%, hsla(0, 0%, 0%, 0.13) 100%);
+    box-shadow: inset 10px 0px 50px hsla(0, 0%, 0%, 0);
+    -webkit-backdrop-filter: blur(60px);
+    backdrop-filter: blur(60px);
 
 }
 
@@ -34,6 +33,7 @@ div.ajusteText {
     width: 100%;
     position: absolute;
     transform: translate(0, 35vh);
+    color: #fff;
 }
 
 div.conteudo {
@@ -75,8 +75,8 @@ div.btnsAjuste {
 }
 
 div.btnsAjuste a {
-    background-color: #1E1E1E;
-    color: #fff;
+    background-color: #DDD6FF;
+    color: #000;
     padding: 10px 15px;
     border-radius: 5px;
     transition: all 0.2s;
@@ -84,7 +84,8 @@ div.btnsAjuste a {
 }
 
 div.btnsAjuste a:hover {
-    background-color: #7008E7;
+    background-color: #2F0D68;
+    color: #fff;
 }
 
 /*Cards porque existimos*/
@@ -324,7 +325,7 @@ div.fCards picture {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 70%;
+    height: 30vh;
 }
 
 
@@ -563,63 +564,66 @@ section.para-alguem {
         grid-auto-flow: row;
     }
 
-    .alunoPasso, .instrutorPasso {
+    .alunoPasso,
+    .instrutorPasso {
         flex-direction: column;
         margin-top: 3vh;
     }
 
-    .passo h1{
-    font-size: 2vh;
-}
+    .passo h1 {
+        font-size: 2vh;
+    }
 
-hr{
-    display: none;
-}
+    hr {
+        display: none;
+    }
 
-div.cardsFuncionalidades {
-    flex-direction: column;
-}
+    div.cardsFuncionalidades {
+        flex-direction: column;
+    }
 
-div.fCards {
-    width: 90%;
-}
+    div.fCards {
+        width: 90%;
+    }
 
-.perguntasFreq {
-    flex-direction: column;
-}
+    .perguntasFreq {
+        flex-direction: column;
+    }
 
-.perguntasFreq h1 {
-    font-size: 3.5vh;
-    width: 100%;
-}
+    .perguntasFreq h1 {
+        font-size: 3.5vh;
+        width: 100%;
+    }
 
-.perguntas{
-    width: 100%;
-}
+    .perguntas {
+        width: 100%;
+    }
 
-.para-instrutores, .para-alunos {
-    flex-direction: column;
-    width: 90%;
-}
+    .para-instrutores,
+    .para-alunos {
+        flex-direction: column;
+        width: 90%;
+    }
 
-.para-instrutores picture, .para-instrutores picture.aluno {
-    width: 100%;
-    height: 25vh;
-}
+    .para-instrutores picture,
+    .para-instrutores picture.aluno {
+        width: 100%;
+        height: 25vh;
+    }
 
-.para-instrutores picture img {
-    border-radius: 10px;
-    object-fit: cover;
-    width: 100%;
-}
+    .para-instrutores picture img {
+        border-radius: 10px;
+        object-fit: cover;
+        width: 100%;
+    }
 
-.para-instrutores div {
-    padding: 45px 45px 45px 90px;
-}
+    .para-instrutores div {
+        padding: 45px 45px 45px 90px;
+    }
 
-.para-instrutores div p{
-    width: 100%;
-}
+    .para-instrutores div p {
+        width: 100%;
+    }
 }
 
 /* TABLET */
@@ -682,8 +686,60 @@ div.fCards {
 }
 
 /* TELAS GRANDES (opcional) */
-@media (min-width: 1440px) {
-    .conteudo h1 {
-        font-size: 7vh;
+@media screen and (min-width: 1920px) and (min-height: 1081px) {
+    div.cards {
+        display: grid;
+        gap: 0vh;
+        margin: 3vh 0;
+        width: 100%;
+        align-items: stretch;
+        justify-content: center;
     }
+
+    div.paraInstrutores,
+    div.paraAlunos {
+        width: 100%;
+    }
+
+    p.svgP {
+        font-size: 20px;
+    }
+
+    div.paraAlunos p,
+    div.paraInstrutore p {
+        display: flex;
+        align-items: center;
+        font-size: 15px;
+    }
+
+    div.paraAlunos .paragrafo,
+    div.paraInstrutores .paragrafo {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        text-align: justify;
+        width: 85%;
+    }
+
+    .alunoPasso hr,
+    .instrutorPasso hr {
+        position: absolute;
+        width: 50%;
+        margin: -50px 0 0 0;
+        z-index: -1;
+    }
+
+    div.fCards {
+        height: 50vh;
+    }
+
+    div.fCards h6 {
+        font-size: 19px;
+    }
+
+    div.fCards p {
+        font-size: 15px;
+    }
+
+    img.responsivoCredenciais {}
 }

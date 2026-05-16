@@ -38,10 +38,6 @@
         <!-- Título dinâmico com base no checkbox -->
         <h1>Olá {{ isInstrutor ? 'Instrutor' : 'Aluno' }}! Crie sua conta</h1>
 
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </p>
-
         <!-- Passando isInstrutor para o componente filho -->
         <app-form-cadastro [isInstrutor]="isInstrutor"></app-form-cadastro>
 
