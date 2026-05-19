@@ -1,175 +1,242 @@
 #!/bin/bash
 
-echo "============================================"
-echo "              DRIVEFLOW"
-echo "============================================"
+# =========================================================
+# CONFIGURACOES
+# =========================================================
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+FRONTEND_DIR="$ROOT_DIR/frontend"
+BACKEND_DIR="$ROOT_DIR/backend"
+
+MONGO_CONTAINER="mongodb_driveflow"
+MONGO_URI="mongodb://localhost:27017/driveflow_db"
+
+FRONTEND_PID=""
+BACKEND_PID=""
+
+# =========================================================
+# FUNCOES
+# =========================================================
+
+check_command() {
+    if ! command -v "$1" >/dev/null 2>&1; then
+        echo "[ERRO] $2 nao encontrado."
+        exit 1
+    fi
+}
+
+cleanup() {
+
+    echo
+    echo "[INFO] Encerrando servicos..."
+
+    if [ -n "$FRONTEND_PID" ]; then
+        kill "$FRONTEND_PID" >/dev/null 2>&1
+    fi
+
+    if [ -n "$BACKEND_PID" ]; then
+        kill "$BACKEND_PID" >/dev/null 2>&1
+    fi
+
+    echo
+    echo "[INFO] Frontend e Backend encerrados."
+    echo "[INFO] MongoDB permanecera ativo."
+
+    exit 0
+}
+
+trap cleanup SIGINT
+
+# =========================================================
+# HEADER
+# =========================================================
+
+clear
+
+echo "============================================"
+echo "               DRIVEFLOW"
+echo "============================================"
 echo
 
-# ============================================
-# VALIDACAO LINUX
-# ============================================
+echo "Root:"
+echo "$ROOT_DIR"
+echo
 
-if [[ "$OSTYPE" != "linux-gnu"* ]]; then
-    echo "[ERRO] Este script deve ser executado no Linux."
+# =========================================================
+# VALIDACOES
+# =========================================================
+
+check_command docker "Docker"
+check_command npm "Node/NPM"
+check_command java "Java"
+
+# =========================================================
+# VALIDAR PASTAS
+# =========================================================
+
+if [ ! -d "$FRONTEND_DIR" ]; then
+    echo "[ERRO] Pasta frontend nao encontrada."
     exit 1
 fi
 
-# ============================================
-# VALIDACOES
-# ============================================
-
-command -v docker >/dev/null 2>&1 || {
-    echo "[ERRO] Docker nao encontrado."
+if [ ! -d "$BACKEND_DIR" ]; then
+    echo "[ERRO] Pasta backend nao encontrada."
     exit 1
-}
+fi
 
-command -v npm >/dev/null 2>&1 || {
-    echo "[ERRO] Node/NPM nao encontrado."
-    exit 1
-}
-
-command -v java >/dev/null 2>&1 || {
-    echo "[ERRO] Java nao encontrado."
-    exit 1
-}
-
-# ============================================
-# FRONTEND
-# ============================================
+# =========================================================
+# FRONTEND - DEPENDENCIAS
+# =========================================================
 
 echo
 echo "============================================"
 echo "FRONTEND"
 echo "============================================"
+echo
 
-cd frontend || exit
+cd "$FRONTEND_DIR" || exit 1
 
 if [ ! -d "node_modules" ]; then
 
-    echo "[INFO] Instalando dependencias Angular..."
+    echo "[INFO] Instalando dependencias..."
 
     npm install
 
     if [ $? -ne 0 ]; then
-        echo "[ERRO] npm install falhou."
+        echo "[ERRO] Falha no npm install."
         exit 1
     fi
 
-    echo "[OK] Dependencias Angular instaladas."
+    echo "[OK] Dependencias instaladas."
 
 else
+
     echo "[INFO] node_modules ja existe."
 fi
 
-cd ..
-
-# ============================================
-# DOCKER
-# ============================================
+# =========================================================
+# DOCKER / MONGODB
+# =========================================================
 
 echo
 echo "============================================"
-echo "DOCKER"
+echo "MONGODB"
 echo "============================================"
+echo
 
-CONTAINER_NAME="driveflow-db"
-
-if [ "$(docker ps -a -q -f name=^${CONTAINER_NAME}$)" ]; then
-
-    echo "[INFO] Container encontrado."
-
-    if [ "$(docker ps -q -f name=^${CONTAINER_NAME}$)" ]; then
-
-        echo "[INFO] Container ja esta rodando."
-
-    else
-
-        echo "[INFO] Iniciando container..."
-
-        docker start ${CONTAINER_NAME}
-
-        if [ $? -ne 0 ]; then
-            echo "[ERRO] Falha ao iniciar container."
-            exit 1
-        fi
-
-        echo "[OK] Container iniciado."
-    fi
-
-else
+if ! docker ps -a --format "{{.Names}}" | grep -i "^${MONGO_CONTAINER}$" >/dev/null; then
 
     echo "[INFO] Container nao encontrado."
-    echo "[INFO] Criando ambiente Docker..."
+    echo "[INFO] Executando docker compose..."
 
-    docker compose up -d --build
+    cd "$ROOT_DIR" || exit 1
+
+    docker compose up -d
 
     if [ $? -ne 0 ]; then
-        echo "[ERRO] Docker compose falhou."
+        echo "[ERRO] Falha no docker compose."
         exit 1
     fi
 
-    echo "[OK] Ambiente Docker criado."
+    echo "[OK] MongoDB iniciado."
+
+else
+
+    if ! docker ps --format "{{.Names}}" | grep -i "^${MONGO_CONTAINER}$" >/dev/null; then
+
+        echo "[INFO] MongoDB parado."
+        echo "[INFO] Iniciando container..."
+
+        docker start "$MONGO_CONTAINER"
+
+        if [ $? -ne 0 ]; then
+            echo "[ERRO] Falha ao iniciar MongoDB."
+            exit 1
+        fi
+
+        echo "[OK] MongoDB iniciado."
+
+    else
+
+        echo "[INFO] MongoDB ja esta rodando."
+    fi
 fi
 
-# ============================================
-# INICIANDO SERVICOS
-# ============================================
+# =========================================================
+# AGUARDAR MONGODB
+# =========================================================
+
+echo
+echo "[INFO] Aguardando MongoDB iniciar..."
+
+sleep 5
+
+# =========================================================
+# BACKEND
+# =========================================================
 
 echo
 echo "============================================"
-echo "INICIANDO SERVICOS"
+echo "BACKEND"
 echo "============================================"
+echo
 
-cd frontend || exit
-npm start &
-FRONT_PID=$!
-cd ..
-
-cd backend || exit
+cd "$BACKEND_DIR" || exit 1
 
 if [ -f "./mvnw" ]; then
 
     chmod +x mvnw
 
-    ./mvnw spring-boot:run -Dspring-boot.run.arguments=--server.port=8081 &
-    BACK_PID=$!
+    ./mvnw spring-boot:run &
+    BACKEND_PID=$!
 
 else
 
     echo "[AVISO] Maven Wrapper nao encontrado."
-    echo "[AVISO] Tentando usar Maven global..."
+    echo "[INFO] Usando Maven global..."
 
-    mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8081 &
-    BACK_PID=$!
+    mvn spring-boot:run &
+    BACKEND_PID=$!
 fi
 
-cd ..
+# =========================================================
+# FRONTEND SERVER
+# =========================================================
+
+echo
+echo "============================================"
+echo "FRONTEND SERVER"
+echo "============================================"
+echo
+
+cd "$FRONTEND_DIR" || exit 1
+
+npm start &
+FRONTEND_PID=$!
+
+# =========================================================
+# STATUS FINAL
+# =========================================================
 
 echo
 echo "============================================"
 echo "AMBIENTE PRONTO"
 echo "============================================"
-
-echo
-echo "Frontend: http://localhost:4200"
-echo "Backend:  http://localhost:8081"
 echo
 
-echo "Pressione ENTER para encerrar os servicos..."
-read
-
-# ============================================
-# ENCERRAMENTO GRACIOSO
-# ============================================
-
+echo "Frontend:"
+echo "http://localhost:4200"
 echo
-echo "[INFO] Encerrando servicos..."
 
-kill -SIGINT $FRONT_PID 2>/dev/null
-kill -SIGINT $BACK_PID 2>/dev/null
-
+echo "Backend:"
+echo "http://localhost:8081"
 echo
-echo "[INFO] Containers Docker permanecem ativos."
+
+echo "MongoDB:"
+echo "$MONGO_URI"
+echo
+
+echo "Pressione CTRL+C para encerrar Frontend e Backend..."
 
 wait
