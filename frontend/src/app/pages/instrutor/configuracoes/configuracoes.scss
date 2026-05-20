@@ -11,7 +11,7 @@ app-header-instrutor {
 .config-page {
   width: 100%;
   min-height: 100vh;
-  padding: 24px;
+  padding: 20px;
 
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -49,8 +49,8 @@ app-header-instrutor {
   align-items: center;
 
   .avatar {
-    width: 140px;
-    height: 140px;
+    width: 100px;
+    height: 100px;
 
     border-radius: 50%;
     border: 5px solid #6c2cff;
@@ -59,7 +59,7 @@ app-header-instrutor {
   }
 
   h2 {
-    font-size: 28px;
+    font-size: 20px;
     font-weight: 700;
     color: #2f2f2f;
   }
@@ -67,7 +67,7 @@ app-header-instrutor {
   p {
     margin-top: 6px;
     color: #7b7b7b;
-    font-size: 18px;
+    font-size: 15px;
   }
 
   .status {
@@ -106,7 +106,7 @@ app-header-instrutor {
 
     text-align: left;
 
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 600;
 
     cursor: pointer;
@@ -126,7 +126,7 @@ app-header-instrutor {
 }
 
 .delete-btn {
-  margin-top: 40px;
+  margin-top: 25px;
 
   width: 100%;
   height: 56px;
@@ -137,7 +137,7 @@ app-header-instrutor {
   background: #ff1c1c;
   color: white;
 
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
 
   cursor: pointer;
@@ -161,7 +161,7 @@ form {
 }
 
 h1 {
-  font-size: 40px;
+  font-size: 25px;
   margin-bottom: 30px;
   color: #2d2d2d;
 }
@@ -178,8 +178,8 @@ h1 {
   margin-bottom: 40px;
 
   .photo-preview {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
 
     border-radius: 50%;
     background: #d9d9d9;
@@ -207,7 +207,7 @@ h1 {
   border-radius: 12px;
 
   color: white;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
 
   cursor: pointer;
