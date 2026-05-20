@@ -2,9 +2,9 @@ package backend.repository;
 
 import backend.model.Aluno;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
-@Repository
 public interface AlunoRepository extends MongoRepository<Aluno, String> {
-
+    // Busca um aluno baseado no ID do Usuário vinculado
+    Optional<Aluno> findByUsuarioId(String usuarioId);
 }
