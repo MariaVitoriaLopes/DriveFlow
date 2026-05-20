@@ -19,7 +19,6 @@ export class FormCadastro implements OnInit {
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
 
-
   form = this.fb.group({
     nome: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
@@ -40,26 +39,26 @@ export class FormCadastro implements OnInit {
     this.isInstrutor = event.target.checked;
   }
 
-
   onSubmit() {
     if (this.form.valid) {
 
+      // 🔴 AJUSTE AQUI: Usando o operador '||' para garantir que nunca envie um valor nulo/vazio ao Java
       const dadosParaEnviar = {
-        nome: this.form.value.nome,
-        email: this.form.value.email,
-        senha: this.form.value.senha,
-        cpf: this.form.value.cpf,
-        perfil: this.isInstrutor ? 'INSTRUTOR' : 'ALUNO'
+        nome: this.form.value.nome || '',
+        email: this.form.value.email || '',
+        senha: this.form.value.senha || '',
+        cpf: this.form.value.cpf || '',
+        perfil: this.isInstrutor ? 'INSTRUTOR' : 'ALUNO',
       };
 
       console.log('Enviando para o MongoDB através do Java:', dadosParaEnviar);
-
 
       this.http.post('http://localhost:8081/api/usuarios/cadastro', dadosParaEnviar)
         .subscribe({
           next: (resposta) => {
             alert('Cadastro realizado com sucesso! Verifique seu banco de dados.');
-            this.form.reset(); // Limpa a tela após sucesso
+            this.form.reset();
+            this.isInstrutor = false; // Reseta a caixinha do instrutor também
           },
           error: (erro) => {
             console.error('Erro na comunicação com o Backend:', erro);
@@ -70,7 +69,6 @@ export class FormCadastro implements OnInit {
       alert('Por favor, preencha todos os campos e cumpra os requisitos da senha.');
     }
   }
-
 
   get searchSenha() {
     return this.form.get('senha');

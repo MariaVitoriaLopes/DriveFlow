@@ -29,12 +29,24 @@
     <span class="icon">👁️</span>
   </div>
 
+  <div class="escolha-perfil" style="margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+    <input
+      type="checkbox"
+      id="checkboxPerfil"
+      [checked]="isInstrutor"
+      (change)="onTipoChange($event)"
+    >
+    <label for="checkboxPerfil" style="margin: 0; cursor: pointer; font-weight: normal;">
+      Quero me cadastrar como Instrutor
+    </label>
+  </div>
+
   <div class="termos">
     <input type="checkbox">
     <span>Concordo com os termos</span>
   </div>
 
   <button type="submit" class="btn-criar" [ngClass]="{ 'btn-instrutor': isInstrutor }" [disabled]="form.invalid">
-    Criar conta como {{ isInstrutor ? 'Instrutor' : 'Aluno' }}
+    Criar conta como {{ isInstrutor ? 'INSTRUTOR' : 'ALUNO' }}
   </button>
 </form>

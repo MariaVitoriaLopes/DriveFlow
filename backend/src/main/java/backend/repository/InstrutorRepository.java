@@ -2,9 +2,9 @@ package backend.repository;
 
 import backend.model.Instrutor;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
-@Repository
 public interface InstrutorRepository extends MongoRepository<Instrutor, String> {
-    boolean existsByNumCredencial(String numCredencial);
+    // Busca um instrutor baseado no ID do Usuário vinculado
+    Optional<Instrutor> findByUsuarioId(String usuarioId);
 }
