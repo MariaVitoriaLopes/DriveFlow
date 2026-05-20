@@ -42,7 +42,7 @@ export class FormCadastro implements OnInit {
   onSubmit() {
     if (this.form.valid) {
 
-      // 🔴 AJUSTE AQUI: Usando o operador '||' para garantir que nunca envie um valor nulo/vazio ao Java
+
       const dadosParaEnviar = {
         nome: this.form.value.nome || '',
         email: this.form.value.email || '',

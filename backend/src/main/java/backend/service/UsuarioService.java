@@ -42,7 +42,12 @@ public class UsuarioService {
     }
 
     public Usuario login(String email, String senha) {
-        return usuarioRepo.findByEmail(email)
+        if (email == null || senha == null) {
+            throw new RuntimeException("E-mail e senha são obrigatórios");
+        }
+
+        // Busca tirando espaços em branco acidentais (.trim())
+        return usuarioRepo.findByEmail(email.trim())
                 .filter(user -> user.getSenha().equals(senha))
                 .orElseThrow(() -> new RuntimeException("E-mail ou senha incorretos"));
     }
