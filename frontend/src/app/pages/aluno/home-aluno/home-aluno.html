@@ -1,4 +1,4 @@
-<app-header-aluno></app-header-aluno>>
+<app-header-aluno></app-header-aluno>
 
 <div class="container">
   <header>
@@ -17,13 +17,14 @@
     <span>6 de {{ instrutores.length }} em exibição</span>
   </div>
 
-  <!-- Modal de filtro -->
+  <div class="cards">
+
+      <!-- Modal de filtro -->
   <div *ngIf="exibeModalFiltro" class="modal-filtro">
     <!-- Aqui você vai puxar o componente de modal -->
-    <p>Componente de filtro aqui</p>
+      <app-filtro></app-filtro>
   </div>
 
-  <div class="cards">
     <div class="card" *ngFor="let i of instrutores">
       <img [src]="i.carro" alt="Carro do instrutor" />
       <div class="info">

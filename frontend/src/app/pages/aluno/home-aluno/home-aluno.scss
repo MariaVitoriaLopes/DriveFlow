@@ -73,8 +73,8 @@ app-header-aluno{
   }
 
   .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 20px;
 
     .card {
@@ -84,6 +84,8 @@ app-header-aluno{
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      padding: 15px 15px;
+      width: 275px;
 
       img {
         width: 100%;

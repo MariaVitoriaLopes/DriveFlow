@@ -1,0 +1,52 @@
+<!-- filtros.component.html -->
+<div class="filtros">
+  <h2>Filtros</h2>
+
+  <!-- Localização -->
+  <label for="localizacao">Localização</label>
+  <div class="input-group">
+    <input id="localizacao" type="text" placeholder="Digite a cidade">
+    <button type="button">&#128269;</button> <!-- ícone de lupa -->
+  </div>
+
+  <!-- Valor da aula -->
+  <label>Valor da aula</label>
+  <div class="valor-aula">
+    <input type="number" placeholder="Mínimo" min="0">
+    <span>-</span>
+    <input type="number" placeholder="Máximo" min="0" value="500">
+  </div>
+
+  <!-- Avaliação -->
+  <label>Avaliação</label>
+  <div class="avaliacao">
+    <span>⭐ ⭐ ⭐ ⭐ ⭐</span>
+    <span>0 estrelas</span>
+  </div>
+
+  <!-- Disponibilidade -->
+  <label>Disponibilidade</label>
+  <div class="disponibilidade">
+    <div *ngFor="let dia of dias">
+      <input type="checkbox" [id]="dia" [(ngModel)]="diasSelecionados[dia]">
+      <label [for]="dia">{{dia}}</label>
+    </div>
+  </div>
+
+  <!-- Categoria -->
+  <label for="categoria">Categoria</label>
+  <select id="categoria" [(ngModel)]="categoriaSelecionada">
+    <option>Categoria A</option>
+    <option>Categoria B</option>
+    <option>Categoria C</option>
+  </select>
+
+  <!-- Câmbio -->
+  <label for="cambio">Câmbio</label>
+  <select id="cambio" [(ngModel)]="cambioSelecionado">
+    <option>Manual</option>
+    <option>Automático</option>
+  </select>
+
+  <button type="button" (click)="limparFiltros()">Limpar filtros</button>
+</div>

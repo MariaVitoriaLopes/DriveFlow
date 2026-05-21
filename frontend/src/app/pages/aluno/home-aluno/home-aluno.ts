@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderAluno } from '../../../components/layout/header-aluno/header-aluno';
+import { Filtro } from '../../../components/layout/filtro/filtro';
 
 interface Instrutor {
   nome: string;
@@ -18,6 +19,7 @@ interface Instrutor {
   imports: [
     CommonModule,
     HeaderAluno,
+    Filtro,
   ],
   templateUrl: './home-aluno.html',
   styleUrl: './home-aluno.scss',
