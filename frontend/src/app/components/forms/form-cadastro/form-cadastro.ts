@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-form-cadastro',
@@ -18,6 +19,7 @@ export class FormCadastro implements OnInit {
 
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
+  private router = inject(Router);
 
   form = this.fb.group({
     nome: ['', [Validators.required]],
@@ -39,6 +41,23 @@ export class FormCadastro implements OnInit {
     this.isInstrutor = event.target.checked;
   }
 
+  onCpfCnhInput(event: any) {
+  let valor: string = event.target.value.replace(/\D/g, '');
+
+  if (this.isInstrutor) {
+    // CNH: apenas números, máximo 11
+    if (valor.length > 11) valor = valor.slice(0, 11);
+  } else {
+    // CPF: XXX.XXX.XXX-XX
+    if (valor.length > 11) valor = valor.slice(0, 11);
+    if (valor.length > 9) valor = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+    else if (valor.length > 6) valor = valor.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+    else if (valor.length > 3) valor = valor.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+  }
+
+  this.form.get('cpf')?.setValue(valor, { emitEvent: false });
+}
+
   onSubmit() {
     if (this.form.valid) {
 
@@ -59,6 +78,7 @@ export class FormCadastro implements OnInit {
             alert('Cadastro realizado com sucesso! Verifique seu banco de dados.');
             this.form.reset();
             this.isInstrutor = false; // Reseta a caixinha do instrutor também
+            this.router.navigate(['/login']);
           },
           error: (erro) => {
             console.error('Erro na comunicação com o Backend:', erro);

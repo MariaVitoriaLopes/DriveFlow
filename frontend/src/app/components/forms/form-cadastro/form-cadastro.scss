@@ -37,6 +37,25 @@ font-size: 12px;
   color: green;
 }
 
+div.escolha-perfil {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0;
+
+    input[type="checkbox"] {
+      display: none;
+      cursor: pointer;
+
+      &:checked {
+        label {
+          font-weight: bold;
+          background-color: #666;
+        }
+      }
+    }
+}
+
 .termos {
   display: flex;
   align-items: center;
