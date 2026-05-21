@@ -1,0 +1,85 @@
+<form [formGroup]="form" class="form-container" (ngSubmit)="onSubmit()">
+  <div class="photo-upload">
+    <div class="photo-preview">
+      <img *ngIf="photoPreview; else placeholder" [src]="photoPreview" alt="Preview">
+      <ng-template #placeholder>
+        <div class="placeholder"></div>
+      </ng-template>
+    </div>
+    <div class="photo-buttons">
+      <button type="button" (click)="onUploadClick()">Enviar foto</button>
+      <button type="button" (click)="removePhoto()">Remover foto</button>
+    </div>
+    <p>Use uma imagem clara de boa qualidade para facilitar a identificação. Formatos aceitos: PNG, JPG e JPEG.</p>
+  </div>
+
+  <div class="form-fields">
+    <label>
+      Nome completo
+      <input type="text" formControlName="nome" placeholder="Insira aqui seu nome">
+    </label>
+
+    <label>
+      E-mail
+      <input type="email" formControlName="email" placeholder="nome@email.com">
+    </label>
+
+    <label class="senha-label">
+      Senha
+      <div class="senha-wrapper">
+        <input type="password" formControlName="senha">
+        <button type="button" (click)="resetSenha()">Redefinir senha</button>
+      </div>
+    </label>
+
+    <label>
+      CPF
+      <input type="text" formControlName="cpf" placeholder="000.000.000-00">
+    </label>
+
+    <label>
+      Data de nascimento
+      <input type="date" formControlName="dataNascimento">
+    </label>
+
+    <label>
+      CEP
+      <input type="text" formControlName="cep" placeholder="00000-000">
+    </label>
+
+    <label>
+      Logradouro
+      <input type="text" formControlName="logradouro" placeholder="Rua, avenida">
+    </label>
+
+    <label>
+      Número
+      <input type="text" formControlName="numero" placeholder="000">
+    </label>
+
+    <label>
+      Complemento
+      <input type="text" formControlName="complemento" placeholder="Apartamento, casa">
+    </label>
+
+    <label>
+      Bairro
+      <input type="text" formControlName="bairro" placeholder="Rua, avenida">
+    </label>
+
+    <label>
+      Cidade
+      <input type="text" formControlName="cidade" placeholder="São Paulo">
+    </label>
+
+    <label>
+      Unidade Federativa
+      <input type="text" formControlName="uf" placeholder="SP">
+    </label>
+  </div>
+
+  <div class="form-actions">
+    <button type="button" (click)="descartar()">Descartar alterações</button>
+    <button type="submit" class="save-btn">Salvar alterações</button>
+  </div>
+</form>

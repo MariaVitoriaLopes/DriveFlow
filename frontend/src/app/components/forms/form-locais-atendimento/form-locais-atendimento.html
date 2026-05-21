@@ -1,0 +1,52 @@
+<form [formGroup]="formLocais" (ngSubmit)="onSubmit()">
+  <div class="locais-container">
+    <div class="header">
+      <h2>Locais de atendimento</h2>
+      <button type="button" class="btn-add" (click)="adicionarEndereco()">Adicionar novo endereço</button>
+    </div>
+
+    <div formArrayName="enderecos">
+      <div *ngFor="let endereco of enderecos.controls; let i = index" [formGroupName]="i" class="endereco-card">
+        <h3>{{ endereco.get('titulo')?.value }}</h3>
+
+        <div class="linha">
+          <label>CEP</label>
+          <input formControlName="cep" type="text">
+
+          <label>Logradouro</label>
+          <input formControlName="logradouro" type="text">
+
+          <label>Número</label>
+          <input formControlName="numero" type="text">
+
+          <label>Complemento</label>
+          <input formControlName="complemento" type="text">
+        </div>
+
+        <div class="linha">
+          <label>Bairro</label>
+          <input formControlName="bairro" type="text">
+
+          <label>Cidade</label>
+          <input formControlName="cidade" type="text">
+
+          <label>Unidade Federativa</label>
+          <input formControlName="uf" type="text">
+        </div>
+
+        <div class="acoes">
+          <label>
+            <input formControlName="favorito" type="checkbox">
+            Definir como favorito
+          </label>
+          <a class="delete" (click)="deletarEndereco(i)">Deletar endereço</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button type="button" class="btn-descartar" (click)="descartarAlteracoes()">Descartar alterações</button>
+      <button type="submit" class="btn-salvar">Salvar alterações</button>
+    </div>
+  </div>
+</form>

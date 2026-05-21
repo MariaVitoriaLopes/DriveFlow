@@ -1,0 +1,42 @@
+<app-header-aluno></app-header-aluno>>
+
+<div class="container">
+  <header>
+    <h1>Olá, {{ alunoNome }}!</h1>
+    <p>Bem-vindo à sua jornada rumo à CNH. Encontre instrutores, agende aulas e acompanhe sua evolução de forma simples e segura.</p>
+    <button class="localizacao">{{ localizacao }}</button>
+  </header>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Pesquise um instrutor" />
+    <button (click)="toggleModalFiltro()">Filtros</button>
+  </div>
+
+  <div class="resultados-info">
+    <span>Resultados:</span>
+    <span>6 de {{ instrutores.length }} em exibição</span>
+  </div>
+
+  <!-- Modal de filtro -->
+  <div *ngIf="exibeModalFiltro" class="modal-filtro">
+    <!-- Aqui você vai puxar o componente de modal -->
+    <p>Componente de filtro aqui</p>
+  </div>
+
+  <div class="cards">
+    <div class="card" *ngFor="let i of instrutores">
+      <img [src]="i.carro" alt="Carro do instrutor" />
+      <div class="info">
+        <div class="perfil">
+          <img *ngIf="i.foto" [src]="i.foto" alt="Foto do instrutor" />
+          <span>{{ i.nome }}</span>
+        </div>
+        <span class="categoria">Categoria {{ i.categoria }}</span>
+        <span class="local">{{ i.local }}</span>
+        <span class="preco">R$ {{ i.preco }} aula</span>
+        <span class="avaliacao">{{ i.avaliacao }} ★ ({{ i.totalAvaliacoes }})</span>
+        <button class="ver-mais">Ver mais</button>
+      </div>
+    </div>
+  </div>
+</div>

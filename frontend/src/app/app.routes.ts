@@ -11,6 +11,7 @@ import { Dashboard } from './pages/instrutor/dashboard/dashboard';
 import { Notificacoes } from './pages/instrutor/notificacoes/notificacoes';
 import path from 'path';
 import { VerInstrutores } from './pages/ver-instrutores/ver-instrutores';
+import { HomeAluno } from './pages/aluno/home-aluno/home-aluno';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -24,6 +25,8 @@ export const routes: Routes = [
   { path: 'instrutor/configuracoes', component: Configuracoes} ,
   { path: 'instrutor/dashboard', component: Dashboard},
   { path: 'instrutor/notificacoes', component: Notificacoes },
+
+  { path: 'aluno/home-aluno', component: HomeAluno },
 
   // Rota de teste para o backend
   { path: 'testebackend', component:  AppComponent},

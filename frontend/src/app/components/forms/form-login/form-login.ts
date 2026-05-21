@@ -50,7 +50,7 @@ export class FormLogin {
               this.router.navigate(['/instrutor/dashboard']);
             } else {
               console.log('Navegando para o painel do Aluno...');
-              this.router.navigate(['/dashboard-aluno']); // Ajuste para sua rota real
+              this.router.navigate(['aluno/home-aluno']); // Ajuste para sua rota real
             }
           },
           error: (erro) => {
