@@ -51,4 +51,9 @@ public class UsuarioService {
     public List<Usuario> listarTodos() {
         return usuarioRepo.findAll();
     }
+
+    public Aluno buscarAlunoPorUsuarioId(String id) {
+        return alunoRepo.findByUsuarioId(id)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+    }
 }

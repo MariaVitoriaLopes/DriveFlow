@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -6,19 +6,27 @@ import {
   Validators
 } from '@angular/forms';
 import { HeaderInstrutor } from '../../../components/layout/header-instrutor/header-instrutor';
+import { FormInformacoesPessoais } from '../../../components/forms/form-informacoes-pessoais/form-informacoes-pessoais';
+import { RouterLink } from "@angular/router";
+import { FormLocaisAtendimento } from "../../../components/forms/form-locais-atendimento/form-locais-atendimento";
 
 @Component({
   selector: 'app-configuracoes',
+  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
     HeaderInstrutor,
+    FormInformacoesPessoais,
+    RouterLink,
+    FormLocaisAtendimento,
   ],
   templateUrl: './configuracoes.html',
   styleUrl: './configuracoes.scss',
 })
-export class Configuracoes {
-    private fb = inject(FormBuilder);
+export class Configuracoes implements OnInit {
+  private fb = inject(FormBuilder);
+  usuario: any;
 
   abaAtiva:
     | 'pessoais'
@@ -28,14 +36,16 @@ export class Configuracoes {
     | 'configuracoes'
     = 'pessoais';
 
-  usuario = {
-    nome: 'João Santos'
-  };
+  ngOnInit(): void {
+    const user = localStorage.getItem('usuario');
+    if (user) {
+      this.usuario = JSON.parse(user);
+    }
+  }
 
   // =========================
-  // FORM PESSOAIS
+  // FORMULÁRIOS
   // =========================
-
   formPessoais = this.fb.group({
     nome: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
@@ -43,10 +53,6 @@ export class Configuracoes {
     cpf: [''],
     dataNascimento: ['']
   });
-
-  // =========================
-  // FORM ENDEREÇO
-  // =========================
 
   formEndereco = this.fb.group({
     cep: [''],
@@ -58,10 +64,6 @@ export class Configuracoes {
     uf: ['']
   });
 
-  // =========================
-  // FORM VEÍCULO
-  // =========================
-
   formVeiculo = this.fb.group({
     marca: [''],
     modelo: [''],
@@ -69,18 +71,10 @@ export class Configuracoes {
     cor: ['']
   });
 
-  // =========================
-  // FORM DOCUMENTOS
-  // =========================
-
   formDocumentos = this.fb.group({
     cnh: [''],
     documentoVeiculo: ['']
   });
-
-  // =========================
-  // FORM CONFIGURAÇÕES
-  // =========================
 
   formConfiguracoes = this.fb.group({
     notificacoes: [true],
@@ -90,7 +84,6 @@ export class Configuracoes {
   // =========================
   // TROCAR ABA
   // =========================
-
   trocarAba(
     aba:
       | 'pessoais'
@@ -99,57 +92,40 @@ export class Configuracoes {
       | 'documentos'
       | 'configuracoes'
   ): void {
-
     this.abaAtiva = aba;
-
   }
 
   // =========================
   // SALVAR
   // =========================
-
   salvarPessoais(): void {
-
     console.log(this.formPessoais.value);
-
   }
 
   salvarEndereco(): void {
-
     console.log(this.formEndereco.value);
-
   }
 
   salvarVeiculo(): void {
-
     console.log(this.formVeiculo.value);
-
   }
 
   salvarDocumentos(): void {
-
     console.log(this.formDocumentos.value);
-
   }
 
   salvarConfiguracoes(): void {
-
     console.log(this.formConfiguracoes.value);
-
   }
 
   // =========================
   // RESET
   // =========================
-
   descartarAlteracoes(): void {
-
     this.formPessoais.reset();
     this.formEndereco.reset();
     this.formVeiculo.reset();
     this.formDocumentos.reset();
     this.formConfiguracoes.reset();
-
   }
-
 }

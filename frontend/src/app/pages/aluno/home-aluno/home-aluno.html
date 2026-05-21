@@ -2,7 +2,7 @@
 
 <div class="container">
   <header>
-    <h1>Olá, {{ alunoNome }}!</h1>
+    <h1>Olá, {{ usuario?.usuario?.nome || usuario?.nome }}!</h1>
     <p>Bem-vindo à sua jornada rumo à CNH. Encontre instrutores, agende aulas e acompanhe sua evolução de forma simples e segura.</p>
     <button class="localizacao">{{ localizacao }}</button>
   </header>

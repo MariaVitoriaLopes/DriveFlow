@@ -1,49 +1,64 @@
 <form [formGroup]="formLocais" (ngSubmit)="onSubmit()">
   <div class="locais-container">
+    
+    <!-- Cabeçalho -->
     <div class="header">
       <h2>Locais de atendimento</h2>
       <button type="button" class="btn-add" (click)="adicionarEndereco()">Adicionar novo endereço</button>
     </div>
 
+    <!-- Lista de endereços -->
     <div formArrayName="enderecos">
       <div *ngFor="let endereco of enderecos.controls; let i = index" [formGroupName]="i" class="endereco-card">
         <h3>{{ endereco.get('titulo')?.value }}</h3>
 
+        <!-- Linha 1 -->
         <div class="linha">
-          <label>CEP</label>
-          <input formControlName="cep" type="text">
-
-          <label>Logradouro</label>
-          <input formControlName="logradouro" type="text">
-
-          <label>Número</label>
-          <input formControlName="numero" type="text">
-
-          <label>Complemento</label>
-          <input formControlName="complemento" type="text">
-        </div>
-
-        <div class="linha">
-          <label>Bairro</label>
-          <input formControlName="bairro" type="text">
-
-          <label>Cidade</label>
-          <input formControlName="cidade" type="text">
-
-          <label>Unidade Federativa</label>
-          <input formControlName="uf" type="text">
-        </div>
-
-        <div class="acoes">
-          <label>
-            <input formControlName="favorito" type="checkbox">
-            Definir como favorito
+          <label>CEP
+            <input formControlName="cep" type="text" placeholder="00000-000">
           </label>
+
+          <label>Logradouro
+            <input formControlName="logradouro" type="text" placeholder="Rua, Avenida">
+          </label>
+
+          <label>Número
+            <input formControlName="numero" type="text" placeholder="000">
+          </label>
+
+          <label>Complemento
+            <input formControlName="complemento" type="text" placeholder="Apartamento, Casa">
+          </label>
+        </div>
+
+        <!-- Linha 2 -->
+        <div class="linha">
+          <label>Bairro
+            <input formControlName="bairro" type="text" placeholder="Bairro">
+          </label>
+
+          <label>Cidade
+            <input formControlName="cidade" type="text" placeholder="Cidade">
+          </label>
+
+          <label>Unidade Federativa
+            <input formControlName="uf" type="text" placeholder="UF">
+          </label>
+        </div>
+
+        <!-- Ações -->
+        <div class="acoes">
+<label>
+  <input type="checkbox" [checked]="endereco.get('favorito')?.value"
+         (change)="marcarFavorito(i)">
+  Definir como favorito
+</label>
           <a class="delete" (click)="deletarEndereco(i)">Deletar endereço</a>
         </div>
       </div>
     </div>
 
+    <!-- Rodapé com botões -->
     <div class="footer">
       <button type="button" class="btn-descartar" (click)="descartarAlteracoes()">Descartar alterações</button>
       <button type="submit" class="btn-salvar">Salvar alterações</button>

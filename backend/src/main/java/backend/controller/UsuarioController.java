@@ -38,4 +38,13 @@ public class UsuarioController {
     public ResponseEntity<List<Usuario>> listarTodos() {
         return ResponseEntity.ok(service.listarTodos());
     }
+
+    @GetMapping("/aluno/{usuarioId}")
+    public ResponseEntity<?> obterAluno(@PathVariable String usuarioId) {
+        try {
+            return ResponseEntity.ok(service.buscarAlunoPorUsuarioId(usuarioId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("mensagem", e.getMessage()));
+        }
+    }
 }

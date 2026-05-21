@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderAluno } from '../../../components/layout/header-aluno/header-aluno';
 import { Filtro } from '../../../components/layout/filtro/filtro';
@@ -22,20 +22,28 @@ interface Instrutor {
     Filtro,
   ],
   templateUrl: './home-aluno.html',
-  styleUrl: './home-aluno.scss',
+  styleUrls: ['./home-aluno.scss'],
 })
-export class HomeAluno implements OnInit{
+export class HomeAluno implements OnInit {
 
-  alunoNome: string = '';
   localizacao: string = 'Obtendo localização...';
   instrutores: Instrutor[] = [];
   exibeModalFiltro: boolean = false;
+  usuario: any;
+
 
   ngOnInit(): void {
-    // Simula pegar o nome do aluno logado
-    this.alunoNome = 'Stephanie';
+    // ------------------------------
+    // 1️⃣ Pega os dados completos do backend
+    // ------------------------------
+      const user = localStorage.getItem('usuario');
+      if (user) {
+        this.usuario = JSON.parse(user);
+      }
 
-    // Pega a localização em tempo real
+    // ------------------------------
+    // 2️⃣ Pega a localização
+    // ------------------------------
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -48,7 +56,9 @@ export class HomeAluno implements OnInit{
       );
     }
 
-    // Simula dados dos instrutores
+    // ------------------------------
+    // 3️⃣ Simula dados dos instrutores
+    // ------------------------------
     this.instrutores = [
       { nome: 'João', categoria: 'B', local: 'Boqueirão, PG', preco: 60, avaliacao: 4.9, totalAvaliacoes: 110, carro: 'carro1.jpg' },
       { nome: 'Mário', categoria: 'B', local: 'Boqueirão, PG', preco: 60, avaliacao: 4.9, totalAvaliacoes: 110, foto: 'mario.jpg', carro: 'carro2.jpg' },

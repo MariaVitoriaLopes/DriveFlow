@@ -1,26 +1,31 @@
 <form [formGroup]="form" class="form-container" (ngSubmit)="onSubmit()">
-  <div class="photo-upload">
-    <div class="photo-preview">
-      <img *ngIf="photoPreview; else placeholder" [src]="photoPreview" alt="Preview">
-      <ng-template #placeholder>
-        <div class="placeholder"></div>
-      </ng-template>
-    </div>
-    <div class="photo-buttons">
-      <button type="button" (click)="onUploadClick()">Enviar foto</button>
-      <button type="button" (click)="removePhoto()">Remover foto</button>
-    </div>
-    <p>Use uma imagem clara de boa qualidade para facilitar a identificação. Formatos aceitos: PNG, JPG e JPEG.</p>
+
+  <!-- FOTO -->
+<div class="photo-upload">
+  <div class="photo-preview">
+    <img *ngIf="photoPreview; else placeholder" [src]="photoPreview" alt="Preview">
+    <ng-template #placeholder>
+      <div class="placeholder"></div>
+    </ng-template>
   </div>
 
+  <!-- input real, escondido -->
+  <input type="file" #fileInput accept="image/png, image/jpeg, image/jpg" (change)="onFileSelected($event)" hidden />
+
+  <div class="photo-buttons">
+    <button type="button" (click)="fileInput.click()">Enviar foto</button>
+    <button type="button" (click)="removePhoto()">Remover foto</button>
+  </div>
+</div>
+
+  <!-- CAMPOS -->
   <div class="form-fields">
-    <label>
-      Nome completo
+
+    <label>Nome completo
       <input type="text" formControlName="nome" placeholder="Insira aqui seu nome">
     </label>
 
-    <label>
-      E-mail
+    <label>E-mail
       <input type="email" formControlName="email" placeholder="nome@email.com">
     </label>
 
@@ -33,53 +38,48 @@
     </label>
 
     <label>
-      CPF
-      <input type="text" formControlName="cpf" placeholder="000.000.000-00">
+      {{ perfil === 'INSTRUTOR' ? 'CNH' : 'CPF' }}
+      <input type="text" formControlName="documento" placeholder="{{ perfil === 'INSTRUTOR' ? 'Informe sua CNH' : '000.000.000-00' }}" (input)="onDocumentoInput($event)">
     </label>
 
-    <label>
-      Data de nascimento
+    <label>Data de nascimento
       <input type="date" formControlName="dataNascimento">
     </label>
 
-    <label>
-      CEP
+    <label>CEP
       <input type="text" formControlName="cep" placeholder="00000-000">
     </label>
 
-    <label>
-      Logradouro
+    <label>Logradouro
       <input type="text" formControlName="logradouro" placeholder="Rua, avenida">
     </label>
 
-    <label>
-      Número
+    <label>Número
       <input type="text" formControlName="numero" placeholder="000">
     </label>
 
-    <label>
-      Complemento
+    <label>Complemento
       <input type="text" formControlName="complemento" placeholder="Apartamento, casa">
     </label>
 
-    <label>
-      Bairro
+    <label>Bairro
       <input type="text" formControlName="bairro" placeholder="Rua, avenida">
     </label>
 
-    <label>
-      Cidade
+    <label>Cidade
       <input type="text" formControlName="cidade" placeholder="São Paulo">
     </label>
 
-    <label>
-      Unidade Federativa
+    <label>Unidade Federativa
       <input type="text" formControlName="uf" placeholder="SP">
     </label>
+
   </div>
 
+  <!-- BOTÕES -->
   <div class="form-actions">
     <button type="button" (click)="descartar()">Descartar alterações</button>
     <button type="submit" class="save-btn">Salvar alterações</button>
   </div>
+
 </form>

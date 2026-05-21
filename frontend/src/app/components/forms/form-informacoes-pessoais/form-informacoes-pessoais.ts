@@ -1,26 +1,25 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-form-informacoes-pessoais',
-  imports: [
-    ReactiveFormsModule,
-    CommonModule,
-  ],
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './form-informacoes-pessoais.html',
-  styleUrl: './form-informacoes-pessoais.scss',
+  styleUrls: ['./form-informacoes-pessoais.scss'],
 })
-export class FormInformacoesPessoais {
-  @Input() tipoDocumento: 'cpf' | 'cnh' = 'cpf'; // Define se é CPF ou CNH
-
+export class FormInformacoesPessoais implements OnInit {
   form: FormGroup;
+  selectedFile: File | null = null;
   photoPreview: string | ArrayBuffer | null = null;
+  tipoDocumento: 'cpf' | 'cnh' = 'cpf';
+  usuarioId: string = '';
+  perfil: 'ALUNO' | 'INSTRUTOR' = 'ALUNO';
 
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
-  private usuarioId = 'ID_DO_USUARIO_LOGADO';
 
   constructor() {
     this.form = this.fb.group({
@@ -29,7 +28,7 @@ export class FormInformacoesPessoais {
       documento: ['', Validators.required], // CPF ou CNH
       senha: ['', Validators.required],
       dataNascimento: [''],
-      cep: [''],
+      cep: ['', Validators.required],
       logradouro: [''],
       numero: [''],
       complemento: [''],
@@ -40,60 +39,109 @@ export class FormInformacoesPessoais {
   }
 
   ngOnInit() {
+    // 1️⃣ Pega usuário logado do localStorage
+    if (typeof window !== 'undefined') {
+      const usuario = JSON.parse(localStorage.getItem('usuario')!);
+      if (!usuario) return;
+
+      this.usuarioId = usuario.id;
+      this.perfil = usuario.perfil;
+      this.tipoDocumento = usuario.perfil === 'INSTRUTOR' ? 'cnh' : 'cpf';
+    }
+
+    // 2️⃣ Carrega dados do backend
     this.carregarUsuario();
+
+    // 3️⃣ Observa mudanças no CEP e preenche endereço automaticamente
+    this.form.get('cep')?.valueChanges.subscribe(cep => {
+      cep = cep.replace(/\D/g, '');
+      if (cep.length === 8) this.buscarEnderecoPorCep(cep);
+    });
   }
 
   carregarUsuario() {
-    this.http.get<any>(`http://localhost:8081/api/usuarios/${this.usuarioId}`)
-      .subscribe(usuario => {
-        this.form.patchValue({
-          nome: usuario.nome,
-          email: usuario.email,
-          documento: this.tipoDocumento === 'cpf' ? usuario.cpf : usuario.cnh,
-          senha: '', // senha não é populada
-          dataNascimento: usuario.dataNascimento,
-          cep: usuario.cep,
-          logradouro: usuario.logradouro,
-          numero: usuario.numero,
-          complemento: usuario.complemento,
-          bairro: usuario.bairro,
-          cidade: usuario.cidade,
-          uf: usuario.uf
-        });
-        this.photoPreview = usuario.foto ?? null;
+    const url = this.perfil === 'INSTRUTOR'
+      ? `http://localhost:8081/api/instrutores/configuracoes/${this.usuarioId}`
+      : `http://localhost:8081/api/alunos/${this.usuarioId}`;
+
+    this.http.get<any>(url).subscribe(data => {
+      const u = this.perfil === 'INSTRUTOR' ? data.usuario : data;
+      const documento = u.cpf; // sempre CPF do backend, só muda o label
+
+      this.form.patchValue({
+        nome: u.nome,
+        email: u.email,
+        documento: documento,
+        senha: '',
+        dataNascimento: u.dataNascimento,
+        cep: u.cep,
+        logradouro: u.logradouro,
+        numero: u.numero,
+        complemento: u.complemento,
+        bairro: u.bairro,
+        cidade: u.cidade,
+        uf: u.uf
       });
+
+      this.photoPreview = u.foto ?? null;
+    });
   }
 
-  onUploadClick() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/png, image/jpeg, image/jpg';
-    input.onchange = () => {
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => this.photoPreview = e.target?.result ?? null;
-        reader.readAsDataURL(input.files[0]);
-      }
-    };
-    input.click();
+  buscarEnderecoPorCep(cep: string) {
+    this.http.get<any>(`https://viacep.com.br/ws/${cep}/json/`).subscribe({
+      next: data => {
+        if (!data.erro) {
+          this.form.patchValue({
+            logradouro: data.logradouro,
+            bairro: data.bairro,
+            cidade: data.localidade,
+            uf: data.uf
+          });
+        }
+      },
+      error: err => console.error('Erro ao buscar CEP:', err)
+    });
   }
 
-  removePhoto() { this.photoPreview = null; }
-
-  resetSenha() { this.form.patchValue({ senha: '' }); }
-
-  onDocumentoInput(event: any) {
-    let valor = event.target.value.replace(/\D/g, '');
-    if (this.tipoDocumento === 'cpf' && valor.length > 11) valor = valor.slice(0, 11);
-    if (this.tipoDocumento === 'cnh' && valor.length > 11) valor = valor.slice(0, 11);
-    this.form.get('documento')?.setValue(valor, { emitEvent: false });
+  // --------------------------
+  // Upload de foto com preview
+  // --------------------------
+  onUploadClick(fileInput: HTMLInputElement) {
+    fileInput.click();
   }
+
+
+onFileSelected(event: any) {
+  if (event.target.files && event.target.files[0]) {
+    this.selectedFile = event.target.files[0];
+
+    if (this.selectedFile) { // garante que não é null
+      const reader = new FileReader();
+      reader.onload = e => this.photoPreview = e.target?.result ?? null;
+      reader.readAsDataURL(this.selectedFile); // agora TypeScript não reclama
+    }
+  }
+}
+
+removePhoto() {
+  this.selectedFile = null;
+  this.photoPreview = null;
+}
+
+  resetSenha() {
+    this.form.patchValue({ senha: '' });
+  }
+
+onDocumentoInput(event: any) {
+  const valorRaw = event?.target?.value ?? ''; // garante que nunca seja undefined
+  let valor = valorRaw.replace(/\D/g, '');
+  if (valor.length > 11) valor = valor.slice(0, 11);
+  this.form.get('documento')?.setValue(valor, { emitEvent: false });
+}
 
   validaDocumento(): boolean {
     const valor = this.form.get('documento')?.value || '';
-    if (this.tipoDocumento === 'cpf') return valor.replace(/\D/g, '').length === 11;
-    if (this.tipoDocumento === 'cnh') return valor.replace(/\D/g, '').length === 11;
-    return false;
+    return valor.replace(/\D/g, '').length === 11;
   }
 
   descartar() {
@@ -101,22 +149,25 @@ export class FormInformacoesPessoais {
     this.photoPreview = null;
   }
 
-  onSubmit() {
-    if (!this.validaDocumento()) {
-      alert(`${this.tipoDocumento.toUpperCase()} inválido!`);
-      return;
+  // --------------------------
+  // Envio do formulário completo com arquivo real
+  // --------------------------
+onSubmit() {
+  if (this.form.valid) {
+    const formData = new FormData();
+    Object.keys(this.form.value).forEach(key => {
+      formData.append(key, this.form.value[key]);
+    });
+
+    if (this.selectedFile) {
+      formData.append('foto', this.selectedFile);
     }
 
-    if (this.form.valid) {
-      const dados = { ...this.form.value, foto: this.photoPreview };
-      this.http.put(`http://localhost:8081/api/usuarios/${this.usuarioId}`, dados)
-        .subscribe({
-          next: () => alert('Perfil atualizado com sucesso!'),
-          error: () => alert('Erro ao atualizar perfil.')
-        });
-    } else {
-      alert('Preencha todos os campos obrigatórios.');
-    }
+    this.http.put(`http://localhost:8081/api/usuarios/${this.usuarioId}`, formData)
+      .subscribe({
+        next: () => alert('Perfil atualizado com sucesso!'),
+        error: () => alert('Erro ao atualizar perfil.')
+      });
   }
-
+}
 }
