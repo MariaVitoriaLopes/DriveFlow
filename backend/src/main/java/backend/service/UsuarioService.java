@@ -6,12 +6,12 @@ import backend.model.Usuario;
 import backend.repository.AlunoRepository;
 import backend.repository.InstrutorRepository;
 import backend.repository.UsuarioRepository;
-import lombok.RequiredArgsConstructor; // 🔥 Adicionado para limpar os @Autowired
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor // 🔥 O Lombok cria o construtor para injetar todos os repositórios 'final' automaticamente
+@RequiredArgsConstructor 
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepo;
@@ -19,15 +19,15 @@ public class UsuarioService {
     private final InstrutorRepository instrutorRepo;
 
     public Usuario cadastrar(Usuario usuario) {
-        // Validação preventiva: não deixa cadastrar e-mails duplicados
+
         if (usuarioRepo.findByEmail(usuario.getEmail()).isPresent()) {
             throw new RuntimeException("Este e-mail já está cadastrado!");
         }
 
-        // Salva o usuário base
+
         Usuario usuarioSalvo = usuarioRepo.save(usuario);
 
-        // Executa a sua lógica original de ramificação por perfil usando as facilidades do Lombok
+
         if ("ALUNO".equalsIgnoreCase(usuarioSalvo.getPerfil())) {
             Aluno aluno = new Aluno();
             aluno.setUsuario(usuarioSalvo);
@@ -36,6 +36,7 @@ public class UsuarioService {
             Instrutor instrutor = new Instrutor();
             instrutor.setUsuario(usuarioSalvo);
             instrutorRepo.save(instrutor);
+            instrutor.setStatusValidacao("PENDENTE");
         }
 
         return usuarioSalvo;
@@ -47,7 +48,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("E-mail ou senha incorretos"));
     }
 
-    // 🔴 ADICIONE ESTE MÉTODO: Ele é a peça que faltava para a tela de Aulas do Angular funcionar!
+
     public List<Usuario> listarTodos() {
         return usuarioRepo.findAll();
     }

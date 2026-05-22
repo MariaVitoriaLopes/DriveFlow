@@ -1,8 +1,6 @@
 package backend.controller;
 
-import backend.model.Instrutor;
-import backend.model.LocalAtendimento;
-import backend.model.Veiculo;
+import backend.model.*;
 import backend.service.InstrutorConfigService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,19 +14,19 @@ public class InstrutorConfigController {
 
     private final InstrutorConfigService configService;
 
-    // Retorna todos os dados para preencher as telas quando o instrutor entrar nelas
+    // Traz todas as configurações salvas para popular os formulários ao abrir a página
     @GetMapping("/{usuarioId}")
     public ResponseEntity<Instrutor> obterConfiguracoes(@PathVariable String usuarioId) {
-        return ResponseEntity.ok(configService.buscarPorUsuarioId(usuarioId));
+        return ResponseEntity.ok(configService.buscarPorUsuario(usuarioId));
     }
 
-    // Endpoint para salvar os dados da tela do Veículo
+    // Endpoint para a tela /instrutor-veiculo
     @PutMapping("/{usuarioId}/veiculo")
     public ResponseEntity<Instrutor> salvarVeiculo(@PathVariable String usuarioId, @RequestBody Veiculo veiculo) {
         return ResponseEntity.ok(configService.atualizarVeiculo(usuarioId, veiculo));
     }
 
-    // Endpoint para salvar os dados da tela de Endereço/Atendimento
+    // Endpoint para a tela /instrutor-endereco
     @PutMapping("/{usuarioId}/local")
     public ResponseEntity<Instrutor> salvarLocal(@PathVariable String usuarioId, @RequestBody LocalAtendimento local) {
         return ResponseEntity.ok(configService.atualizarLocal(usuarioId, local));

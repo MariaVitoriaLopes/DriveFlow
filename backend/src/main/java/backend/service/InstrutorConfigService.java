@@ -1,8 +1,6 @@
 package backend.service;
 
-import backend.model.Instrutor;
-import backend.model.LocalAtendimento;
-import backend.model.Veiculo;
+import backend.model.*;
 import backend.repository.InstrutorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,25 +11,29 @@ public class InstrutorConfigService {
 
     private final InstrutorRepository instrutorRepo;
 
-    // Busca as configurações atuais do instrutor pelo ID do Usuário logado
-    public Instrutor buscarPorUsuarioId(String usuarioId) {
+    public Instrutor buscarPorUsuario(String usuarioId) {
         return instrutorRepo.findByUsuarioId(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Instrutor não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Perfil de instrutor não localizado."));
     }
 
-    //  Atualiza a tela de Veículo
-    public Instrutor atualizarVeiculo(String usuarioId, Veiculo novoVeiculo) {
-        Instrutor instrutor = buscarPorUsuarioId(usuarioId);
-        instrutor.setVeiculo(novoVeiculo);
+    // Salvar/Atualizar dados da tela Veículo
+    public Instrutor atualizarVeiculo(String usuarioId, Veiculo veiculo) {
+        Instrutor instrutor = buscarPorUsuario(usuarioId);
+        instrutor.setVeiculo(veiculo);
         return instrutorRepo.save(instrutor);
     }
 
-    // Atualiza a tela de Local de Atendimento / Endereço
-    public Instrutor atualizarLocal(String usuarioId, LocalAtendimento novoLocal) {
-        Instrutor instrutor = buscarPorUsuarioId(usuarioId);
-        instrutor.setLocalAtendimento(novoLocal);
+    // Salvar/Atualizar dados da tela Endereço
+    public Instrutor atualizarLocal(String usuarioId, LocalAtendimento local) {
+        Instrutor instrutor = buscarPorUsuario(usuarioId);
+        instrutor.setLocalAtendimento(local);
         return instrutorRepo.save(instrutor);
     }
 
-
+    // Salvar/Atualizar dados da tela Informações Gerais (Bio)
+    public Instrutor atualizarGerais(String usuarioId, String bio) {
+        Instrutor instrutor = buscarPorUsuario(usuarioId);
+        instrutor.setBio(bio);
+        return instrutorRepo.save(instrutor);
+    }
 }
