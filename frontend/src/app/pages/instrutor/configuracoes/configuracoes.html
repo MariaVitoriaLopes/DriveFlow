@@ -28,57 +28,31 @@
     </div>
 
     <!-- ENDEREÇO -->
-  <div *ngIf="abaAtiva === 'endereco'">
-    <div class="header">
-      <h2>Locais de atendimento</h2>
-      <button type="button" class="btn-add" (click)="formLocais.adicionarEnderecoTemporario()">
-        Adicionar novo endereço
-      </button>
+    <div *ngIf="abaAtiva === 'endereco'">
+      <h1>Endereços</h1>
+      <button type="button" routerLink="/instrutor/add-novo-endereco">Adicionar novo endereço</button>
+      <app-form-locais-atendimento></app-form-locais-atendimento>
     </div>
-
-    <!-- Referência ao componente -->
-    <app-form-locais-atendimento #formLocais></app-form-locais-atendimento>
-  </div>
 
     <!-- VEÍCULO -->
-  <div *ngIf="abaAtiva === 'veiculo'">
-    <h1>Veículo</h1>
-    <button type="button" (click)="abrirAddNovoVeiculo()">Adicionar novo veículo</button>
-
-    <!-- Formulário de listagem de veículos -->
-    <div *ngIf="!mostraAddNovoVeiculo">
-      <app-form-veiculos></app-form-veiculos>
+    <div *ngIf="abaAtiva === 'veiculo'">
+      <form [formGroup]="formVeiculo" (ngSubmit)="salvarVeiculo()">
+        <h1>Veículo</h1>
+      </form>
     </div>
-
-    <!-- Formulário de adicionar novo veículo -->
-    <div *ngIf="mostraAddNovoVeiculo">
-      <app-form-add-novo-veiculo (veiculoSalvo)="onVeiculoSalvo($event)"></app-form-add-novo-veiculo>
-    </div>
-  </div>
 
     <!-- DOCUMENTOS -->
     <div *ngIf="abaAtiva === 'documentos'">
-  <div class="header">
-    <h1>Documentos</h1>
-    <button (click)="abrirModal()">Adicionar novo documento</button>
-  </div>
-
-  <!-- Modal Caseiro -->
-  <div class="modal-backdrop" *ngIf="modalAberto">
-    <div class="modal">
-      <button (click)="selecionarDocumento('CNH')">CNH</button>
-      <button (click)="selecionarDocumento('CERTIFICADO')">Certificado</button>
-      <button class="close-btn" (click)="fecharModal()">Cancelar</button>
-    </div>
-  </div>
-
-      <app-form-documentos></app-form-documentos>
+      <form [formGroup]="formDocumentos" (ngSubmit)="salvarDocumentos()">
+        <h1>Documentos</h1>
+      </form>
     </div>
 
     <!-- CONFIGURAÇÕES -->
     <div *ngIf="abaAtiva === 'configuracoes'">
+      <form [formGroup]="formConfiguracoes" (ngSubmit)="salvarConfiguracoes()">
         <h1>Configurações</h1>
-        <app-config-sistema></app-config-sistema>
+      </form>
     </div>
   </div>
 </section>

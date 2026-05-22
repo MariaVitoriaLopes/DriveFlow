@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { HeaderInstrutor } from '../../../components/layout/header-instrutor/header-instrutor';
-import { RouterLink } from "@angular/router";
 
 interface Aula {
   horario: string;
@@ -16,7 +15,7 @@ interface HorarioAgenda {
 
 @Component({
   selector: 'app-agenda',
-  imports: [HeaderInstrutor, RouterLink],
+  imports: [HeaderInstrutor],
   templateUrl: './agenda.html',
   styleUrl: './agenda.scss',
 })

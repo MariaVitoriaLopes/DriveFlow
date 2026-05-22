@@ -5,15 +5,13 @@ import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-form-locais-atendimento',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './form-locais-atendimento.html',
-  styleUrls: ['./form-locais-atendimento.scss'],
+  styleUrl: './form-locais-atendimento.scss',
 })
-export class FormLocaisAtendimento implements OnInit {
+export class FormLocaisAtendimento implements OnInit{
 
   formLocais!: FormGroup;
-  private enderecoTemporarioIndex: number | null = null;
 
   constructor(private fb: FormBuilder, private http: HttpClient) { }
 
@@ -22,6 +20,7 @@ export class FormLocaisAtendimento implements OnInit {
       enderecos: this.fb.array([])
     });
 
+    // Exemplo: carregar dados iniciais do backend
     this.carregarEnderecos([
       {
         titulo: 'Endereço 1',
@@ -47,9 +46,10 @@ export class FormLocaisAtendimento implements OnInit {
       }
     ]);
 
-    this.enderecos.controls.forEach(ctrl => {
+    // Observa mudanças de CEP em cada endereço
+    this.enderecos.controls.forEach((ctrl, index) => {
       if (ctrl instanceof FormGroup) {
-        this.monitorarCep(ctrl);
+        this.monitorarCep(ctrl, index);
       }
     });
   }
@@ -71,49 +71,16 @@ export class FormLocaisAtendimento implements OnInit {
       favorito: [endereco?.favorito || false]
     });
 
-    this.monitorarCep(grupo);
+    // Observa CEP para buscar endereço
+    this.monitorarCep(grupo, this.enderecos.length);
 
     return grupo;
   }
 
-  // 🔹 Adicionar endereço temporário no topo
-  public adicionarEnderecoTemporario(): void {
-    const novoEndereco = this.criarEndereco();
-    this.enderecos.insert(0, novoEndereco);
-    this.enderecoTemporarioIndex = 0;
-  }
-
-  deletarEndereco(index: number): void {
-    this.enderecos.removeAt(index);
-    if (this.enderecoTemporarioIndex === index) {
-      this.enderecoTemporarioIndex = null;
-    }
-  }
-
-  descartarAlteracoes(): void {
-    if (this.enderecoTemporarioIndex !== null) {
-      this.enderecos.removeAt(this.enderecoTemporarioIndex);
-      this.enderecoTemporarioIndex = null;
-    }
-    this.formLocais.reset();
-  }
-
-  carregarEnderecos(dados: any[]): void {
-    dados.forEach(endereco => {
-      this.enderecos.push(this.criarEndereco(endereco));
-    });
-  }
-
-  marcarFavorito(indiceSelecionado: number) {
-    this.enderecos.controls.forEach((ctrl, i) => {
-      const grupo = ctrl as FormGroup;
-      grupo.get('favorito')?.setValue(i === indiceSelecionado);
-    });
-  }
-
-  monitorarCep(grupo: FormGroup) {
+  monitorarCep(grupo: FormGroup, index: number) {
     grupo.get('cep')?.valueChanges.subscribe(cep => {
       if (!cep) return;
+
       const cepLimpo = cep.replace(/\D/g, '');
       if (cepLimpo.length === 8) {
         this.buscarEnderecoPorCep(cepLimpo, grupo);
@@ -137,14 +104,36 @@ export class FormLocaisAtendimento implements OnInit {
     });
   }
 
-  onSubmit(): void {
-    if (!this.formLocais.valid) {
-      console.log('Formulário inválido');
-      return;
-    }
+  adicionarEndereco(): void {
+    this.enderecos.push(this.criarEndereco());
+  }
 
-    const usuarioId = 'ID_DO_INSTRUTOR_LOGADO';
+  deletarEndereco(index: number): void {
+    this.enderecos.removeAt(index);
+  }
 
+  descartarAlteracoes(): void {
+    this.formLocais.reset();
+  }
+
+  carregarEnderecos(dados: any[]): void {
+    dados.forEach(endereco => {
+      this.enderecos.push(this.criarEndereco(endereco));
+    });
+  }
+
+  marcarFavorito(indiceSelecionado: number) {
+  this.enderecos.controls.forEach((ctrl, i) => {
+    const grupo = ctrl as FormGroup;
+    grupo.get('favorito')?.setValue(i === indiceSelecionado);
+  });
+}
+
+onSubmit(): void {
+  if (this.formLocais.valid) {
+    const usuarioId = 'ID_DO_INSTRUTOR_LOGADO'; // pegue do localStorage ou AuthService
+
+    // enviar cada endereço individualmente
     this.enderecos.controls.forEach((ctrl: AbstractControl) => {
       const endereco = ctrl.value;
       this.http.put(`http://localhost:8081/api/instrutores/configuracoes/${usuarioId}/local`, endereco)
@@ -153,16 +142,8 @@ export class FormLocaisAtendimento implements OnInit {
           error: err => console.error('Erro ao salvar endereço:', err)
         });
     });
-
-    // Se houver endereço temporário, remove do topo e adiciona no final
-    if (this.enderecoTemporarioIndex !== null) {
-      const temp = this.enderecos.at(this.enderecoTemporarioIndex);
-      if (temp) {
-        this.enderecos.removeAt(this.enderecoTemporarioIndex);
-        this.enderecos.push(temp);
-      }
-      this.enderecoTemporarioIndex = null;
-    }
+  } else {
+    console.log('Formulário inválido');
   }
-
+}
 }

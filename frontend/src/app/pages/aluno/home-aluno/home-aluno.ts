@@ -2,6 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderAluno } from '../../../components/layout/header-aluno/header-aluno';
 import { Filtro } from '../../../components/layout/filtro/filtro';
+import { ChangeDetectorRef } from '@angular/core';
+
 
 interface Instrutor {
   nome: string;
@@ -25,35 +27,81 @@ interface Instrutor {
   styleUrls: ['./home-aluno.scss'],
 })
 export class HomeAluno implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
 
   localizacao: string = 'Obtendo localização...';
   instrutores: Instrutor[] = [];
   exibeModalFiltro: boolean = false;
   usuario: any;
 
-
   ngOnInit(): void {
     // ------------------------------
     // 1️⃣ Pega os dados completos do backend
     // ------------------------------
-      const user = localStorage.getItem('usuario');
-      if (user) {
-        this.usuario = JSON.parse(user);
-      }
+//       const user = localStorage.getItem('usuario');
+//       if (user) {
+//         this.usuario = JSON.parse(user);
+//       }
 
-    // ------------------------------
-    // 2️⃣ Pega a localização
-    // ------------------------------
-    if (navigator.geolocation) {
+    this.localizacao = 'Buscando localização...';
+
+    if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.localizacao = `Lat: ${position.coords.latitude.toFixed(2)}, Lon: ${position.coords.longitude.toFixed(2)}`;
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          this.localizacao = 'Buscando endereço...';
+
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
+              {
+                headers: {
+                  Accept: 'application/json'
+                }
+              }
+            );
+
+            const data = await response.json();
+
+            const bairro =
+              data.address.suburb ||
+              data.address.neighbourhood ||
+              data.address.city_district ||
+              '';
+
+            this.cdr.detectChanges();
+
+            const cidade =
+              data.address.city ||
+              data.address.town ||
+              data.address.village ||
+              '';
+
+            this.localizacao = bairro
+              ? `${bairro}, ${cidade}`
+              : cidade || 'Endereço não encontrado';
+
+          } catch (erro) {
+              console.log('ERRO GEO:', erro);
+          }
         },
-        (error) => {
-          console.error(error);
-          this.localizacao = 'Praia Grande, SP'; // fallback
+
+        (erro) => {
+          console.error('Erro geolocalização:', erro);
+          this.localizacao = 'Permissão de localização negada';
+        },
+
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
         }
       );
+
+    } else {
+      this.localizacao = 'Geolocalização indisponível';
     }
 
     // ------------------------------

@@ -1,14 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { HeaderInstrutor } from '../../../components/layout/header-instrutor/header-instrutor';
 import { FormInformacoesPessoais } from '../../../components/forms/form-informacoes-pessoais/form-informacoes-pessoais';
-import { FormLocaisAtendimento } from '../../../components/forms/form-locais-atendimento/form-locais-atendimento';
-import { FormVeiculos } from '../../../components/forms/form-veiculos/form-veiculos';
-import { FormDocumentos } from '../../../components/forms/form-documentos/form-documentos';
-import { ConfigSistema } from '../../../components/forms/config-sistema/config-sistema';
-import { FormAddNovoVeiculo } from '../../../components/forms/form-add-novo-veiculo/form-add-novo-veiculo';
+import { RouterLink } from "@angular/router";
+import { FormLocaisAtendimento } from "../../../components/forms/form-locais-atendimento/form-locais-atendimento";
 
 @Component({
   selector: 'app-configuracoes',
@@ -18,29 +18,34 @@ import { FormAddNovoVeiculo } from '../../../components/forms/form-add-novo-veic
     ReactiveFormsModule,
     HeaderInstrutor,
     FormInformacoesPessoais,
+    RouterLink,
     FormLocaisAtendimento,
-    FormVeiculos,
-    FormDocumentos,
-    ConfigSistema,
-    FormAddNovoVeiculo,
   ],
   templateUrl: './configuracoes.html',
-  styleUrls: ['./configuracoes.scss'],
+  styleUrl: './configuracoes.scss',
 })
 export class Configuracoes implements OnInit {
   private fb = inject(FormBuilder);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-
   usuario: any;
 
-  abaAtiva: 'pessoais' | 'endereco' | 'veiculo' | 'documentos' | 'configuracoes' = 'pessoais';
-  modalAberto = false;
+  abaAtiva:
+    | 'pessoais'
+    | 'endereco'
+    | 'veiculo'
+    | 'documentos'
+    | 'configuracoes'
+    = 'pessoais';
 
-  // Controle para mostrar o form de adicionar novo veículo
-  mostraAddNovoVeiculo = false;
+  ngOnInit(): void {
+    const user = localStorage.getItem('usuario');
+    if (user) {
+      this.usuario = JSON.parse(user);
+    }
+  }
 
-  // Formulários
+  // =========================
+  // FORMULÁRIOS
+  // =========================
   formPessoais = this.fb.group({
     nome: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
@@ -76,68 +81,47 @@ export class Configuracoes implements OnInit {
     emailPromocional: [false]
   });
 
-  ngOnInit(): void {
-    const user = localStorage.getItem('usuario');
-    if (user) {
-      this.usuario = JSON.parse(user);
-    }
-
-    this.route.queryParams.subscribe((params: { [key: string]: string }) => {
-      const aba = params['aba'];
-      if (aba && ['pessoais','endereco','veiculo','documentos','configuracoes'].includes(aba)) {
-        this.abaAtiva = aba as any;
-      }
-    });
-  }
-
   // =========================
-  // Métodos de troca de aba
+  // TROCAR ABA
   // =========================
-  trocarAba(aba: 'pessoais' | 'endereco' | 'veiculo' | 'documentos' | 'configuracoes') {
+  trocarAba(
+    aba:
+      | 'pessoais'
+      | 'endereco'
+      | 'veiculo'
+      | 'documentos'
+      | 'configuracoes'
+  ): void {
     this.abaAtiva = aba;
   }
 
-  abrirModal() {
-    this.modalAberto = true;
+  // =========================
+  // SALVAR
+  // =========================
+  salvarPessoais(): void {
+    console.log(this.formPessoais.value);
   }
 
-  fecharModal() {
-    this.modalAberto = false;
+  salvarEndereco(): void {
+    console.log(this.formEndereco.value);
   }
 
-  selecionarDocumento(tipo: 'CNH' | 'CERTIFICADO') {
-    this.modalAberto = false;
-    this.router.navigate(['/instrutor/add-novo-documento'], { queryParams: { tipoDocumento: tipo } });
+  salvarVeiculo(): void {
+    console.log(this.formVeiculo.value);
   }
 
-  // =========================
-  // Abrir form adicionar novo veículo
-  // =========================
-  abrirAddNovoVeiculo() {
-    this.mostraAddNovoVeiculo = true;
+  salvarDocumentos(): void {
+    console.log(this.formDocumentos.value);
   }
 
-  // =========================
-  // Evento disparado quando veículo for salvo
-  // =========================
-  onVeiculoSalvo(veiculo: any) {
-    alert('Veículo cadastrado com sucesso!');
-    this.mostraAddNovoVeiculo = false;
-
-    // Aqui você pode atualizar a lista de veículos se tiver
-    console.log('Veículo cadastrado:', veiculo);
+  salvarConfiguracoes(): void {
+    console.log(this.formConfiguracoes.value);
   }
 
   // =========================
-  // Métodos de salvar (opcional)
+  // RESET
   // =========================
-  salvarPessoais() { console.log(this.formPessoais.value); }
-  salvarEndereco() { console.log(this.formEndereco.value); }
-  salvarVeiculo() { console.log(this.formVeiculo.value); }
-  salvarDocumentos() { console.log(this.formDocumentos.value); }
-  salvarConfiguracoes() { console.log(this.formConfiguracoes.value); }
-
-  descartarAlteracoes() {
+  descartarAlteracoes(): void {
     this.formPessoais.reset();
     this.formEndereco.reset();
     this.formVeiculo.reset();

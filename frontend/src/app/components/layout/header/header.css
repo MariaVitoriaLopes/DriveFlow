@@ -8,7 +8,7 @@ header {
   padding: 0rem 1rem;
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 999;
   transition: ease-in-out 0.5s;
 }
 
