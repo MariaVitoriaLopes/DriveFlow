@@ -1,36 +1,32 @@
-<header>
-    <picture>
-      <a routerLink="/">
-        <img src="/logos-svg/logo_primary_black.svg" alt="Logo">
-      </a>
-    </picture>
-
-    <nav>
-        <a routerLink="/instrutor/dashboard">Dashboard</a>
-        <a routerLink="/instrutor/agenda">Agenda</a>
-        <a routerLink="/instrutor/aulas">Aulas</a>
-        <a routerLink="/instrutor/alunos">Alunos</a>
-        <hr>
-        <a routerLink="/instrutor/notificacoes">notificações</a>
-        <a [routerLink]="['/instrutor/configuracoes']" [queryParams]="{ aba: 'documentos' }">Documentos</a>
-        <a [routerLink]="['/instrutor/configuracoes']" [queryParams]="{ aba: 'pessoais' }">Configurações</a>
-    </nav>
-
-    <div class="linkAgendamento">
-        <h5>Link de agendamento</h5>
-        <p>Compartilhe esse link e atraia alunos direamente para seu perfil</p>
-        <button (click)="compartilhar()">
-            Copiar link
+<header class="sidebar">
+    <div class="sidebar-top">
+        <picture class="logo">
+            <a routerLink="/"><img src="/logos-svg/logo_primary_black.svg" alt="Logo DriveFlow"></a>
+        </picture>
+        <nav class="sidebar-nav">
+            <a routerLink="/instrutor/dashboard" routerLinkActive="active">Dashboard</a>
+            <a routerLink="/instrutor/agenda" routerLinkActive="active">Agenda</a>
+            <a routerLink="/instrutor/aulas" routerLinkActive="active">Aulas</a>
+            <a routerLink="/instrutor/alunos" routerLinkActive="active">Alunos</a>
+            <hr>
+            <a routerLink="/instrutor/notificacoes" routerLinkActive="active">Notificações</a>
+            <a [routerLink]="['/instrutor/configuracoes']" [queryParams]="{ aba: 'documentos' }" routerLinkActive="active">Documentos</a>
+            <a [routerLink]="['/instrutor/configuracoes']" [queryParams]="{ aba: 'pessoais' }" routerLinkActive="active">Configurações</a>
+        </nav>
+    </div>
+    <div class="sidebar-bottom">
+        <div class="card-box">
+            <h5>Link de agendamento</h5>
+            <p>Compartilhe esse link e atraia alunos diretamente para seu perfil</p>
+            <button type="button" (click)="compartilhar()">Copiar link</button>
+        </div>
+        <div class="card-box">
+            <h5>Precisa de ajuda?</h5>
+            <p>Entre em contato conosco em caso de dúvidas</p>
+            <a routerLink="/suporte">Suporte ao instrutor</a>
+        </div>
+        <button class="logout-btn" type="button">
+            Encerrar sessão
         </button>
     </div>
-
-    <div class="ajuda">
-        <h5>Precisa de ajuda?</h5>
-        <p>Entre em contato conosco em caso de dúvidas</p>
-        <a routerLink="/suporte">Suporte ao instrutor</a>
-    </div>
-
-    <button type="button">Encerrar sessão</button>
 </header>
-
-
