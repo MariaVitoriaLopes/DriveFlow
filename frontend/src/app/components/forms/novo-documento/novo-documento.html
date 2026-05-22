@@ -1,0 +1,24 @@
+<app-header-instrutor></app-header-instrutor>
+
+<div class="page-container">
+  <h1>
+    Faça o upload da sua
+    <span *ngIf="tipoDocumento">{{ tipoDocumento === 'CNH' ? 'CNH' : 'Certificado de Instrutor' }}</span>
+  </h1>
+
+  <form [formGroup]="form" (ngSubmit)="enviar()" class="upload-form">
+    <div class="file-upload">
+      <label>Frente</label>
+      <input type="file" (change)="onFileChange($event, 'frente')">
+      <img *ngIf="previewFrente" [src]="previewFrente" class="preview-img">
+    </div>
+
+    <div class="file-upload">
+      <label>Verso</label>
+      <input type="file" (change)="onFileChange($event, 'verso')">
+      <img *ngIf="previewVerso" [src]="previewVerso" class="preview-img">
+    </div>
+
+    <button type="submit" [disabled]="form.invalid">Enviar Documento</button>
+  </form>
+</div>

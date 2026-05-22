@@ -1,11 +1,5 @@
 <form [formGroup]="formLocais" (ngSubmit)="onSubmit()">
   <div class="locais-container">
-    
-    <!-- Cabeçalho -->
-    <div class="header">
-      <h2>Locais de atendimento</h2>
-      <button type="button" class="btn-add" (click)="adicionarEndereco()">Adicionar novo endereço</button>
-    </div>
 
     <!-- Lista de endereços -->
     <div formArrayName="enderecos">
