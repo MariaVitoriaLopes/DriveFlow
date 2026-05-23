@@ -1,8 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild, ElementRef, EventEmitter, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  EventEmitter,
+  Output
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { catchError } from 'rxjs';
+import { catchError, finalize, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-form-add-novo-veiculo',
@@ -15,103 +27,177 @@ export class FormAddNovoVeiculo implements OnInit {
 
   @Output() veiculoSalvo = new EventEmitter<any>();
 
-  @ViewChild('mainFile') mainFile!: ElementRef;
-  @ViewChild('sideFile') sideFile!: ElementRef;
+  @ViewChild('mainFile') mainFile!: ElementRef<HTMLInputElement>;
 
   veiculoForm!: FormGroup;
 
-  marcas = ['Fiat', 'Chevrolet', 'Volkswagen', 'Ford'];
-  versoes = ['LT 1.0', 'LT 1.4', 'EX 1.6'];
-  cores = ['Branco', 'Preto', 'Prata'];
-  anos = Array.from({length: 30}, (_, i) => 2023 - i);
-  cambios = ['Manual', 'Automático'];
-  categorias = ['Categoria A (Moto)', 'Categoria B (Carro)'];
-  recursos = ['Ar-condicionado', 'ABS', 'Duplo comando', 'Direção elétrica', 'Direção hidráulica', 'Travas elétricas'];
+  usuarioId = '';
+  salvando = false;
+
+  fotosSelecionadas: File[] = [];
 
   mainImageUrl: string | null = null;
   sideImages: (string | null)[] = [null, null, null];
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {}
+  marcas = ['Fiat', 'Chevrolet', 'Volkswagen', 'Ford'];
+  versoes = ['LT 1.0', 'LT 1.4', 'EX 1.6'];
+  cores = ['Branco', 'Preto', 'Prata'];
+  anos = Array.from({ length: 30 }, (_, i) => 2026 - i);
+  cambios = ['Manual', 'Automático'];
+  categorias = ['Categoria A (Moto)', 'Categoria B (Carro)'];
 
-  ngOnInit() {
+  recursos = [
+    'Ar-condicionado',
+    'ABS',
+    'Duplo comando',
+    'Direção elétrica',
+    'Direção hidráulica',
+    'Travas elétricas'
+  ];
+
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient
+  ) {}
+
+  ngOnInit(): void {
+    this.usuarioId =
+      localStorage.getItem('usuarioId') ||
+      localStorage.getItem('userId') ||
+      '';
+
     this.veiculoForm = this.fb.group({
-      marca: [''],
+      marca: ['', Validators.required],
       versao: [''],
-      modelo: [''],
-      cor: [''],
-      ano: [''],
-      placa: [''],
-      cambio: [''],
-      categoria: [''],
+      modelo: ['', Validators.required],
+      cor: ['', Validators.required],
+      ano: ['', Validators.required],
+      placa: ['', Validators.required],
+      cambio: ['', Validators.required],
+      categoria: ['', Validators.required],
       recursos: [[]],
       infoExtra: [''],
       padrao: [false]
     });
   }
 
-  uploadMainImage() {
+  abrirSeletorFotos(): void {
     this.mainFile.nativeElement.click();
   }
 
-  onMainImageSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) this.mainImageUrl = URL.createObjectURL(file);
-  }
+  onFotosSelecionadas(event: Event): void {
+    const input = event.target as HTMLInputElement;
 
-  uploadSideImage(index: number) {
-    this.sideFile.nativeElement.click();
-  }
+    if (!input.files || input.files.length === 0) return;
 
-  onSideImageSelected(event: any, index: number) {
-    const file = event.target.files[0];
-    if (file) this.sideImages[index] = URL.createObjectURL(file);
-  }
+    const arquivos = Array.from(input.files).slice(0, 4);
 
-  toggleRecurso(rec: string) {
-    const recursos = this.veiculoForm.value.recursos;
-    if (recursos.includes(rec)) {
-      this.veiculoForm.patchValue({ recursos: recursos.filter((r: string) => r !== rec) });
-    } else {
-      this.veiculoForm.patchValue({ recursos: [...recursos, rec] });
-    }
-  }
+    this.fotosSelecionadas = arquivos;
 
-  submit() {
-    if (!this.veiculoForm.valid) return;
+    this.limparPreviews();
 
-    const formData = new FormData();
-    Object.entries(this.veiculoForm.value).forEach(([key, value]) => {
-      if (key === 'recursos') {
-        formData.append(key, JSON.stringify(value));
+    arquivos.forEach((file, index) => {
+      const previewUrl = URL.createObjectURL(file);
+
+      if (index === 0) {
+        this.mainImageUrl = previewUrl;
       } else {
-        formData.append(key, value as any);
+        this.sideImages[index - 1] = previewUrl;
       }
     });
 
-    if (this.mainFile.nativeElement.files[0]) {
-      formData.append('imagemPrincipal', this.mainFile.nativeElement.files[0]);
+    input.value = '';
+  }
+
+  limparPreviews(): void {
+    if (this.mainImageUrl) {
+      URL.revokeObjectURL(this.mainImageUrl);
     }
 
-    this.sideFile.nativeElement.files?.forEach((file: File) => {
-      formData.append('imagensLaterais', file);
+    this.sideImages.forEach(img => {
+      if (img) URL.revokeObjectURL(img);
     });
 
-    // POST direto para API
-    this.http.post('http://localhost:8081/api/veiculos', formData)
-      .pipe(
-        catchError(err => {
-          alert('Erro ao salvar veículo!');
-          throw err;
-        })
-      )
-      .subscribe((res: any) => {
-        // Backend respondeu sucesso → emite evento para pai
-        this.veiculoSalvo.emit(res);
-
-        // Limpa o formulário
-        this.veiculoForm.reset();
-        this.mainImageUrl = null;
-        this.sideImages = [null, null, null];
-      });
+    this.mainImageUrl = null;
+    this.sideImages = [null, null, null];
   }
+
+  toggleRecurso(rec: string): void {
+    const recursosAtuais: string[] = this.veiculoForm.get('recursos')?.value || [];
+
+    const novosRecursos = recursosAtuais.includes(rec)
+      ? recursosAtuais.filter(r => r !== rec)
+      : [...recursosAtuais, rec];
+
+    this.veiculoForm.patchValue({
+      recursos: novosRecursos
+    });
+  }
+
+  recursoSelecionado(rec: string): boolean {
+    const recursosAtuais: string[] = this.veiculoForm.get('recursos')?.value || [];
+    return recursosAtuais.includes(rec);
+  }
+
+submit(): void {
+  if (this.salvando) return;
+
+  this.usuarioId =
+    localStorage.getItem('usuarioId') ||
+    localStorage.getItem('userId') ||
+    '';
+
+  if (!this.usuarioId) {
+    alert('Usuário não encontrado. Faça login novamente.');
+    return;
+  }
+
+  if (!this.veiculoForm.value.marca || !this.veiculoForm.value.modelo) {
+    alert('Preencha pelo menos marca e modelo.');
+    return;
+  }
+
+  const veiculo = {
+    marca: this.veiculoForm.value.marca,
+    modelo: this.veiculoForm.value.modelo,
+    placa: this.veiculoForm.value.placa,
+    ano: String(this.veiculoForm.value.ano || ''),
+
+    versao: this.veiculoForm.value.versao,
+    cor: this.veiculoForm.value.cor,
+    cambio: this.veiculoForm.value.cambio,
+    categoria: this.veiculoForm.value.categoria,
+    recursos: this.veiculoForm.value.recursos,
+    infoExtra: this.veiculoForm.value.infoExtra,
+    padrao: this.veiculoForm.value.padrao
+  };
+
+  const formData = new FormData();
+
+  formData.append('veiculo', JSON.stringify(veiculo));
+
+  this.fotosSelecionadas.forEach(file => {
+    formData.append('fotos', file);
+  });
+
+  const url = `http://localhost:8081/api/instrutores/configuracoes/${this.usuarioId}/veiculo`;
+
+  this.salvando = true;
+
+  this.http.post(url, formData)
+    .pipe(
+      catchError(err => {
+        console.error('Erro ao salvar veículo:', err);
+        alert('Erro ao salvar veículo!');
+        return throwError(() => err);
+      }),
+      finalize(() => {
+        this.salvando = false;
+      })
+    )
+    .subscribe(res => {
+      alert('Veículo salvo com sucesso!');
+      this.veiculoSalvo.emit(res);
+    });
+}
 }

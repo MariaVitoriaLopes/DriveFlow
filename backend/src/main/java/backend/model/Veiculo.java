@@ -1,6 +1,7 @@
 package backend.model;
 
 import lombok.Data;
+import java.util.List;
 
 @Data
 public class Veiculo {
@@ -8,4 +9,15 @@ public class Veiculo {
     private String modelo;
     private String placa;
     private String ano;
-    private String fotoUrl; }
+
+    private String versao;
+    private String cor;
+    private String cambio;
+    private String categoria;
+    private List<String> recursos;
+    private String infoExtra;
+    private Boolean padrao;
+
+    private String fotoUrl;
+    private List<String> fotoUrls;
+}

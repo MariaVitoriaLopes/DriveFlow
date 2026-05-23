@@ -1,58 +1,55 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormsModule, AbstractControl } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormArray,
+  Validators,
+  ReactiveFormsModule,
+  FormsModule
+} from '@angular/forms';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-form-locais-atendimento',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule],
   templateUrl: './form-locais-atendimento.html',
   styleUrls: ['./form-locais-atendimento.scss'],
 })
-export class FormLocaisAtendimento implements OnInit {
+export class FormLocaisAtendimento implements OnInit, OnChanges {
 
   formLocais!: FormGroup;
-  private enderecoTemporarioIndex: number | null = null;
+  usuarioId = '';
+  carregando = false;
+  salvando = false;
 
-  constructor(private fb: FormBuilder, private http: HttpClient) { }
+constructor(
+  private fb: FormBuilder,
+  private http: HttpClient,
+  private cdr: ChangeDetectorRef
+) {}
+
+  @Input() reloadKey = 0;
 
   ngOnInit(): void {
+    this.usuarioId =
+      localStorage.getItem('usuarioId') ||
+      localStorage.getItem('userId') ||
+      '';
+
     this.formLocais = this.fb.group({
       enderecos: this.fb.array([])
     });
 
-    this.carregarEnderecos([
-      {
-        titulo: 'Endereço 1',
-        cep: '11718-270',
-        logradouro: 'Rua José Maria de Oliveira',
-        numero: 'Nenhum',
-        complemento: 'Nenhum',
-        bairro: 'Quietude',
-        cidade: 'Praia Grande',
-        uf: 'São Paulo',
-        favorito: true
-      },
-      {
-        titulo: 'Endereço 2',
-        cep: '11706-520',
-        logradouro: 'Rua Maximina Idelfonso Ventura',
-        numero: 'Nenhum',
-        complemento: 'Nenhum',
-        bairro: '',
-        cidade: '',
-        uf: '',
-        favorito: false
-      }
-    ]);
-
-    this.enderecos.controls.forEach(ctrl => {
-      if (ctrl instanceof FormGroup) {
-        this.monitorarCep(ctrl);
-      }
-    });
+    this.buscarLocaisCadastrados();
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+  if (changes['reloadKey'] && !changes['reloadKey'].firstChange) {
+    this.buscarLocaisCadastrados();
+  }
+}
 
   get enderecos(): FormArray {
     return this.formLocais.get('enderecos') as FormArray;
@@ -62,13 +59,13 @@ export class FormLocaisAtendimento implements OnInit {
     const grupo = this.fb.group({
       titulo: [endereco?.titulo || `Endereço ${this.enderecos.length + 1}`],
       cep: [endereco?.cep || '', Validators.required],
-      logradouro: [endereco?.logradouro || '', Validators.required],
+      logradouro: [endereco?.logradouro || ''],
       numero: [endereco?.numero || ''],
       complemento: [endereco?.complemento || ''],
       bairro: [endereco?.bairro || ''],
       cidade: [endereco?.cidade || ''],
       uf: [endereco?.uf || ''],
-      favorito: [endereco?.favorito || false]
+      favorito: [!!endereco?.favorito]
     });
 
     this.monitorarCep(grupo);
@@ -76,61 +73,114 @@ export class FormLocaisAtendimento implements OnInit {
     return grupo;
   }
 
-  // 🔹 Adicionar endereço temporário no topo
-  public adicionarEnderecoTemporario(): void {
-    const novoEndereco = this.criarEndereco();
-    this.enderecos.insert(0, novoEndereco);
-    this.enderecoTemporarioIndex = 0;
+buscarLocaisCadastrados(): void {
+  if (!this.usuarioId) {
+    console.warn('Usuário não encontrado.');
+    return;
   }
+
+  this.carregando = true;
+
+  const url = `http://localhost:8081/api/instrutores/configuracoes/${this.usuarioId}/locais`;
+
+  this.http.get<any>(url).subscribe({
+    next: (res) => {
+      const locais = Array.isArray(res)
+        ? res
+        : res?.locaisAtendimento || [];
+
+      const novosEnderecos = locais.map((local: any, index: number) =>
+        this.criarEndereco({
+          ...local,
+          titulo: local.titulo || `Endereço ${index + 1}`
+        })
+      );
+
+      this.formLocais.setControl(
+        'enderecos',
+        this.fb.array(novosEnderecos)
+      );
+
+      this.carregando = false;
+      this.cdr.detectChanges();
+
+      console.log('Locais aplicados:', this.enderecos.value);
+    },
+    error: (err) => {
+      console.error('Erro ao buscar locais:', err);
+
+      this.formLocais.setControl(
+        'enderecos',
+        this.fb.array([])
+      );
+
+      this.carregando = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
+
+adicionarEnderecoTemporario(): void {
+  this.enderecos.insert(
+    0,
+    this.criarEndereco({
+      titulo: `Novo endereço`,
+      favorito: this.enderecos.length === 0,
+      temporario: true
+    })
+  );
+}
 
   deletarEndereco(index: number): void {
     this.enderecos.removeAt(index);
-    if (this.enderecoTemporarioIndex === index) {
-      this.enderecoTemporarioIndex = null;
+    this.reordenarTitulos();
+
+    const temFavorito = this.enderecos.controls.some(ctrl =>
+      !!ctrl.get('favorito')?.value
+    );
+
+    if (!temFavorito && this.enderecos.length > 0) {
+      this.enderecos.at(0).get('favorito')?.setValue(true);
     }
   }
 
   descartarAlteracoes(): void {
-    if (this.enderecoTemporarioIndex !== null) {
-      this.enderecos.removeAt(this.enderecoTemporarioIndex);
-      this.enderecoTemporarioIndex = null;
-    }
-    this.formLocais.reset();
+    this.buscarLocaisCadastrados();
   }
 
-  carregarEnderecos(dados: any[]): void {
-    dados.forEach(endereco => {
-      this.enderecos.push(this.criarEndereco(endereco));
-    });
-  }
-
-  marcarFavorito(indiceSelecionado: number) {
+  marcarFavorito(indiceSelecionado: number): void {
     this.enderecos.controls.forEach((ctrl, i) => {
-      const grupo = ctrl as FormGroup;
-      grupo.get('favorito')?.setValue(i === indiceSelecionado);
+      ctrl.get('favorito')?.setValue(i === indiceSelecionado);
     });
   }
 
-  monitorarCep(grupo: FormGroup) {
+  reordenarTitulos(): void {
+    this.enderecos.controls.forEach((ctrl, index) => {
+      ctrl.get('titulo')?.setValue(`Endereço ${index + 1}`);
+    });
+  }
+
+  monitorarCep(grupo: FormGroup): void {
     grupo.get('cep')?.valueChanges.subscribe(cep => {
-      if (!cep) return;
-      const cepLimpo = cep.replace(/\D/g, '');
+      const cepRaw = cep || '';
+      const cepLimpo = cepRaw.replace(/\D/g, '');
+
       if (cepLimpo.length === 8) {
         this.buscarEnderecoPorCep(cepLimpo, grupo);
       }
     });
   }
 
-  buscarEnderecoPorCep(cep: string, grupo: FormGroup) {
+  buscarEnderecoPorCep(cep: string, grupo: FormGroup): void {
     this.http.get<any>(`https://viacep.com.br/ws/${cep}/json/`).subscribe({
       next: data => {
         if (!data.erro) {
           grupo.patchValue({
-            logradouro: data.logradouro,
-            bairro: data.bairro,
-            cidade: data.localidade,
-            uf: data.uf
-          });
+            logradouro: data.logradouro || '',
+            bairro: data.bairro || '',
+            cidade: data.localidade || '',
+            uf: data.uf || ''
+          }, { emitEvent: false });
         }
       },
       error: err => console.error('Erro ao buscar CEP:', err)
@@ -138,31 +188,55 @@ export class FormLocaisAtendimento implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.formLocais.valid) {
-      console.log('Formulário inválido');
+    if (this.salvando) return;
+
+    if (!this.usuarioId) {
+      alert('Usuário não encontrado.');
       return;
     }
 
-    const usuarioId = 'ID_DO_INSTRUTOR_LOGADO';
-
-    this.enderecos.controls.forEach((ctrl: AbstractControl) => {
-      const endereco = ctrl.value;
-      this.http.put(`http://localhost:8081/api/instrutores/configuracoes/${usuarioId}/local`, endereco)
-        .subscribe({
-          next: res => console.log('Endereço salvo:', res),
-          error: err => console.error('Erro ao salvar endereço:', err)
-        });
-    });
-
-    // Se houver endereço temporário, remove do topo e adiciona no final
-    if (this.enderecoTemporarioIndex !== null) {
-      const temp = this.enderecos.at(this.enderecoTemporarioIndex);
-      if (temp) {
-        this.enderecos.removeAt(this.enderecoTemporarioIndex);
-        this.enderecos.push(temp);
-      }
-      this.enderecoTemporarioIndex = null;
+    if (this.enderecos.length === 0) {
+      alert('Adicione pelo menos um local de atendimento.');
+      return;
     }
-  }
 
+    if (this.formLocais.invalid) {
+      this.formLocais.markAllAsTouched();
+      alert('Preencha os campos obrigatórios.');
+      return;
+    }
+
+    this.salvando = true;
+
+    const locais = this.enderecos.getRawValue()
+      .map((local: any) => ({
+        ...local,
+        favorito: !!local.favorito
+      }))
+      .sort((a: any, b: any) => {
+        if (a.temporario && !b.temporario) return 1;
+        if (!a.temporario && b.temporario) return -1;
+        return 0;
+      })
+      .map((local: any, index: number) => ({
+        ...local,
+        temporario: false,
+        titulo: `Endereço ${index + 1}`
+      }));
+
+    const url = `http://localhost:8081/api/instrutores/configuracoes/${this.usuarioId}/locais`;
+
+    this.http.put(url, locais).subscribe({
+      next: () => {
+        alert('Locais salvos com sucesso!');
+        this.salvando = false;
+        this.buscarLocaisCadastrados();
+      },
+      error: err => {
+        console.error('Erro ao salvar locais:', err);
+        alert('Erro ao salvar locais.');
+        this.salvando = false;
+      }
+    });
+  }
 }

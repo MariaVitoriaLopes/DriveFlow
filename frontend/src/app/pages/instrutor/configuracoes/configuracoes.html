@@ -28,7 +28,7 @@
     </div>
 
     <!-- ENDEREÇO -->
-  <div *ngIf="abaAtiva === 'endereco'">
+  <div [hidden]="abaAtiva !== 'endereco'">
     <div class="header">
       <h2>Locais de atendimento</h2>
       <button type="button" class="btn-add" (click)="formLocais.adicionarEnderecoTemporario()">
@@ -37,17 +37,22 @@
     </div>
 
     <!-- Referência ao componente -->
-    <app-form-locais-atendimento #formLocais></app-form-locais-atendimento>
+    <app-form-locais-atendimento
+      #formLocais
+      [reloadKey]="reloadLocais"
+    ></app-form-locais-atendimento>
   </div>
 
     <!-- VEÍCULO -->
-  <div *ngIf="abaAtiva === 'veiculo'">
+  <div [hidden]="abaAtiva !== 'veiculo'">
     <h1>Veículo</h1>
     <button type="button" (click)="abrirAddNovoVeiculo()">Adicionar novo veículo</button>
 
     <!-- Formulário de listagem de veículos -->
     <div *ngIf="!mostraAddNovoVeiculo">
-      <app-form-veiculos></app-form-veiculos>
+      <app-form-veiculos
+        [reloadKey]="reloadVeiculos"
+      ></app-form-veiculos>
     </div>
 
     <!-- Formulário de adicionar novo veículo -->

@@ -1,61 +1,130 @@
 <form [formGroup]="formLocais" (ngSubmit)="onSubmit()">
   <div class="locais-container">
 
-    <!-- Lista de endereços -->
+    <p *ngIf="carregando">Carregando locais...</p>
+
+    <div
+      *ngIf="!carregando && enderecos.length === 0"
+      class="sem-enderecos"
+    >
+      Nenhum local de atendimento cadastrado.
+    </div>
+
     <div formArrayName="enderecos">
-      <div *ngFor="let endereco of enderecos.controls; let i = index" [formGroupName]="i" class="endereco-card">
+      <div
+        *ngFor="let endereco of enderecos.controls; let i = index"
+        [formGroupName]="i"
+        class="endereco-card"
+      >
+
         <h3>{{ endereco.get('titulo')?.value }}</h3>
 
-        <!-- Linha 1 -->
         <div class="linha">
-          <label>CEP
-            <input formControlName="cep" type="text" placeholder="00000-000">
+          <label>
+            CEP
+            <input
+              formControlName="cep"
+              type="text"
+              placeholder="00000-000"
+            >
           </label>
 
-          <label>Logradouro
-            <input formControlName="logradouro" type="text" placeholder="Rua, Avenida">
+          <label>
+            Logradouro
+            <input
+              formControlName="logradouro"
+              type="text"
+              placeholder="Rua, Avenida"
+            >
           </label>
 
-          <label>Número
-            <input formControlName="numero" type="text" placeholder="000">
+          <label>
+            Número
+            <input
+              formControlName="numero"
+              type="text"
+              placeholder="000"
+            >
           </label>
 
-          <label>Complemento
-            <input formControlName="complemento" type="text" placeholder="Apartamento, Casa">
+          <label>
+            Complemento
+            <input
+              formControlName="complemento"
+              type="text"
+              placeholder="Apartamento, Casa"
+            >
           </label>
         </div>
 
-        <!-- Linha 2 -->
         <div class="linha">
-          <label>Bairro
-            <input formControlName="bairro" type="text" placeholder="Bairro">
+          <label>
+            Bairro
+            <input
+              formControlName="bairro"
+              type="text"
+              placeholder="Bairro"
+            >
           </label>
 
-          <label>Cidade
-            <input formControlName="cidade" type="text" placeholder="Cidade">
+          <label>
+            Cidade
+            <input
+              formControlName="cidade"
+              type="text"
+              placeholder="Cidade"
+            >
           </label>
 
-          <label>Unidade Federativa
-            <input formControlName="uf" type="text" placeholder="UF">
+          <label>
+            Unidade Federativa
+            <input
+              formControlName="uf"
+              type="text"
+              placeholder="UF"
+            >
           </label>
         </div>
 
-        <!-- Ações -->
         <div class="acoes">
-<label>
-  <input type="checkbox" [checked]="endereco.get('favorito')?.value"
-         (change)="marcarFavorito(i)">
-  Definir como favorito
-</label>
-          <a class="delete" (click)="deletarEndereco(i)">Deletar endereço</a>
+          <label>
+            <input
+              type="checkbox"
+              [checked]="endereco.get('favorito')?.value"
+              (change)="marcarFavorito(i)"
+            >
+            Definir como favorito
+          </label>
+
+          <a
+            class="delete"
+            type="button"
+            (click)="deletarEndereco(i)"
+          >
+            Deletar endereço
+          </a>
         </div>
+
       </div>
     </div>
 
-    <!-- Rodapé com botões -->
     <div class="footer">
-      <button type="button" class="btn-descartar" (click)="descartarAlteracoes()">Descartar alterações</button>
-      <button type="submit" class="btn-salvar">Salvar alterações</button>
+      <button
+        type="button"
+        class="btn-descartar"
+        (click)="descartarAlteracoes()"
+      >
+        Descartar alterações
+      </button>
+
+      <button
+        type="submit"
+        class="btn-salvar"
+        [disabled]="salvando || carregando"
+      >
+        {{ salvando ? 'Salvando...' : 'Salvar alterações' }}
+      </button>
     </div>
+
   </div>
 </form>

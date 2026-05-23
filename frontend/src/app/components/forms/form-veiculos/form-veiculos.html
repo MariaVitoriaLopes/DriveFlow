@@ -1,87 +1,161 @@
-<div class="veiculo-card">
+<p>Quantidade: {{ veiculos.length }}</p>
+
+<div
+  *ngFor="let veiculo of veiculos; let i = index"
+  class="veiculo-card"
+>
+
   <div class="header">
-    <h3>{{ veiculo.marca }} {{ veiculo.modelo }} {{ veiculo.cor }} {{ veiculo.ano }}</h3>
+    <h3>
+      {{ veiculo.marca }}
+      {{ veiculo.modelo }}
+      {{ veiculo.cor }}
+      {{ veiculo.ano }}
+    </h3>
   </div>
 
   <div class="imagens">
+
     <div class="foto-principal">
-      <img *ngIf="previewImagem" [src]="previewImagem" alt="Foto veículo" />
-      <label *ngIf="editMode" class="upload-btn">
-        <input type="file" (change)="onFileChange($event)" />
-        Alterar foto
-      </label>
+
+      <img
+        *ngIf="veiculo.fotoUrls?.length"
+        [src]="veiculo.fotoUrls?.[0]"
+        alt="Foto veículo"
+      />
+
+      <div
+        *ngIf="!veiculo.fotoUrls?.length"
+        class="sem-foto"
+      >
+        Sem foto
+      </div>
+
     </div>
+
     <div class="outras-fotos">
-      <div class="foto-add">
-        <span>Adicionar foto</span>
+
+      <div
+        class="foto-add"
+        *ngFor="let img of (veiculo.fotoUrls || []).slice(1, 4)"
+      >
+
+        <img
+          *ngIf="img"
+          [src]="img"
+          alt="Foto adicional"
+        />
+
+        <span *ngIf="!img">
+          Sem foto
+        </span>
+
       </div>
-      <div class="foto-add">
-        <span>Adicionar foto</span>
-      </div>
+
     </div>
+
   </div>
 
-  <form [formGroup]="veiculoForm" class="form-veiculo">
+  <div class="form-veiculo">
+
     <div class="row">
+
       <div>
         <label>Marca</label>
-        <input formControlName="marca" />
+        <input [value]="veiculo.marca || ''" disabled />
       </div>
+
       <div>
-        <label>Versão (Opcional)</label>
-        <input formControlName="versao" />
+        <label>Versão</label>
+        <input [value]="veiculo.versao || ''" disabled />
       </div>
+
     </div>
 
     <div class="row">
+
       <div>
         <label>Modelo</label>
-        <input formControlName="modelo" />
+        <input [value]="veiculo.modelo || ''" disabled />
       </div>
+
     </div>
 
     <div class="row">
+
       <div>
         <label>Cor</label>
-        <input formControlName="cor" />
+        <input [value]="veiculo.cor || ''" disabled />
       </div>
+
       <div>
         <label>Ano</label>
-        <input formControlName="ano" type="number" />
+        <input [value]="veiculo.ano || ''" disabled />
       </div>
+
     </div>
 
     <div class="row">
+
       <div>
         <label>Placa</label>
-        <input formControlName="placa" />
+        <input [value]="veiculo.placa || ''" disabled />
       </div>
+
       <div>
         <label>Câmbio</label>
-        <input formControlName="cambio" />
+        <input [value]="veiculo.cambio || ''" disabled />
       </div>
+
       <div>
         <label>Categoria</label>
-        <input formControlName="categoria" />
+        <input [value]="veiculo.categoria || ''" disabled />
       </div>
+
     </div>
 
     <div class="checkbox">
+
       <label>
-        <input type="checkbox" formControlName="definidoComoPadrao" />
+
+        <input
+          type="checkbox"
+          [checked]="veiculo.padrao"
+          disabled
+        />
+
         Definir como carro para as aulas
+
       </label>
+
     </div>
 
     <div class="acoes">
-      <button type="button" class="deletar" (click)="onDeletar()">Deletar veículo</button>
-        <button class="editar-btn" (click)="toggleEdit()">
-        {{ editMode ? 'Cancelar' : 'Editar veículo' }}
-        </button>
-    </div>
-    
-    <button>Descartar alterações</button>
-    <button type="button" class="salvar" (click)="onSalvar()" [disabled]="!editMode">Salvar alterações</button>
-  </form>
 
+      <button
+        type="button"
+        class="deletar"
+      >
+        Deletar veículo
+      </button>
+
+      <button
+        type="button"
+        class="editar-btn"
+        (click)="editarVeiculo(veiculo, i)"
+      >
+        Editar veículo
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div
+  *ngIf="!veiculos.length"
+  class="sem-veiculos"
+>
+  Nenhum veículo cadastrado.
 </div>
