@@ -2,34 +2,37 @@ package backend.controller;
 
 import backend.model.Aula;
 import backend.service.AulaService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/aulas")
 @CrossOrigin(origins = "http://localhost:4200")
+@RequiredArgsConstructor
 public class AulaController {
 
-    @Autowired
-    private AulaService aulaService;
+    private final AulaService aulaService;
 
-    // Rota para criar/agendar uma aula
+    // Endpoint chamado quando o instrutor clica em qualquer dia do calendário do Angular
+
+    @GetMapping("/instrutor/{instrutorId}/dia")
+    public ResponseEntity<List<Aula>> obterAgendaDoDia(
+            @PathVariable String instrutorId,
+            @RequestParam("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
+        return ResponseEntity.ok(aulaService.buscarAgendaDoDia(instrutorId, data));
+    }
+
     @PostMapping("/agendar")
-    public ResponseEntity<Aula> agendar(@RequestBody Aula aula) {
+    public ResponseEntity<Aula> criarAgendamento(@RequestBody Aula aula) {
         return ResponseEntity.ok(aulaService.agendarAula(aula));
     }
 
-    // Rota para buscar as aulas de um instrutor específico
-    @GetMapping("/instrutor/{id}")
-    public ResponseEntity<List<Aula>> listarPorInstrutor(@PathVariable String id) {
-        return ResponseEntity.ok(aulaService.listarPorInstrutor(id));
-    }
-
-    // Rota para buscar as aulas de um aluno específico
-    @GetMapping("/aluno/{id}")
-    public ResponseEntity<List<Aula>> listarPorAluno(@PathVariable String id) {
-        return ResponseEntity.ok(aulaService.listarPorAluno(id));
+    @PutMapping("/{aulaId}/cancelar")
+    public ResponseEntity<Aula> cancelar(@PathVariable String aulaId) {
+        return ResponseEntity.ok(aulaService.cancelarAula(aulaId));
     }
 }

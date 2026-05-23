@@ -8,17 +8,15 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "alunos")
-@Data                   // 🔥 Lombok: Gera Getters, Setters, toString, etc.
-@NoArgsConstructor      // 🔥 Lombok: Gera o construtor vazio essencial para o Spring Data
-@AllArgsConstructor     // 🔥 Lombok: Gera o construtor completo
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Aluno {
 
     @Id
     private String id;
 
-    @DBRef // 🔥 Cria o vínculo de referência com a coleção de usuários
+    @DBRef
     private Usuario usuario;
 
-    // Se no futuro precisar de campos específicos do aluno (ex: "horasPraticadas", "statusTeorico"), eles entram aqui:
-    // private Integer aulasConcluidas = 0;
 }
