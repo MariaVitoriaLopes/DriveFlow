@@ -34,21 +34,28 @@ onLogin() {
         localStorage.setItem('userId', usuarioLogado.id);
         localStorage.setItem('userPerfil', usuarioLogado.perfil);
 
-        alert(`Bem-vindo de volta, ${usuarioLogado.nome}!`);
+            alert(`Bem-vindo de volta, ${usuarioLogado.nome}!`);
 
-        if (usuarioLogado.perfil === 'INSTRUTOR') {
-          this.router.navigate(['/instrutor/dashboard']);
-        } else {
-          this.router.navigate(['/aluno/home-aluno']);
-        }
-      },
-      error: erro => {
-        console.error('Erro na autenticação:', erro);
-        alert('E-mail ou senha incorretos!');
-      }
-    });
-  } else {
-    alert('Por favor, preencha os campos corretamente.');
-  }
+
+            localStorage.setItem('usuario', JSON.stringify(usuarioLogado));
+            localStorage.setItem('usuarioId', usuarioLogado.id || usuarioLogado._id || usuarioLogado.usuarioId);
+
+
+            if (usuarioLogado.perfil === 'INSTRUTOR') {
+              console.log('Navegando para o painel do Instrutor...');
+              this.router.navigate(['/instrutor/dashboard']);
+            } else {
+              console.log('Navegando para o painel do Aluno...');
+              this.router.navigate(['/aluno/home-aluno']); // Ajuste para sua rota real
+            }
+          },
+          error: (erro) => {
+            console.error('Erro na autenticação:', erro);
+            alert('E-mail ou senha incorretos! Verifique os dados.');
+          }
+        });
+    } else {
+      alert('Por favor, preencha os campos corretamente.');
+    }
   }
 }

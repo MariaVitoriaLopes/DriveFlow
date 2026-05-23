@@ -7,17 +7,9 @@
       <input type="file" accept="image/png, image/jpeg, image/jpg" hidden #mainFile (change)="onMainImageSelected($event)">
       <img *ngIf="mainImageUrl" [src]="mainImageUrl" alt="Veículo">
       <span *ngIf="!mainImageUrl">
-        Escolha até 4 imagens de boa qualidade.<br>
+        Escolha uma imagem de boa qualidade.<br>
         Formatos permitidos: PNG, JPEG e JPG.
       </span>
-    </div>
-
-    <div class="side-uploads">
-      <div class="side-upload" *ngFor="let img of sideImages; let i = index" (click)="uploadSideImage(i)">
-        <input type="file" accept="image/png, image/jpeg, image/jpg" hidden #sideFile (change)="onSideImageSelected($event, i)">
-        <img *ngIf="img" [src]="img" alt="Imagem {{i+1}}">
-        <span *ngIf="!img">+</span>
-      </div>
     </div>
   </div>
 
@@ -88,10 +80,16 @@
 
   <div class="form-row checkbox-row">
     <label>
-      <input type="checkbox" formControlName="padrao"> Definir como carro para as aulas
+      <input type="checkbox" formControlName="principal"> Definir como carro para as aulas
     </label>
   </div>
 
-  <button type="submit" (click)="submit()" [disabled]="veiculoForm.invalid">Salvar veículo</button>
+    <button type="button" (click)="submit()" [disabled]="veiculoForm.invalid">
+      Salvar veículo
+    </button>
+
+    <button type="button" (click)="cancelarCadastro()">
+      Cancelar
+    </button>
 
 </form>

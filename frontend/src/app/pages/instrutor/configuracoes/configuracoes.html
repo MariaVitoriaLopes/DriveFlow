@@ -72,8 +72,69 @@
     </div>
   </div>
 
-      <app-form-documentos></app-form-documentos>
-    </div>
+</form>
+
+}
+
+<!-- ENDEREÇO -->
+@if (abaAtiva === 'endereco') {
+
+<form
+  [formGroup]="formEndereco"
+  (ngSubmit)="salvarEndereco()">
+
+  <h1>Endereço</h1>
+
+</form>
+
+}
+
+<!-- VEÍCULO -->
+@if (abaAtiva === 'veiculo') {
+
+  <section class="veiculos-section">
+    <h1>Veículo</h1>
+
+    @if (!mostrandoFormNovoVeiculo) {
+      <button type="button" (click)="abrirFormNovoVeiculo()">
+        Adicionar novo veículo
+      </button>
+
+      @if (veiculos.length === 0) {
+        <p>Nenhum veículo cadastrado ainda.</p>
+      }
+
+      @for (veiculo of veiculos; track veiculo.id) {
+        <app-form-veiculos
+          [veiculo]="veiculo"
+          (veiculoAtualizado)="atualizarVeiculo($event)"
+          (veiculoDeletado)="deletarVeiculo($event)">
+        </app-form-veiculos>
+      }
+    }
+
+    @if (mostrandoFormNovoVeiculo) {
+      <app-form-add-novo-veiculo
+        (veiculoSalvo)="salvarNovoVeiculo($event)"
+        (cancelar)="cancelarNovoVeiculo()">
+      </app-form-add-novo-veiculo>
+    }
+  </section>
+
+}
+
+<!-- DOCUMENTOS -->
+@if (abaAtiva === 'documentos') {
+
+<form
+  [formGroup]="formDocumentos"
+  (ngSubmit)="salvarDocumentos()">
+
+  <h1>Documentos</h1>
+
+</form>
+
+}
 
     <!-- CONFIGURAÇÕES -->
     <div *ngIf="abaAtiva === 'configuracoes'">

@@ -1,104 +1,127 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 
 export interface Veiculo {
   id?: string;
   marca: string;
   modelo: string;
-  cor: string;
-  ano: number;
   placa: string;
+  ano: string;
+  cor: string;
   cambio: string;
   categoria: string;
-  versao?: string;
-  capa?: string;
-  definidoComoPadrao?: boolean;
+  fotoUrl?: string;
+  principal: boolean;
 }
+
 @Component({
   selector: 'app-form-veiculos',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule 
-  ],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './form-veiculos.html',
   styleUrl: './form-veiculos.scss',
 })
-export class FormVeiculos {
-
+export class FormVeiculos implements OnInit, OnChanges {
   @Input() veiculo!: Veiculo;
-  @Input() usuarioId!: string;
-  @Output() adicionarNovo = new EventEmitter<void>();
+
   @Output() veiculoAtualizado = new EventEmitter<Veiculo>();
   @Output() veiculoDeletado = new EventEmitter<Veiculo>();
 
   veiculoForm!: FormGroup;
   editMode = false;
-  previewImagem?: string;
+  previewImagem = '';
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {}
+  constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
-    this.initForm();
+ngOnInit(): void {
+  this.veiculoForm = this.fb.group({
+    marca: [{ value: '', disabled: true }, Validators.required],
+    modelo: [{ value: '', disabled: true }, Validators.required],
+    cor: [{ value: '', disabled: true }],
+    ano: [{ value: '', disabled: true }],
+    placa: [{ value: '', disabled: true }],
+    cambio: [{ value: '', disabled: true }],
+    categoria: [{ value: '', disabled: true }],
+    principal: [{ value: false, disabled: true }]
+  });
+
+  if (this.veiculo) {
+    this.carregarDadosNoForm();
   }
+}
 
-  initForm() {
-    this.veiculoForm = this.fb.group({
-      marca: [{ value: this.veiculo.marca, disabled: true }, Validators.required],
-      modelo: [{ value: this.veiculo.modelo, disabled: true }, Validators.required],
-      cor: [{ value: this.veiculo.cor, disabled: true }, Validators.required],
-      ano: [{ value: this.veiculo.ano, disabled: true }, Validators.required],
-      placa: [{ value: this.veiculo.placa, disabled: true }, Validators.required],
-      cambio: [{ value: this.veiculo.cambio, disabled: true }, Validators.required],
-      categoria: [{ value: this.veiculo.categoria, disabled: true }, Validators.required],
-      versao: [{ value: this.veiculo.versao, disabled: true }],
-      definidoComoPadrao: [{ value: this.veiculo.definidoComoPadrao, disabled: true }]
-    });
-    this.previewImagem = this.veiculo.capa || '';
+  ngOnChanges(changes: SimpleChanges): void {
+  if (changes['veiculo'] && this.veiculoForm && this.veiculo) {
+    this.carregarDadosNoForm();
   }
+}
 
-  toggleEdit() {
+carregarDadosNoForm(): void {
+  console.log('VEÍCULO RECEBIDO NO CARD:', this.veiculo);
+
+  this.veiculoForm.patchValue({
+    marca: this.veiculo?.marca || '',
+    modelo: this.veiculo?.modelo || '',
+    cor: this.veiculo?.cor || '',
+    ano: this.veiculo?.ano || '',
+    placa: this.veiculo?.placa || '',
+    cambio: this.veiculo?.cambio || '',
+    categoria: this.veiculo?.categoria || '',
+    principal: this.veiculo?.principal || false
+  });
+
+  this.previewImagem = this.veiculo?.fotoUrl || '';
+}
+
+  toggleEdit(): void {
     this.editMode = !this.editMode;
-    if (this.editMode) this.veiculoForm.enable();
-    else this.veiculoForm.disable();
-  }
 
-  onSalvar() {
-    if (this.veiculoForm.valid) {
-      const atualizado: Veiculo = { ...this.veiculo, ...this.veiculoForm.value, capa: this.previewImagem };
-
-      const url = `http://localhost:8081/api/${this.usuarioId}/veiculo`;
-
-this.http.put<Veiculo>(url, atualizado).subscribe({
-  next: (res: Veiculo) => {
-    console.log('Veículo atualizado com sucesso', res);
-    this.veiculoForm.disable();
-    this.editMode = false;
-    this.veiculoAtualizado.emit(res);
-  },
-  error: (err: any) => {
-    console.error('Erro ao atualizar veículo', err);
-  }
-});
+    if (this.editMode) {
+      this.veiculoForm.enable();
+    } else {
+      this.veiculoForm.disable();
+      this.veiculoForm.patchValue(this.veiculo);
+      this.previewImagem = this.veiculo.fotoUrl || '';
     }
   }
 
-  onDeletar() {
+  onSalvar(): void {
+    if (this.veiculoForm.invalid) return;
+
+    const atualizado: Veiculo = {
+      ...this.veiculo,
+      ...this.veiculoForm.getRawValue(),
+      fotoUrl: this.previewImagem
+    };
+
+    this.veiculoAtualizado.emit(atualizado);
+    this.veiculoForm.disable();
+    this.editMode = false;
+  }
+
+  onDeletar(): void {
     this.veiculoDeletado.emit(this.veiculo);
   }
 
-  onAdicionarNovo() {
-    this.adicionarNovo.emit();
-  }
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
 
-  onFileChange(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => (this.previewImagem = reader.result as string);
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.previewImagem = reader.result as string;
+    };
+    reader.readAsDataURL(file);
   }
 }
