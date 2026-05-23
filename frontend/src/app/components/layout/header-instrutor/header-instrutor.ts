@@ -7,6 +7,8 @@ import { RouterLink } from "@angular/router";
   templateUrl: './header-instrutor.html',
   styleUrl: './header-instrutor.scss',
 })
+
+
 export class HeaderInstrutor {
   async compartilhar() {
 
