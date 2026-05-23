@@ -1,6 +1,9 @@
 package backend.model;
 
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -13,6 +16,6 @@ public class Veiculo {
     private String cor;
     private String cambio;
     private String categoria;
-    private String fotoUrl;
+    private List<String> fotosUrl = new ArrayList<>();
     private boolean principal; // Checkbox "Definir como carro para as aulas"
 }

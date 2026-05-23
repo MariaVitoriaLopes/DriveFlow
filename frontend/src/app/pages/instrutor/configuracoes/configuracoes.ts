@@ -1,9 +1,9 @@
-import { 
-  Component, 
-  inject, 
-  OnInit, 
+import {
+  Component,
+  inject,
+  OnInit,
   ChangeDetectorRef,
- } from '@angular/core';
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -12,6 +12,11 @@ import { ActivatedRoute } from '@angular/router';
 import { HeaderInstrutor } from '../../../components/layout/header-instrutor/header-instrutor';
 import { FormVeiculos, Veiculo } from '../../../components/forms/form-veiculos/form-veiculos';
 import { FormAddNovoVeiculo } from '../../../components/forms/form-add-novo-veiculo/form-add-novo-veiculo';
+import { FormLocaisAtendimento } from '../../../components/forms/form-locais-atendimento/form-locais-atendimento';
+import { FormInformacoesPessoais } from '../../../components/forms/form-informacoes-pessoais/form-informacoes-pessoais';
+import { ConfigSistema } from '../../../components/forms/config-sistema/config-sistema';
+
+type AbaConfig = 'pessoais' | 'endereco' | 'veiculo' | 'documentos' | 'configuracoes';
 
 @Component({
   selector: 'app-configuracoes',
@@ -22,7 +27,10 @@ import { FormAddNovoVeiculo } from '../../../components/forms/form-add-novo-veic
     HttpClientModule,
     HeaderInstrutor,
     FormVeiculos,
-    FormAddNovoVeiculo
+    FormAddNovoVeiculo,
+    FormLocaisAtendimento,
+    FormInformacoesPessoais,
+    ConfigSistema,
   ],
   templateUrl: './configuracoes.html',
   styleUrls: ['./configuracoes.scss'],
@@ -31,14 +39,15 @@ export class Configuracoes implements OnInit {
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
-  route = inject(ActivatedRoute);
+  private route = inject(ActivatedRoute);
 
   apiUrl = 'http://localhost:8081/api/instrutores/configuracoes';
 
   usuarioLogado: any = {};
   usuarioId = '';
 
-  abaAtiva: 'pessoais' | 'endereco' | 'veiculo' | 'documentos' | 'configuracoes' = 'pessoais';
+  abasValidas: AbaConfig[] = ['pessoais', 'endereco', 'veiculo', 'documentos', 'configuracoes'];
+  abaAtiva: AbaConfig = 'pessoais';
 
   usuario: any = {
     nome: 'João Santos'
@@ -46,6 +55,7 @@ export class Configuracoes implements OnInit {
 
   veiculos: Veiculo[] = [];
   mostrandoFormNovoVeiculo = false;
+  modalAberto = false;
 
   formPessoais = this.fb.group({
     nome: ['', Validators.required],
@@ -83,28 +93,18 @@ export class Configuracoes implements OnInit {
   });
 
   ngOnInit(): void {
-    const user = localStorage.getItem('usuario');
-    if (user) {
-      this.usuario = JSON.parse(user);
-    }
+    this.carregarUsuarioLogado();
 
-    this.route.queryParams.subscribe((params: { [key: string]: string }) => {
+    this.route.queryParams.subscribe((params: any) => {
       const aba = params['aba'];
-      if (aba && ['pessoais','endereco','veiculo','documentos','configuracoes'].includes(aba)) {
-        this.abaAtiva = aba as any;
+
+      if (aba && this.abasValidas.includes(aba)) {
+        this.abaAtiva = aba;
       }
     });
+
+    this.carregarConfiguracoes();
   }
-
-    ngOnInit(): void {
-
-      this.route.queryParams.subscribe((params: any) => {
-        this.abaAtiva = params['aba'] || 'pessoais';
-      });
-
-      this.carregarUsuarioLogado();
-      this.carregarConfiguracoes();
-    }
 
   carregarUsuarioLogado(): void {
     const usuarioStorage = localStorage.getItem('usuario');
@@ -113,18 +113,14 @@ export class Configuracoes implements OnInit {
     if (usuarioStorage) {
       try {
         this.usuarioLogado = JSON.parse(usuarioStorage);
+        this.usuario = this.usuarioLogado;
       } catch (error) {
         console.error('Erro ao converter usuário do localStorage:', error);
         this.usuarioLogado = {};
       }
     }
 
-    this.usuarioId =
-      usuarioIdStorage ||
-      this.usuarioLogado.id ||
-      this.usuarioLogado._id ||
-      this.usuarioLogado.usuarioId ||
-      '';
+    this.usuarioId = usuarioIdStorage || this.usuarioLogado.id || '';
 
     console.log('USUÁRIO LOGADO:', this.usuarioLogado);
     console.log('ID USADO NAS CONFIGURAÇÕES:', this.usuarioId);
@@ -138,6 +134,8 @@ export class Configuracoes implements OnInit {
 
     this.http.get<any>(`${this.apiUrl}/${this.usuarioId}`).subscribe({
       next: (instrutor) => {
+        console.log('CONFIGURAÇÕES RECEBIDAS:', instrutor);
+
         this.usuario = instrutor;
         this.veiculos = instrutor.veiculos || [];
 
@@ -155,7 +153,7 @@ export class Configuracoes implements OnInit {
     });
   }
 
-  trocarAba(aba: 'pessoais' | 'endereco' | 'veiculo' | 'documentos' | 'configuracoes'): void {
+  trocarAba(aba: AbaConfig): void {
     this.abaAtiva = aba;
   }
 
@@ -169,7 +167,7 @@ export class Configuracoes implements OnInit {
 
   salvarNovoVeiculo(veiculo: Veiculo): void {
     const novaLista = [...this.veiculos, veiculo];
-    this.salvarListaVeiculos(novaLista, true);
+    this.salvarListaVeiculos(novaLista);
   }
 
   atualizarVeiculo(veiculoAtualizado: Veiculo): void {
@@ -186,6 +184,7 @@ export class Configuracoes implements OnInit {
     this.http.delete<any>(`${this.apiUrl}/${this.usuarioId}/veiculos/${veiculo.id}`).subscribe({
       next: (instrutor) => {
         this.veiculos = instrutor.veiculos || [];
+        this.cdr.detectChanges();
         alert('Veículo deletado com sucesso!');
       },
       error: (err) => {
@@ -195,11 +194,12 @@ export class Configuracoes implements OnInit {
     });
   }
 
-  salvarListaVeiculos(lista: Veiculo[], fecharForm = false): void {
+  salvarListaVeiculos(lista: Veiculo[]): void {
     this.http.put<any>(`${this.apiUrl}/${this.usuarioId}/veiculos`, lista).subscribe({
       next: (instrutor) => {
         this.veiculos = instrutor.veiculos || [];
-        this.mostrandoFormNovoVeiculo = !fecharForm;
+        this.mostrandoFormNovoVeiculo = false;
+        this.abaAtiva = 'veiculo';
 
         this.cdr.detectChanges();
 
@@ -210,6 +210,23 @@ export class Configuracoes implements OnInit {
         alert('Erro ao salvar veículo.');
       }
     });
+  }
+
+  abrirModal(): void {
+    this.modalAberto = true;
+  }
+
+  fecharModal(): void {
+    this.modalAberto = false;
+  }
+
+  selecionarDocumento(tipo: string): void {
+    console.log('Documento selecionado:', tipo);
+    this.modalAberto = false;
+  }
+
+  trackByVeiculoId(index: number, veiculo: Veiculo): string {
+    return veiculo.id || index.toString();
   }
 
   salvarPessoais(): void {

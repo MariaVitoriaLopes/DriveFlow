@@ -2,17 +2,14 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   OnInit,
-  ViewChild,
   ViewChildren,
   ElementRef,
   QueryList,
   EventEmitter,
-  Output,
-  inject
+  Output
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Veiculo } from '../form-veiculos/form-veiculos';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-form-add-novo-veiculo',
@@ -25,15 +22,11 @@ export class FormAddNovoVeiculo implements OnInit {
   @Output() veiculoSalvo = new EventEmitter<Veiculo>();
   @Output() cancelar = new EventEmitter<void>();
 
-  @ViewChild('mainFile') mainFile!: ElementRef<HTMLInputElement>;
-  @ViewChildren('sideFile') sideFiles!: QueryList<ElementRef<HTMLInputElement>>;
-
-  private router = inject(Router);
+  @ViewChildren('fotoInput') fotoInputs!: QueryList<ElementRef<HTMLInputElement>>;
 
   veiculoForm!: FormGroup;
 
-  mainImageUrl = '';
-  sideImages: string[] = ['', '', ''];
+  fotosPreview: string[] = ['', '', '', ''];
 
   marcas = ['Fiat', 'Chevrolet', 'Volkswagen', 'Ford', 'Honda', 'Toyota', 'Hyundai', 'Renault'];
   versoes = ['Básica', 'Completa', 'Sport', 'Premium'];
@@ -69,39 +62,36 @@ export class FormAddNovoVeiculo implements OnInit {
     });
   }
 
-  uploadMainImage(): void {
-    this.mainFile.nativeElement.click();
+  abrirSeletorFoto(index: number): void {
+    const input = this.fotoInputs.toArray()[index];
+
+    if (input) {
+      input.nativeElement.click();
+    }
   }
 
-  uploadSideImage(index: number): void {
-    const input = this.sideFiles.toArray()[index];
-    input?.nativeElement.click();
-  }
-
-  onMainImageSelected(event: Event): void {
+  onFotoSelecionada(event: Event, index: number): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
 
     if (!file) return;
 
+    if (index < 0 || index > 3) {
+      alert('Você só pode escolher até 4 fotos.');
+      return;
+    }
+
     const reader = new FileReader();
+
     reader.onload = () => {
-      this.mainImageUrl = reader.result as string;
+      this.fotosPreview[index] = reader.result as string;
     };
+
     reader.readAsDataURL(file);
   }
 
-  onSideImageSelected(event: Event, index: number): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.sideImages[index] = reader.result as string;
-    };
-    reader.readAsDataURL(file);
+  removerFoto(index: number): void {
+    this.fotosPreview[index] = '';
   }
 
   toggleRecurso(recurso: string): void {
@@ -132,17 +122,11 @@ export class FormAddNovoVeiculo implements OnInit {
       cor: form.cor,
       cambio: form.cambio,
       categoria: form.categoria,
-      fotoUrl: this.mainImageUrl,
+      fotosUrl: this.fotosPreview.filter(foto => !!foto),
       principal: form.principal
     };
 
     this.veiculoSalvo.emit(novoVeiculo);
-        this.router.navigate(
-      ['/instrutor/configuracoes'],
-      {
-        queryParams: { aba: 'veiculo' }
-      }
-    );
   }
 
   cancelarCadastro(): void {

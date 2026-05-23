@@ -42,7 +42,7 @@ public class InstrutorConfigController {
     // Rota para o botão "Adicionar novo endereço" -> Cria um nó vazio e retorna para o front
     @PostMapping("/{usuarioId}/locais/novo")
     public ResponseEntity<Instrutor> criarNovoCardEmBranco(@PathVariable String usuarioId) {
-        return ResponseEntity.ok(configService.adicionarLocalEmBranco(usuarioId));
+        return ResponseEntity.ok(configService.addLocalEmBranco(usuarioId));
     }
 
     // Rota para o botão vermelho "Deletar endereço" -> Remove direto passando o ID do endereço na URL
@@ -54,9 +54,22 @@ public class InstrutorConfigController {
 
     //////////////////VEICULO//////////////
 
-    //Rota para atualizar dados do veiculo
+    //////////////////////// VEICULO /////////////////////////////
+
+    // Rota dedicada para atualizar apenas as fotos de um veículo específico
+    @PutMapping("/{usuarioId}/veiculos/{veiculoId}/fotos")
+    public ResponseEntity<Instrutor> atualizarFotosVeiculo(
+            @PathVariable String usuarioId,
+            @PathVariable String veiculoId,
+            @RequestBody List<String> fotosUrl) {
+        return ResponseEntity.ok(configService.atualizarFotosDoVeiculo(usuarioId, veiculoId, fotosUrl));
+    } // <-- Chave de fechamento do método tratada corretamente!
+
+    // Rota para atualizar todos os dados do veículo
     @PutMapping("/{usuarioId}/veiculos")
-    public ResponseEntity<Instrutor> salvarTodosVeiculos(@PathVariable String usuarioId, @RequestBody List<Veiculo> veiculos) {
+    public ResponseEntity<Instrutor> salvarTodosVeiculos(
+            @PathVariable String usuarioId,
+            @RequestBody List<Veiculo> veiculos) {
         return ResponseEntity.ok(configService.atualizarTodosVeiculos(usuarioId, veiculos));
     }
 
@@ -68,7 +81,9 @@ public class InstrutorConfigController {
 
     // Rota para o botão vermelho "Deletar veículo"
     @DeleteMapping("/{usuarioId}/veiculos/{veiculoId}")
-    public ResponseEntity<Instrutor> deletarCardVeiculo(@PathVariable String usuarioId, @PathVariable String veiculoId) {
+    public ResponseEntity<Instrutor> deletarCardVeiculo(
+            @PathVariable String usuarioId,
+            @PathVariable String veiculoId) {
         return ResponseEntity.ok(configService.removerVeiculo(usuarioId, veiculoId));
     }
 

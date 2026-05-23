@@ -1,15 +1,34 @@
 <form [formGroup]="veiculoForm" class="veiculo-form">
-
-  <h2>Veículo 1</h2>
+  <h2>Novo veículo</h2>
 
   <div class="upload-section">
-    <div class="main-upload" (click)="uploadMainImage()">
-      <input type="file" accept="image/png, image/jpeg, image/jpg" hidden #mainFile (change)="onMainImageSelected($event)">
-      <img *ngIf="mainImageUrl" [src]="mainImageUrl" alt="Veículo">
-      <span *ngIf="!mainImageUrl">
-        Escolha uma imagem de boa qualidade.<br>
-        Formatos permitidos: PNG, JPEG e JPG.
-      </span>
+    <p>Escolha até 4 imagens. Formatos permitidos: PNG, JPEG e JPG.</p>
+
+    <div class="fotos-grid">
+      <div
+        class="foto-box"
+        *ngFor="let img of fotosPreview; let i = index"
+        (click)="abrirSeletorFoto(i)">
+
+        <input
+          type="file"
+          accept="image/png, image/jpeg, image/jpg"
+          hidden
+          #fotoInput
+          (change)="onFotoSelecionada($event, i)">
+
+        <img *ngIf="img" [src]="img" alt="Foto {{ i + 1 }}">
+
+        <span *ngIf="!img">+</span>
+
+        <button
+          *ngIf="img"
+          type="button"
+          class="btn-remover-foto"
+          (click)="removerFoto(i); $event.stopPropagation()">
+          Remover
+        </button>
+      </div>
     </div>
   </div>
 
@@ -17,13 +36,13 @@
     <label>Marca</label>
     <select formControlName="marca">
       <option value="">Marca</option>
-      <option *ngFor="let m of marcas" [value]="m">{{m}}</option>
+      <option *ngFor="let m of marcas" [value]="m">{{ m }}</option>
     </select>
 
     <label>Versão <span class="optional">(Opcional)</span></label>
     <select formControlName="versao">
       <option value="">Selecione versão</option>
-      <option *ngFor="let v of versoes" [value]="v">{{v}}</option>
+      <option *ngFor="let v of versoes" [value]="v">{{ v }}</option>
     </select>
   </div>
 
@@ -34,13 +53,15 @@
     <label>Cor</label>
     <div class="radio-group">
       <label *ngFor="let c of cores">
-        <input type="radio" [value]="c" formControlName="cor">{{c}}
+        <input type="radio" [value]="c" formControlName="cor">
+        {{ c }}
       </label>
     </div>
 
     <label>Ano</label>
     <select formControlName="ano">
-      <option *ngFor="let a of anos" [value]="a">{{a}}</option>
+      <option value="">Ano</option>
+      <option *ngFor="let a of anos" [value]="a">{{ a }}</option>
     </select>
   </div>
 
@@ -50,28 +71,40 @@
 
     <label>Câmbio</label>
     <select formControlName="cambio">
-      <option *ngFor="let c of cambios" [value]="c">{{c}}</option>
+      <option value="">Câmbio</option>
+      <option *ngFor="let c of cambios" [value]="c">{{ c }}</option>
     </select>
 
     <label>Categoria</label>
     <select formControlName="categoria">
-      <option *ngFor="let cat of categorias" [value]="cat">{{cat}}</option>
+      <option value="">Categoria</option>
+      <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
     </select>
   </div>
 
   <div class="recursos-section">
     <h3>Recursos extras</h3>
+
     <div class="recursos-grid">
-      <button type="button" *ngFor="let r of recursos" (click)="toggleRecurso(r)" [class.active]="veiculoForm.value.recursos.includes(r)">
-        {{r}}
+      <button
+        type="button"
+        *ngFor="let r of recursos"
+        (click)="toggleRecurso(r)"
+        [class.active]="veiculoForm.value.recursos?.includes(r)">
+        {{ r }}
       </button>
     </div>
   </div>
 
   <div class="form-row">
     <label>Informações extras</label>
-    <textarea formControlName="infoExtra" placeholder="Bom para iniciantes, utilizado em provas, etc..." maxlength="500"></textarea>
-    <span>{{veiculoForm.value.infoExtra.length}}/500</span>
+    <textarea
+      formControlName="infoExtra"
+      placeholder="Bom para iniciantes, utilizado em provas, etc..."
+      maxlength="500">
+    </textarea>
+
+    <span>{{ veiculoForm.value.infoExtra?.length || 0 }}/500</span>
   </div>
 
   <div class="info-box">
@@ -80,16 +113,16 @@
 
   <div class="form-row checkbox-row">
     <label>
-      <input type="checkbox" formControlName="principal"> Definir como carro para as aulas
+      <input type="checkbox" formControlName="principal">
+      Definir como carro para as aulas
     </label>
   </div>
 
-    <button type="button" (click)="submit()" [disabled]="veiculoForm.invalid">
-      Salvar veículo
-    </button>
+  <button type="button" (click)="submit()" [disabled]="veiculoForm.invalid">
+    Salvar veículo
+  </button>
 
-    <button type="button" (click)="cancelarCadastro()">
-      Cancelar
-    </button>
-
+  <button type="button" (click)="cancelarCadastro()">
+    Cancelar
+  </button>
 </form>

@@ -5,7 +5,10 @@ import {
   EventEmitter,
   OnInit,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  ViewChildren,
+  ElementRef,
+  QueryList
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -19,7 +22,7 @@ export interface Veiculo {
   cor: string;
   cambio: string;
   categoria: string;
-  fotoUrl?: string;
+  fotosUrl: string[];
   principal: boolean;
 }
 
@@ -36,51 +39,58 @@ export class FormVeiculos implements OnInit, OnChanges {
   @Output() veiculoAtualizado = new EventEmitter<Veiculo>();
   @Output() veiculoDeletado = new EventEmitter<Veiculo>();
 
+  @ViewChildren('fotoInput') fotoInputs!: QueryList<ElementRef<HTMLInputElement>>;
+
   veiculoForm!: FormGroup;
   editMode = false;
-  previewImagem = '';
+
+  fotosPreview: string[] = ['', '', '', ''];
 
   constructor(private fb: FormBuilder) {}
 
-ngOnInit(): void {
-  this.veiculoForm = this.fb.group({
-    marca: [{ value: '', disabled: true }, Validators.required],
-    modelo: [{ value: '', disabled: true }, Validators.required],
-    cor: [{ value: '', disabled: true }],
-    ano: [{ value: '', disabled: true }],
-    placa: [{ value: '', disabled: true }],
-    cambio: [{ value: '', disabled: true }],
-    categoria: [{ value: '', disabled: true }],
-    principal: [{ value: false, disabled: true }]
-  });
+  ngOnInit(): void {
+    this.veiculoForm = this.fb.group({
+      marca: [{ value: '', disabled: true }, Validators.required],
+      modelo: [{ value: '', disabled: true }, Validators.required],
+      cor: [{ value: '', disabled: true }],
+      ano: [{ value: '', disabled: true }],
+      placa: [{ value: '', disabled: true }],
+      cambio: [{ value: '', disabled: true }],
+      categoria: [{ value: '', disabled: true }],
+      principal: [{ value: false, disabled: true }]
+    });
 
-  if (this.veiculo) {
-    this.carregarDadosNoForm();
+    if (this.veiculo) {
+      this.carregarDadosNoForm();
+    }
   }
-}
 
   ngOnChanges(changes: SimpleChanges): void {
-  if (changes['veiculo'] && this.veiculoForm && this.veiculo) {
-    this.carregarDadosNoForm();
+    if (changes['veiculo'] && this.veiculoForm && this.veiculo) {
+      this.carregarDadosNoForm();
+    }
   }
-}
 
-carregarDadosNoForm(): void {
-  console.log('VEÍCULO RECEBIDO NO CARD:', this.veiculo);
+  carregarDadosNoForm(): void {
+    this.veiculoForm.patchValue({
+      marca: this.veiculo.marca || '',
+      modelo: this.veiculo.modelo || '',
+      cor: this.veiculo.cor || '',
+      ano: this.veiculo.ano || '',
+      placa: this.veiculo.placa || '',
+      cambio: this.veiculo.cambio || '',
+      categoria: this.veiculo.categoria || '',
+      principal: this.veiculo.principal || false
+    });
 
-  this.veiculoForm.patchValue({
-    marca: this.veiculo?.marca || '',
-    modelo: this.veiculo?.modelo || '',
-    cor: this.veiculo?.cor || '',
-    ano: this.veiculo?.ano || '',
-    placa: this.veiculo?.placa || '',
-    cambio: this.veiculo?.cambio || '',
-    categoria: this.veiculo?.categoria || '',
-    principal: this.veiculo?.principal || false
-  });
-
-  this.previewImagem = this.veiculo?.fotoUrl || '';
-}
+    const fotos = this.veiculo.fotosUrl || [];
+    this.fotosPreview = [
+      fotos[0] || '',
+      fotos[1] || '',
+      fotos[2] || '',
+      fotos[3] || ''
+    ];
+  }
 
   toggleEdit(): void {
     this.editMode = !this.editMode;
@@ -89,9 +99,44 @@ carregarDadosNoForm(): void {
       this.veiculoForm.enable();
     } else {
       this.veiculoForm.disable();
-      this.veiculoForm.patchValue(this.veiculo);
-      this.previewImagem = this.veiculo.fotoUrl || '';
+      this.carregarDadosNoForm();
     }
+  }
+
+  abrirSeletorFoto(index: number): void {
+    if (!this.editMode) return;
+
+    const input = this.fotoInputs.toArray()[index];
+
+    if (input) {
+      input.nativeElement.click();
+    }
+  }
+
+  onFotoSelecionada(event: Event, index: number): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) return;
+
+    if (index < 0 || index > 3) {
+      alert('Você só pode escolher até 4 fotos.');
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      this.fotosPreview[index] = reader.result as string;
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  removerFoto(index: number): void {
+    if (!this.editMode) return;
+
+    this.fotosPreview[index] = '';
   }
 
   onSalvar(): void {
@@ -100,7 +145,7 @@ carregarDadosNoForm(): void {
     const atualizado: Veiculo = {
       ...this.veiculo,
       ...this.veiculoForm.getRawValue(),
-      fotoUrl: this.previewImagem
+      fotosUrl: this.fotosPreview.filter(foto => !!foto)
     };
 
     this.veiculoAtualizado.emit(atualizado);
@@ -110,18 +155,5 @@ carregarDadosNoForm(): void {
 
   onDeletar(): void {
     this.veiculoDeletado.emit(this.veiculo);
-  }
-
-  onFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.previewImagem = reader.result as string;
-    };
-    reader.readAsDataURL(file);
   }
 }
