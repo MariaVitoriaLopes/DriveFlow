@@ -1,23 +1,27 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Router } from '@angular/router';
+
 import { HeaderAluno } from '../../../components/layout/header-aluno/header-aluno';
 import { Filtro } from '../../../components/layout/filtro/filtro';
 
 interface Instrutor {
+  id: string;
   nome: string;
   categoria: string;
   local: string;
-  preco: number;
-  avaliacao: number;
-  totalAvaliacoes: number;
   foto?: string;
   carro: string;
+  preco?: number | null;
 }
 
 @Component({
   selector: 'app-home-aluno',
+  standalone: true,
   imports: [
     CommonModule,
+    HttpClientModule,
     HeaderAluno,
     Filtro,
   ],
@@ -31,45 +35,171 @@ export class HomeAluno implements OnInit {
   exibeModalFiltro: boolean = false;
   usuario: any;
 
+  private apiUrl = 'http://localhost:8081/api/usuarios/instrutores';
+
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    // ------------------------------
-    // 1️⃣ Pega os dados completos do backend
-    // ------------------------------
-      const user = localStorage.getItem('usuario');
-      if (user) {
-        this.usuario = JSON.parse(user);
-      }
+    const user = localStorage.getItem('usuario');
 
-    // ------------------------------
-    // 2️⃣ Pega a localização
-    // ------------------------------
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.localizacao = `Lat: ${position.coords.latitude.toFixed(2)}, Lon: ${position.coords.longitude.toFixed(2)}`;
-        },
-        (error) => {
-          console.error(error);
-          this.localizacao = 'Praia Grande, SP'; // fallback
-        }
-      );
+    if (user) {
+      this.usuario = JSON.parse(user);
     }
 
-    // ------------------------------
-    // 3️⃣ Simula dados dos instrutores
-    // ------------------------------
-    this.instrutores = [
-      { nome: 'João', categoria: 'B', local: 'Boqueirão, PG', preco: 60, avaliacao: 4.9, totalAvaliacoes: 110, carro: 'carro1.jpg' },
-      { nome: 'Mário', categoria: 'B', local: 'Boqueirão, PG', preco: 60, avaliacao: 4.9, totalAvaliacoes: 110, foto: 'mario.jpg', carro: 'carro2.jpg' },
-      { nome: 'Cleber', categoria: 'B', local: 'Boqueirão, PG', preco: 70, avaliacao: 4.9, totalAvaliacoes: 110, foto: 'cleber.jpg', carro: 'carro3.jpg' },
-      { nome: 'Francisco', categoria: 'B', local: 'Boqueirão, PG', preco: 70, avaliacao: 4.9, totalAvaliacoes: 110, foto: 'francisco.jpg', carro: 'carro4.jpg' },
-      { nome: 'Renato', categoria: 'B', local: 'Boqueirão, PG', preco: 70, avaliacao: 4.9, totalAvaliacoes: 110, foto: 'renato.jpg', carro: 'carro5.jpg' }
-    ];
+    this.pegarLocalizacao();
+    this.carregarInstrutores();
+  }
+
+  carregarInstrutores(): void {
+    this.http.get<any[]>(this.apiUrl).subscribe({
+      next: (res) => {
+        this.instrutores = res.map((instrutor) => {
+          const veiculo = instrutor.veiculos?.[0] || instrutor.veiculo || null;
+
+          const localFavorito =
+            instrutor.locaisAtendimento?.find((l: any) => l.favorito === true) ||
+            instrutor.locaisAtendimento?.[0] ||
+            instrutor.localAtendimento ||
+            null;
+
+          return {
+            id:
+              instrutor.id ||
+              instrutor._id ||
+              instrutor.usuario?.id ||
+              '',
+
+            nome:
+              instrutor.usuario?.nome ||
+              instrutor.nome ||
+              'Instrutor',
+
+            foto:
+              instrutor.usuario?.foto ||
+              instrutor.foto ||
+              '',
+
+            categoria:
+              veiculo?.categoria ||
+              'Não informada',
+
+            carro:
+              veiculo?.fotoPrincipal ||
+              veiculo?.foto ||
+              veiculo?.imagem ||
+              veiculo?.mainImageUrl ||
+              '/images/carro-placeholder.png',
+
+            local: this.formatarLocal(localFavorito),
+
+            preco:
+              instrutor.agenda?.valorAula ||
+              instrutor.valorAula ||
+              null
+          };
+        });
+
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao buscar instrutores:', err);
+      }
+    });
+  }
+
+  verPerfil(instrutorId: string): void {
+    if (!instrutorId) {
+      console.error('Instrutor sem ID');
+      return;
+    }
+
+    sessionStorage.setItem('instrutorIdSelecionado', instrutorId);
+
+    this.router.navigate(['/aluno/perfil-instrutor'], {
+      state: { instrutorId }
+    });
+  }
+
+  formatarLocal(local: any): string {
+    if (!local) return 'Local não informado';
+
+    const bairro =
+      local.bairro ||
+      local.endereco?.bairro ||
+      '';
+
+    const cidade =
+      local.cidade ||
+      local.endereco?.cidade ||
+      '';
+
+    if (bairro && cidade) return `${bairro}, ${cidade}`;
+    if (bairro) return bairro;
+    if (cidade) return cidade;
+
+    return local.logradouro || 'Local não informado';
+  }
+
+  pegarLocalizacao(): void {
+    this.localizacao = 'Buscando localização...';
+
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
+              {
+                headers: {
+                  Accept: 'application/json'
+                }
+              }
+            );
+
+            const data = await response.json();
+
+            const bairro =
+              data.address?.suburb ||
+              data.address?.neighbourhood ||
+              data.address?.city_district ||
+              '';
+
+            const cidade =
+              data.address?.city ||
+              data.address?.town ||
+              data.address?.village ||
+              '';
+
+            this.localizacao = bairro
+              ? `${bairro}, ${cidade}`
+              : cidade || 'Endereço não encontrado';
+
+            this.cdr.detectChanges();
+
+          } catch (erro) {
+            console.error('Erro localização:', erro);
+            this.localizacao = 'Praia Grande, SP';
+            this.cdr.detectChanges();
+          }
+        },
+        () => {
+          this.localizacao = 'Praia Grande, SP';
+          this.cdr.detectChanges();
+        }
+      );
+    } else {
+      this.localizacao = 'Praia Grande, SP';
+    }
   }
 
   toggleModalFiltro(): void {
     this.exibeModalFiltro = !this.exibeModalFiltro;
   }
-
 }

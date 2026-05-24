@@ -21,6 +21,12 @@ export class FormLogin {
     senha: ['', [Validators.required, Validators.minLength(8)]],
   });
 
+  mostrarSenha = false;
+
+  toggleSenha(): void {
+    this.mostrarSenha = !this.mostrarSenha;
+  }
+
   onLogin(): void {
     if (this.form.invalid) {
       alert('Por favor, preencha os campos corretamente.');
