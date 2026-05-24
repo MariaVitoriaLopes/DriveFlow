@@ -13,28 +13,25 @@ public class InstrutorConfigService {
 
     private final InstrutorRepository instrutorRepo;
 
-    // Método auxiliar blindado para buscar o instrutor com segurança
     public Instrutor buscarPorUsuario(String usuarioId) {
         return instrutorRepo.findByUsuarioId(usuarioId)
                 .orElseGet(() -> instrutorRepo.findById(usuarioId)
                         .orElseThrow(() -> new RuntimeException("Perfil de instrutor não localizado para o ID: " + usuarioId)));
     }
 
-    // Salvar/Atualizar dados da tela Informações Gerais (Bio)
     public Instrutor atualizarGerais(String usuarioId, String bio) {
         Instrutor instrutor = buscarPorUsuario(usuarioId);
         instrutor.setBio(bio);
         return instrutorRepo.save(instrutor);
     }
 
-    // Atualizar Foto de Perfil
     public Instrutor atualizarFotoPerfil(String usuarioId, String fotoUrl) {
         Instrutor instrutor = buscarPorUsuario(usuarioId);
-        instrutor.setBio(fotoUrl); // Mantido o padrão que você utilizava, use o campo correto se tiver alterado na model
+        instrutor.setBio(fotoUrl);
         return instrutorRepo.save(instrutor);
     }
 
-    //////////////////////// LOGICA LOCAL /////////////////////////////
+    //////////////////////// LÓGICA LOCAL /////////////////////////////
 
     public Instrutor atualizarTodosLocais(String usuarioId, List<LocalAtendimento> novosLocais) {
         Instrutor instrutor = buscarPorUsuario(usuarioId);
@@ -51,7 +48,8 @@ public class InstrutorConfigService {
         return instrutorRepo.save(instrutor);
     }
 
-    public Instrutor addLocalEmBranco(String usuarioId) {
+    // 🔥 CORRIGIDO: Nome alterado para bater exatamente com o que o Controller chama!
+    public Instrutor adicionarLocalEmBranco(String usuarioId) {
         Instrutor instrutor = buscarPorUsuario(usuarioId);
         if (instrutor.getLocaisAtendimento() == null) {
             instrutor.setLocaisAtendimento(new ArrayList<>());
@@ -68,7 +66,7 @@ public class InstrutorConfigService {
         return instrutorRepo.save(instrutor);
     }
 
-    //////////////////////// LOGICA VEICULO /////////////////////////////
+    //////////////////////// LÓGICA VEÍCULO /////////////////////////////
 
     public Instrutor atualizarTodosVeiculos(String usuarioId, List<Veiculo> novosVeiculos) {
         Instrutor instrutor = buscarPorUsuario(usuarioId);
@@ -126,7 +124,7 @@ public class InstrutorConfigService {
         return instrutorRepo.save(instrutor);
     }
 
-    //////////////////////// LOGICA DOCUMENTO /////////////////////////////
+    //////////////////////// LÓGICA DOCUMENTO /////////////////////////////
 
     public Instrutor atualizarCnh(String usuarioId, Documento novaCnh) {
         Instrutor instrutor = buscarPorUsuario(usuarioId);

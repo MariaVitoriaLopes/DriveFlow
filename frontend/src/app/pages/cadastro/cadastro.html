@@ -28,15 +28,9 @@
 
   <div class="login-overlay">
     <div class="login-card">
-      <div class="ajusteCheck">
-        <!-- Checkbox para selecionar o tipo de usuário -->
-        <input type="checkbox" id="instrutorCheckbox" (change)="onTipoChange($event)">
-        <label for="instrutorCheckbox">Sou instrutor</label>
-      </div>
-
       <div class="lado-direito">
         <!-- Título dinâmico com base no checkbox -->
-        <h1>Olá {{ isInstrutor ? 'Instrutor' : 'Aluno' }}! Crie sua conta</h1>
+        <h1>Olá! Crie sua conta</h1>
 
         <!-- Passando isInstrutor para o componente filho -->
         <app-form-cadastro [isInstrutor]="isInstrutor"></app-form-cadastro>

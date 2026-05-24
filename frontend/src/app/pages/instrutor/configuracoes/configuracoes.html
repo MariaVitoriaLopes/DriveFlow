@@ -1,12 +1,21 @@
 <app-header-instrutor></app-header-instrutor>
 
 <section class="config-page">
-
   <aside class="sidebar">
     <div class="profile">
-      <div class="avatar"></div>
+      <div class="avatar">
+        <img
+          *ngIf="fotoUsuario; else semFoto"
+          [src]="fotoUsuario"
+          alt="Foto do usuário"
+        />
 
-      <h2>{{ usuario.nome || 'João Santos' }}</h2>
+        <ng-template #semFoto>
+          <span>{{ inicialUsuario }}</span>
+        </ng-template>
+      </div>
+
+      <h2>{{ usuario?.usuario?.nome || usuario?.nome || 'Instrutor' }}</h2>
       <p>Perfil ativo</p>
 
       <span class="status">
@@ -16,133 +25,129 @@
     </div>
 
     <nav class="menu">
-      <button
-        type="button"
-        [class.active]="abaAtiva === 'pessoais'"
-        (click)="trocarAba('pessoais')">
+      <button type="button" [class.active]="abaAtiva === 'pessoais'" (click)="trocarAba('pessoais')">
         Informações pessoais
       </button>
 
-      <button
-        type="button"
-        [class.active]="abaAtiva === 'endereco'"
-        (click)="trocarAba('endereco')">
+      <button type="button" [class.active]="abaAtiva === 'endereco'" (click)="trocarAba('endereco')">
         Endereço
       </button>
 
-      <button
-        type="button"
-        [class.active]="abaAtiva === 'veiculo'"
-        (click)="trocarAba('veiculo')">
+      <button type="button" [class.active]="abaAtiva === 'veiculo'" (click)="trocarAba('veiculo')">
         Veículo
       </button>
 
-      <button
-        type="button"
-        [class.active]="abaAtiva === 'documentos'"
-        (click)="trocarAba('documentos')">
+      <button type="button" [class.active]="abaAtiva === 'documentos'" (click)="trocarAba('documentos')">
         Documentos
       </button>
 
-      <button
-        type="button"
-        [class.active]="abaAtiva === 'configuracoes'"
-        (click)="trocarAba('configuracoes')">
+      <button type="button" [class.active]="abaAtiva === 'configuracoes'" (click)="trocarAba('configuracoes')">
         Configurações
       </button>
     </nav>
 
-    <button type="button" class="delete-btn">
+    <button
+      type="button"
+      class="delete-btn"
+      (click)="apagarMinhaConta()"
+    >
       Apagar minha conta
     </button>
   </aside>
 
-<!-- INFORMAÇÕES PESSOAIS -->
-@if (abaAtiva === 'pessoais') {
+  <div class="aba-conteudo">
 
-<form
-  [formGroup]="formPessoais"
-  (ngSubmit)="salvarPessoais()">
+    <div *ngIf="abaAtiva === 'pessoais'">
+      <app-form-informacoes-pessoais></app-form-informacoes-pessoais>
+    </div>
 
-  <h1>Informações pessoais</h1>
+    <div *ngIf="abaAtiva === 'endereco'">
+      <div class="header">
+        <h2>Locais de atendimento</h2>
 
-  <div class="photo-area">
-    <div class="photo-preview"></div>
-
-    <div>
-      <div class="photo-buttons">
-        <button type="button" class="btn dark">Enviar foto</button>
-        <button type="button" class="btn gray">Remover foto</button>
+        <!-- Botão chama método do componente filho -->
+        <button
+          type="button"
+          class="btn-add"
+          (click)="formLocais.adicionarEnderecoTemporario()"
+        >
+          Adicionar novo endereço
+        </button>
       </div>
 
-      <p>
-        Use uma imagem clara e de boa qualidade para facilitar a identificação.
-        Formatos aceitos: PNG, JPG e JPEG.
-      </p>
+      <!-- Formulário de locais de atendimento -->
+      <app-form-locais-atendimento #formLocais [usuarioId]="usuario?.id"></app-form-locais-atendimento>
     </div>
-  </div>
 
-  <div class="form-grid">
-    <div class="field full">
-      <label>Nome completo</label>
-      <input type="text" formControlName="nome">
+    <div *ngIf="abaAtiva === 'veiculo'">
+      <section class="veiculos-section">
+        <h1>Veículo</h1>
+
+        <button
+          *ngIf="!mostrandoFormNovoVeiculo"
+          type="button"
+          (click)="abrirFormNovoVeiculo()"
+        >
+          Adicionar novo veículo
+        </button>
+
+        <div *ngIf="!mostrandoFormNovoVeiculo">
+          <p *ngIf="veiculos.length === 0">
+            Nenhum veículo cadastrado ainda.
+          </p>
+
+          <app-form-veiculos
+            *ngFor="let veiculo of veiculos; trackBy: trackByVeiculoId"
+            [veiculo]="veiculo"
+            (veiculoAtualizado)="atualizarVeiculo($event)"
+            (veiculoDeletado)="deletarVeiculo($event)"
+          ></app-form-veiculos>
+        </div>
+
+        <div *ngIf="mostrandoFormNovoVeiculo">
+          <app-form-add-novo-veiculo
+            (veiculoSalvo)="salvarNovoVeiculo($event)"
+            (cancelar)="cancelarNovoVeiculo()"
+          ></app-form-add-novo-veiculo>
+        </div>
+      </section>
     </div>
+
+    <div *ngIf="abaAtiva === 'documentos'">
+      <div class="header">
+        <h1>Documentos</h1>
+
+        <button type="button" (click)="abrirModal()">
+          Adicionar novo documento
+        </button>
+      </div>
+
+      <div class="modal-backdrop" *ngIf="modalAberto">
+        <div class="modal">
+          <button type="button" (click)="selecionarDocumento('CNH')">
+            CNH
+          </button>
+
+          <button type="button" (click)="selecionarDocumento('CERTIFICADO')">
+            Certificado
+          </button>
+
+          <button type="button" class="close-btn" (click)="fecharModal()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <app-form-documentos
+        [instrutor]="usuario"
+        [abaAtiva]="abaAtiva"
+      ></app-form-documentos>
+    </div>
+
+    <div *ngIf="abaAtiva === 'configuracoes'">
+      <h1>Configurações</h1>
+      <app-config-sistema></app-config-sistema>
+    </div>
+
   </div>
-
-</form>
-
-}
-
-<!-- ENDEREÇO -->
-@if (abaAtiva === 'endereco') {
-
-<form
-  [formGroup]="formEndereco"
-  (ngSubmit)="salvarEndereco()">
-
-  <h1>Endereço</h1>
-
-</form>
-
-}
-
-<!-- VEÍCULO -->
-@if (abaAtiva === 'veiculo') {
-
-<form
-  [formGroup]="formVeiculo"
-  (ngSubmit)="salvarVeiculo()">
-
-  <h1>Veículo</h1>
-
-</form>
-
-}
-
-<!-- DOCUMENTOS -->
-@if (abaAtiva === 'documentos') {
-
-<form
-  [formGroup]="formDocumentos"
-  (ngSubmit)="salvarDocumentos()">
-
-  <h1>Documentos</h1>
-
-</form>
-
-}
-
-<!-- CONFIGURAÇÕES -->
-@if (abaAtiva === 'configuracoes') {
-
-<form
-  [formGroup]="formConfiguracoes"
-  (ngSubmit)="salvarConfiguracoes()">
-
-  <h1>Configurações</h1>
-
-</form>
-
-}
-
 </section>

@@ -1,11 +1,33 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
 
+:root {
+    --bg-page: #f5f5f7;
+    --bg-card: #ffffff;
+
+    --primary: #7008e7;
+    --primary-hover: #5e05c4;
+
+    --text-primary: #111111;
+    --text-secondary: #666674;
+
+    --border: #d7d7df;
+    --border-soft: #ececf2;
+
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
+
+    --radius-lg: 16px;
+    --radius-md: 12px;
+
+    background: var(--bg-page);
+    border: var(--border);
+}
+
 *{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family:  'DM Sans', system-ui, sans-serif;;
+  font-family:  'DM Sans', system-ui, sans-serif;
 }
 
 .header-desktop{
@@ -27,6 +49,11 @@
 }
 }
 
-app-dashboard, app-agenda, app-alunos, app-aulas, app-configuracoes {
+app-dashboard, app-agenda, app-alunos, app-aulas, app-configuracoes, app-home-aluno, app-novo-documento, app-cadastro-agenda, app-perfil-instrutor, app-cadastro-agenda{
     display: flex;
+    background-color: var(--bg-page);
+}
+
+input[type='checkbox'], input[type='radio'] {
+  accent-color: var(--primary-hover);
 }

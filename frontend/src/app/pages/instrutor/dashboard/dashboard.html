@@ -1,163 +1,106 @@
 <app-header-instrutor></app-header-instrutor>
-  
+
 <section class="dashboard">
-  <h2>Estatísticas Gerais</h2>
-
-  <div class="stats">
-    <div class="card chart-card">
-      <h3>Visão geral da sua agenda</h3>
-
-      <div class="days-top">
-        @for (day of weekStats; track day) {
-          <div>
-            <span>{{ day.weekDay }}</span>
-            <small>{{ day.date }}</small>
-            <strong>{{ day.total }}</strong>
-          </div>
-        }
-      </div>
-
-      <div class="chart-area">
-        <span class="line-label l15">15</span>
-        <span class="line-label l10">10</span>
-        <span class="line-label l5">5</span>
-        <span class="line-label l0">0</span>
-
-        @for (day of weekStats; track day; let i = $index) {
-          <div
-            class="bar"
-            [class.active]="i === 0"
-            [style.height.px]="day.total * 8">
-          </div>
-        }
-      </div>
+    <div class="profile-banner">
+        <p>Atualize seu perfil nas configurações para alcançar alunos.</p>
+        <button type="button"  [routerLink]="['/instrutor/configuracoes']" [queryParams]="{ aba: 'pessoais' }" routerLinkActive="active">Editar meu perfil</button>
     </div>
+    <h2 class="section-title">Estatísticas Gerais</h2>
+    <div class="stats-grid">
+        <article class="card chart-card">
+            <h3>Visão geral da sua agenda</h3>
+            <div class="days-top">
+                @for (day of weekStats; track day.date) {
+                    <div>
+                        <span>{{ day.weekDay }}</span>
+                        <small>{{ day.date }}</small>
+                        <strong>{{ day.total }}</strong>
+                    </div>
+                }
+            </div>
+            <div class="chart-area">
+                <span class="line-label l15">15</span>
+                <span class="line-label l10">10</span>
+                <span class="line-label l5">5</span>
+                <span class="line-label l0">0</span>
 
-    <div class="card info-card">
-      <div class="circle">4</div>
-      <h3>Alunos hoje</h3>
-      <p>4 aulas foram marcadas para 01 de Maio</p>
-    </div>
-
-    <div class="card info-card">
-      <div class="circle">0</div>
-      <h3>Dias de folga</h3>
-      <p>Esta semana não possui um dia sem agendamento</p>
-    </div>
-
-    <div class="card info-card">
-      <div class="circle">41</div>
-      <h3>Alunos nesta semana</h3>
-      <p>41 aulas foram marcadas de 01/05 até 07/05</p>
-    </div>
-
-    <div class="card info-card">
-      <div class="circle">4.9</div>
-      <h3>Sua nota</h3>
-      <p>Sua avaliação é de 4,9, mantenha uma boa reputação!</p>
-    </div>
-  </div>
-
-  <h2>Agenda</h2>
-
-  <div class="agenda">
-    <div class="card calendar-card">
-      <div class="calendar-header">
-        <button>‹</button>
-        <strong>{{ mesAtual }}</strong>
-        <button>›</button>
-      </div>
-
-      <div class="week-days">
-        <span>D</span>
-        <span>S</span>
-        <span>T</span>
-        <span>Q</span>
-        <span>Q</span>
-        <span>S</span>
-        <span>S</span>
-      </div>
-
-      <div class="calendar-days">
-        @for (dia of diasCalendario; track $index) {
-          <span [class.selected]="dia === diaAtual">
-            {{ dia }}
-          </span>
-        }
-      </div>
-    </div>
-
-    <div class="card today-card">
-      <h3>Agenda de hoje</h3>
-
-      <div class="lesson">
-        <span>08:00</span>
-        <div class="avatar"></div>
-        <p>Ana</p>
-        <button>⋮</button>
-      </div>
-
-      <div class="lesson">
-        <span>09:00</span>
-        <div class="avatar"></div>
-        <p>Amanda</p>
-        <button>⋮</button>
-      </div>
-
-      <div class="lesson">
-        <span>12:00</span>
-        <div class="avatar"></div>
-        <p>Guilherme</p>
-        <button>⋮</button>
-      </div>
-
-      <div class="lesson">
-        <span>14:00</span>
-        <div class="avatar"></div>
-        <p>Renato</p>
-        <button>⋮</button>
-      </div>
-
-      <a href="#">Ver agenda completa</a>
-    </div>
-
-    <div class="right-area">
-      <div class="card availability">
-        <span>Disponibilidade para novas aulas</span>
-
-        <label class="switch">
-          <input type="checkbox" checked />
-          <span></span>
-        </label>
-      </div>
-
-      <div class="card student-card">
-        <div class="student-icons">
-          <span>♔</span>
-          <span>☏</span>
+                @for (day of weekStats; track day.date; let i = $index) {
+                    <div class="bar" [class.active]="i === 0" [style.height.px]="day.total * 8"></div>
+                }
+            </div>
+        </article>
+        <div class="stats-cards">
+            <article class="card info-card">
+                <div class="circle">4</div>
+                <h3>Alunos hoje</h3>
+                <p>4 aulas foram marcadas para hoje</p>
+            </article>
+            <article class="card info-card">
+                <div class="circle">0</div>
+                <h3>Dias de folga</h3>
+                <p>Esta semana não possui dias livres</p>
+            </article>
+            <article class="card info-card">
+                <div class="circle">41</div>
+                <h3>Alunos nesta semana</h3>
+                <p>41 aulas foram marcadas nesta semana</p>
+            </article>
+            <article class="card info-card">
+                <div class="circle">4.9</div>
+                <h3>Sua nota</h3>
+                <p>Sua avaliação permanece excelente</p>
+            </article>
         </div>
-
-        <div class="student-header">
-          <div class="avatar big"></div>
-
-          <div>
-            <h3>Ana</h3>
-            <small>Primeira aula</small>
-          </div>
-        </div>
-
-        <p><strong>Horário:</strong> 08:00</p>
-
-        <p>
-          <strong>Local de encontro:</strong>
-          Av. Paulista, 1000, Bela Vista, São Paulo - SP
-        </p>
-
-        <div class="buttons">
-          <button class="cancel">Cancelar aula</button>
-          <button class="start">Iniciar aula</button>
-        </div>
-      </div>
     </div>
-  </div>
+    <h2 class="section-title">Agenda</h2>
+    <div class="agenda-grid">
+        <app-calendar [selectedDate]="selectedDate" (dateSelected)="onDateSelected($event)"></app-calendar>
+        <article class="card today-card">
+            <div class="students">
+                <h3>Agenda de hoje</h3>
+                @for (lesson of todayLessons; track lesson.time) {
+                    <div class="lesson">
+                        <span class="time">{{ lesson.time }}</span>
+                        <div class="avatar"></div>
+                        <p class="name">{{ lesson.student }}</p>
+                        <button class="menu" type="button">⋮</button>
+                    </div>
+                }
+            </div>
+            <a class="view-all" href="#">Ver agenda completa</a>
+        </article>
+
+        <div class="right-area">
+            <article class="card availability">
+                <span>Disponibilidade para novas aulas</span>
+
+                <label class="switch">
+                    <input type="checkbox" checked />
+                    <span></span>
+                </label>
+            </article>
+
+            <article class="card student-card">
+                <div class="student-icons">
+                    <span>♔</span>
+                    <span>☏</span>
+                </div>
+                <div class="student-header">
+                    <div class="avatar big"></div>
+                    <div>
+                        <h3>Ana</h3>
+                        <small>Primeira aula</small>
+                    </div>
+                </div>
+                <div class="student-info">
+                    <p><strong>Horário:</strong> 08:00</p>
+                    <p><strong>Local:</strong> Av. Paulista, 1000, Bela Vista, São Paulo - SP</p>
+                </div>
+                <div class="buttons">
+                    <button class="cancel" type="button">Cancelar aula</button>
+                    <button class="start" type="button">Iniciar aula</button>
+                </div>
+            </article>
+        </div>
+    </div>
 </section>

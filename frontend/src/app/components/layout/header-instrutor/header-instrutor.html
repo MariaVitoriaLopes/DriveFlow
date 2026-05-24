@@ -1,34 +1,110 @@
-<header>
-    <picture>
-      <a routerLink="/">
-        <img src="/logos-svg/logo_primary_black.svg" alt="Logo">
-      </a>
-    </picture>
+<button
+  class="menu-toggle"
+  type="button"
+  (click)="toggleMenu()">
 
-    <nav>
-        <a routerLink="/instrutor/dashboard">Dashboard</a>
-        <a routerLink="/instrutor/agenda">Agenda</a>
-        <a routerLink="/instrutor/aulas">Aulas</a>
-        <a routerLink="/instrutor/alunos">Alunos</a>
-        <hr>
-        <a routerLink="/instrutor/notificacoes">notificações</a>
-        <a routerLink="/instrutor/documentos">Documentos</a>
-        <a routerLink="/instrutor/configuracoes">Configurações</a>
-    </nav>
+  <span [class.open]="menuAberto">❯</span>
 
-    <div class="linkAgendamento">
-        <h5>Link de agendamento</h5>
-        <p>Compartilhe esse link e atraia alunos direamente para seu perfil</p>
-        <button (click)="compartilhar()">
-            Copiar link
+</button>
+
+<div
+  class="overlay"
+  [class.show]="menuAberto"
+  (click)="fecharMenuMobile()">
+</div>
+
+<header
+  class="sidebar"
+  [class.open]="menuAberto">
+
+    <div class="sidebar-top">
+
+        <picture class="logo">
+            <a routerLink="/">
+              <img src="/logos-svg/logo_primary_black.svg" alt="Logo DriveFlow">
+            </a>
+        </picture>
+
+        <nav class="sidebar-nav">
+
+            <a
+              routerLink="/instrutor/dashboard"
+              routerLinkActive="active"
+              (click)="fecharMenuMobile()">
+              Dashboard
+            </a>
+
+            <a
+              routerLink="/instrutor/agenda"
+              routerLinkActive="active"
+              (click)="fecharMenuMobile()">
+              Agenda
+            </a>
+
+            <a
+              routerLink="/instrutor/aulas"
+              routerLinkActive="active"
+              (click)="fecharMenuMobile()">
+              Aulas
+            </a>
+
+            <a
+              routerLink="/instrutor/alunos"
+              routerLinkActive="active"
+              (click)="fecharMenuMobile()">
+              Alunos
+            </a>
+
+            <hr>
+
+            <a
+              routerLink="/instrutor/notificacoes"
+              routerLinkActive="active"
+              (click)="fecharMenuMobile()">
+              Notificações
+            </a>
+
+            <a
+              [routerLink]="['/instrutor/configuracoes']"
+              [queryParams]="{ aba: 'documentos' }"
+              routerLinkActive="active"
+              (click)="fecharMenuMobile()">
+              Documentos
+            </a>
+
+            <a
+              [routerLink]="['/instrutor/configuracoes']"
+              [queryParams]="{ aba: 'pessoais' }"
+              routerLinkActive="active"
+              (click)="fecharMenuMobile()">
+              Configurações
+            </a>
+
+        </nav>
+
+    </div>
+
+    <div class="sidebar-bottom">
+        <div class="card-box">
+            <h5>Link de agendamento</h5>
+            <p>
+              Compartilhe esse link e atraia alunos diretamente para seu perfil
+            </p>
+            <button type="button" (click)="compartilhar()">
+              Copiar link
+            </button>
+        </div>
+        <div class="card-box">
+            <h5>Precisa de ajuda?</h5>
+            <p>
+              Entre em contato conosco em caso de dúvidas
+            </p>
+            <a routerLink="/suporte">
+              Suporte ao instrutor
+            </a>
+        </div>
+        <button class="logout-btn" type="button">
+            <a routerLink="/">Encerrar sessão</a>
         </button>
     </div>
-
-    <div class="ajuda">
-        <h5>Precisa de ajuda?</h5>
-        <p>Entre em contato conosco em caso de dúvidas</p>
-        <a href="">Suporte ao instrutor</a>
-    </div>
-
-    <a href="">Encerrar sessão</a>
 </header>

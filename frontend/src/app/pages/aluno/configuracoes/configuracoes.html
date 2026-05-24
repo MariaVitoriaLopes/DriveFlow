@@ -1,0 +1,53 @@
+<app-header-aluno></app-header-aluno>
+
+<section class="config-page">
+  <aside class="sidebar">
+    <div>
+      <div class="profile">
+        <div class="avatar"></div>
+
+        <h2>{{ usuario?.usuario?.nome || usuario?.nome || 'Aluno' }}</h2>
+        <p>Perfil ativo</p>
+
+        <span class="status">
+          <span></span>
+          Disponível
+        </span>
+      </div>
+
+      <nav class="menu">
+        <button
+          type="button"
+          [class.active]="abaAtiva === 'pessoais'"
+          (click)="trocarAba('pessoais')">
+          Informações pessoais
+        </button>
+
+        <button
+          type="button"
+          [class.active]="abaAtiva === 'configuracoes'"
+          (click)="trocarAba('configuracoes')">
+          Configurações
+        </button>
+      </nav>
+    </div>
+
+    <button
+      type="button"
+      class="delete-btn"
+      (click)="apagarMinhaConta()">
+      Apagar minha conta
+    </button>
+  </aside>
+
+  <main class="aba-conteudo">
+    <div class="content-card" *ngIf="abaAtiva === 'pessoais'">
+      <app-form-informacoes-pessoais></app-form-informacoes-pessoais>
+    </div>
+
+    <div class="content-card" *ngIf="abaAtiva === 'configuracoes'">
+      <h1>Configurações</h1>
+      <app-config-sistema></app-config-sistema>
+    </div>
+  </main>
+</section>

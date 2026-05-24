@@ -1,72 +1,70 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderInstrutor } from '../../../components/layout/header-instrutor/header-instrutor';
+import { CalendarComponent } from '../../../components/layout/calendario/calendario';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+
+interface WeekStat {
+  weekDay: string;
+  date: string;
+  total: number;
+}
+
+interface Lesson {
+  time: string;
+  student: string;
+}
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     CommonModule,
-    HeaderInstrutor
+    HeaderInstrutor,
+    CalendarComponent,
+    RouterLink,
+    RouterLinkActive
   ],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.scss',
+  styleUrls: ['./dashboard.scss']
 })
 export class Dashboard {
 
-  hoje = new Date();
+  selectedDate = new Date();
 
-  mesAtual = this.hoje.toLocaleDateString('pt-BR', {
-    month: 'long'
-  });
+  weekStats: WeekStat[] = [];
 
-  anoAtual = this.hoje.getFullYear();
-
-  diaAtual = this.hoje.getDate();
-
-  primeiroDiaMes = new Date(
-    this.anoAtual,
-    this.hoje.getMonth(),
-    1
-  ).getDay();
-
-  totalDiasMes = new Date(
-    this.anoAtual,
-    this.hoje.getMonth() + 1,
-    0
-  ).getDate();
-
-  diasCalendario: (number | null)[] = [];
-
-  weekStats: any[] = [];
+  todayLessons: Lesson[] = [
+    {
+      time: '08:00',
+      student: 'Ana'
+    },
+    {
+      time: '09:00',
+      student: 'Amanda'
+    },
+    {
+      time: '12:00',
+      student: 'Guilherme'
+    },
+    {
+      time: '14:00',
+      student: 'Renato'
+    }
+  ];
 
   constructor() {
 
-    this.gerarCalendario();
-
-    this.gerarSemanaGrafico();
+    this.generateWeekStats();
 
   }
 
-  gerarCalendario(): void {
-
-    this.diasCalendario = [];
-
-    for (let i = 0; i < this.primeiroDiaMes; i++) {
-
-      this.diasCalendario.push(null);
-
-    }
-
-    for (let dia = 1; dia <= this.totalDiasMes; dia++) {
-
-      this.diasCalendario.push(dia);
-
-    }
-
+  onDateSelected(date: Date): void {
+    this.selectedDate = date;
+    console.log('Data selecionada:', date);
   }
 
-  gerarSemanaGrafico(): void {
+  private generateWeekStats(): void {
 
     const diasSemana = [
       'Domingo',
@@ -81,26 +79,18 @@ export class Dashboard {
     this.weekStats = [];
 
     for (let i = 6; i >= 0; i--) {
-
-      const data = new Date();
-
-      data.setDate(this.hoje.getDate() - i);
+      const date = new Date();
+      date.setDate(date.getDate() - i);
 
       this.weekStats.push({
-
-        weekDay: diasSemana[data.getDay()],
-
-        date: data.toLocaleDateString('pt-BR', {
+        weekDay: diasSemana[date.getDay()],
+        date: date.toLocaleDateString('pt-BR', {
           day: '2-digit',
           month: '2-digit'
         }),
 
         total: Math.floor(Math.random() * 12) + 1
-
       });
-
     }
-
   }
-
 }

@@ -1,0 +1,35 @@
+/* filtros.component.scss */
+.filtros {
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  label { font-weight: 600; margin-top: 10px; }
+
+  .input-group {
+    display: flex;
+    gap: 5px;
+  }
+
+  .valor-aula {
+    display: flex;
+    gap: 5px;
+    input { width: 50%; }
+  }
+
+  .disponibilidade {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  button {
+    margin-top: 10px;
+    background-color: #555;
+    color: #fff;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+  }
+}

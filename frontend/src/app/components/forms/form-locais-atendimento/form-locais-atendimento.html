@@ -1,0 +1,55 @@
+<form [formGroup]="formLocais" (ngSubmit)="salvarAlteracoes()">
+  <div class="locais-container">
+    <div formArrayName="enderecos">
+      <div *ngFor="let endereco of enderecos.controls; let i = index" [formGroupName]="i" class="endereco-card">
+        <div class="card-header">
+          <h3>{{ endereco.get('titulo')?.value }}</h3>
+          <button type="button" (click)="editarEndereco(i)" [disabled]="modoEdicao[i]">
+            Editar
+          </button>
+        </div>
+
+        <div class="linha">
+          <label>CEP
+            <input formControlName="cep" type="text" placeholder="00000-000">
+          </label>
+          <label>Logradouro
+            <input formControlName="logradouro" type="text" placeholder="Rua, Avenida">
+          </label>
+          <label>Número
+            <input formControlName="numero" type="text" placeholder="000">
+          </label>
+          <label>Complemento
+            <input formControlName="complemento" type="text" placeholder="Apartamento, Casa">
+          </label>
+        </div>
+
+        <div class="linha">
+          <label>Bairro
+            <input formControlName="bairro" type="text" placeholder="Bairro">
+          </label>
+          <label>Cidade
+            <input formControlName="cidade" type="text" placeholder="Cidade">
+          </label>
+          <label>UF
+            <input formControlName="uf" type="text" placeholder="UF">
+          </label>
+        </div>
+
+        <div class="acoes">
+          <label>
+            <input type="checkbox" [checked]="endereco.get('favorito')?.value" [disabled]="!modoEdicao[i]"
+                   (change)="marcarFavorito(i)">
+            Definir como favorito
+          </label>
+          <button type="button" class="delete" (click)="deletarEndereco(i)">Deletar endereço</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button type="button" class="btn-descartar" (click)="descartarAlteracoes()">Descartar alterações</button>
+      <button type="submit" class="btn-salvar">Salvar alterações</button>
+    </div>
+  </div>
+</form>

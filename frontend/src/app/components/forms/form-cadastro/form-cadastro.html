@@ -3,16 +3,25 @@
   <label>Nome:</label>
   <input type="text" formControlName="nome" placeholder="Seu nome completo ...">
 
-  <label>CPF:</label>
-  <input type="text" formControlName="cpf" maxlength="14" placeholder="Insira somente os numeros do seu CPF ...">
+  <label>{{ isInstrutor ? 'CNH' : 'CPF' }}:</label>
+<input type="text" formControlName="cpf" maxlength="14"
+       (input)="onCpfCnhInput($event)"
+       placeholder="Insira somente os números {{ isInstrutor ? 'da sua CNH' : 'do seu CPF' }}">
 
   <label>E-mail:</label>
   <input type="email" formControlName="email" placeholder="nome@email.com">
 
   <label>Senha:</label>
   <div class="input-icon">
-    <input type="password" formControlName="senha" placeholder="Escolha uma senha segura">
-    <span class="icon">👁️</span>
+    <input
+      class="input-form"
+      [type]="mostrarSenha ? 'text' : 'password'"
+      formControlName="senha"
+      placeholder="Escolha uma senha segura"
+    >
+    <span class="icon" (click)="toggleSenha()">
+      {{ mostrarSenha ? '🙈' : '👁️' }}
+    </span>
   </div>
 
   <ul class="requisitos">
@@ -25,11 +34,18 @@
 
   <label>Repita a senha:</label>
   <div class="input-icon">
-    <input type="password" placeholder="Insira a mesma senha">
-    <span class="icon">👁️</span>
+    <input
+      class="input-form"
+      [type]="mostrarRepetirSenha ? 'text' : 'password'"
+      formControlName="confirmarSenha"
+      placeholder="Insira a mesma senha"
+    >
+    <span class="icon" (click)="toggleRepetirSenha()">
+      {{ mostrarRepetirSenha ? '🙈' : '👁️' }}
+    </span>
   </div>
 
-  <div class="escolha-perfil" style="margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+  <div class="escolha-perfil" >
     <input
       type="checkbox"
       id="checkboxPerfil"
@@ -37,12 +53,12 @@
       (change)="onTipoChange($event)"
     >
     <label for="checkboxPerfil" style="margin: 0; cursor: pointer; font-weight: normal;">
-      Quero me cadastrar como Instrutor
+      Quero me cadastrar como  {{ isInstrutor ? 'aluno' : 'instrutor' }}
     </label>
   </div>
 
   <div class="termos">
-    <input type="checkbox">
+    <input type="checkbox" formControlName="termos">
     <span>Concordo com os termos</span>
   </div>
 
