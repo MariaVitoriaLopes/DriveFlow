@@ -36,7 +36,11 @@
       </button>
     </nav>
 
-    <button type="button" class="delete-btn">
+    <button 
+      type="button" 
+      class="delete-btn"
+      (click)="apagarMinhaConta()"
+    >
       Apagar minha conta
     </button>
   </aside>
@@ -105,6 +109,12 @@
           <button type="button" class="close-btn" (click)="fecharModal()">Cancelar</button>
         </div>
       </div>
+
+            <app-form-documentos
+        *ngIf="abaAtiva === 'documentos'"
+        [instrutor]="usuario"
+        [abaAtiva]="abaAtiva">
+      </app-form-documentos>
     </div>
 
     <div *ngIf="abaAtiva === 'configuracoes'">

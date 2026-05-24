@@ -13,7 +13,7 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="driveflow_db@localhost" uuid="8523c798-a1c1-44fa-ab2a-bb35204230ab">
+    <data-source source="LOCAL" name="Driveflow" uuid="8523c798-a1c1-44fa-ab2a-bb35204230ab">
       <driver-ref>mongo.4</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>

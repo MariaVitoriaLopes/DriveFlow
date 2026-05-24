@@ -19,6 +19,11 @@
       <img *ngIf="previewVerso" [src]="previewVerso" class="preview-img">
     </div>
 
+    <div class="file-upload">
+    <label>Número do documento</label>
+    <input type="text" formControlName="numeroDocumento">
+  </div>
+
     <button type="submit" [disabled]="form.invalid">Enviar Documento</button>
   </form>
 </div>

@@ -1,45 +1,129 @@
 <form [formGroup]="form">
-  <div *ngFor="let doc of documentos.controls; let i = index">
-    
-    <!-- Accordion CNH -->
-    <div class="accordion" *ngIf="doc.get('tipo')?.value === 'CNH'">
-      <div class="header" (click)="toggleAccordion('CNH')">
-        Carteira Nacional de Habilitação (CNH)
-        <span>{{ cnhExpanded ? '-' : '+' }}</span>
+
+  <div formArrayName="documentos">
+
+    <div
+      *ngFor="let doc of documentos.controls; let i = index"
+      [formGroupName]="i"
+    >
+
+      <!-- CNH -->
+      <div class="accordion" *ngIf="doc.get('tipo')?.value === 'CNH'">
+
+        <div class="header" (click)="toggleAccordion('CNH')">
+          Carteira Nacional de Habilitação (CNH)
+          <span>{{ cnhExpanded ? '-' : '+' }}</span>
+        </div>
+
+        <div class="content" *ngIf="cnhExpanded">
+
+          <label>Nome completo</label>
+          <input formControlName="nomeCompleto" type="text">
+
+          <label>Número da CNH</label>
+          <input formControlName="numeroDocumento" type="text">
+
+          <label>Data de emissão</label>
+          <input formControlName="dataEmissao" type="date">
+
+          <label>Data de validade</label>
+          <input formControlName="dataValidade" type="date">
+
+          <label>
+            <input type="checkbox" formControlName="categoriaA">
+            Categoria A
+          </label>
+
+          <label>
+            <input type="checkbox" formControlName="categoriaB">
+            Categoria B
+          </label>
+
+          <!-- FOTO FRENTE -->
+          <div class="upload-container">
+
+            <label>Foto Frente</label>
+
+            <img
+              *ngIf="doc.get('frente')?.value"
+              [src]="doc.get('frente')?.value"
+              class="preview-img"
+            >
+
+          </div>
+
+          <!-- FOTO VERSO -->
+          <div class="upload-container">
+
+            <label>Foto Verso</label>
+
+            <img
+              *ngIf="doc.get('verso')?.value"
+              [src]="doc.get('verso')?.value"
+              class="preview-img"
+            >
+
+          </div>
+
+        </div>
+
       </div>
-      <div class="content" *ngIf="cnhExpanded">
-        <label>Nome completo</label>
-        <input formControlName="nomeCompleto" type="text">
 
-        <label>Número da CNH</label>
-        <input formControlName="numero" type="text">
+      <!-- CERTIFICADO -->
+      <div
+        class="accordion"
+        *ngIf="doc.get('tipo')?.value === 'CERTIFICADO'"
+      >
 
-        <label>Data de emissão</label>
-        <input formControlName="dataEmissao" type="date">
+        <div class="header" (click)="toggleAccordion('CERTIFICADO')">
+          Credencial/Certificado de Instrutor de Trânsito
+          <span>{{ certificadoExpanded ? '-' : '+' }}</span>
+        </div>
 
-        <label>Data de validade</label>
-        <input formControlName="dataValidade" type="date">
+        <div class="content" *ngIf="certificadoExpanded">
 
-        <label>
-          <input type="checkbox" formControlName="categoriaA"> Categoria A
-        </label>
-        <label>
-          <input type="checkbox" formControlName="categoriaB"> Categoria B
-        </label>
+          <label>Nome completo</label>
+          <input formControlName="nomeCompleto" type="text">
 
-      </div>
-    </div>
+          <label>Número do certificado</label>
+          <input formControlName="numeroDocumento" type="text">
 
-    <!-- Accordion Certificado -->
-    <div class="accordion" *ngIf="doc.get('tipo')?.value === 'CERTIFICADO'">
-      <div class="header" (click)="toggleAccordion('CERTIFICADO')">
-        Credencial/Certificado de Instrutor de Trânsito
-        <span>{{ certificadoExpanded ? '-' : '+' }}</span>
+          <!-- FOTO FRENTE -->
+          <div class="upload-container">
+
+            <label>Foto Frente</label>
+
+            <img
+              *ngIf="doc.get('frente')?.value"
+              [src]="doc.get('frente')?.value"
+              class="preview-img"
+            >
+
+          </div>
+
+          <!-- FOTO VERSO -->
+          <div class="upload-container">
+
+            <label>Foto Verso</label>
+
+            <img
+              *ngIf="doc.get('verso')?.value"
+              [src]="doc.get('verso')?.value"
+              class="preview-img"
+            >
+
+          </div>
+
+        </div>
+
       </div>
 
     </div>
 
   </div>
 
-  <button type="button" (click)="salvar()">Salvar alterações</button>
+  <button type="button" (click)="salvar()">
+    Salvar alterações
+  </button>
+
 </form>

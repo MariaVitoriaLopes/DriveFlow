@@ -1,20 +1,20 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-form-documentos',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-  ],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './form-documentos.html',
   styleUrl: './form-documentos.scss',
 })
-export class FormDocumentos {
+export class FormDocumentos implements OnChanges {
+  @Input() instrutor: any;
+  @Input() abaAtiva: string = '';
 
-    form: FormGroup;
+  form: FormGroup;
   cnhExpanded = true;
   certificadoExpanded = false;
 
@@ -22,16 +22,55 @@ export class FormDocumentos {
     this.form = this.fb.group({
       documentos: this.fb.array([])
     });
+  }
 
-    // Inicializa CNH por padrão
-    this.addDocumento('CNH');
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      changes['instrutor'] ||
+      changes['abaAtiva']
+    ) {
+      if (this.abaAtiva === 'documentos' && this.instrutor) {
+        this.carregarDocumentos();
+      }
+    }
   }
 
   get documentos(): FormArray {
     return this.form.get('documentos') as FormArray;
   }
 
-  toggleAccordion(tipo: string) {
+  carregarDocumentos(): void {
+    this.documentos.clear();
+
+    if (this.instrutor.cnh) {
+      this.documentos.push(this.criarDocumentoForm('CNH', this.instrutor.cnh));
+    } else {
+      this.documentos.push(this.criarDocumentoForm('CNH'));
+    }
+
+    if (this.instrutor.credencialInstrutor) {
+      this.documentos.push(this.criarDocumentoForm('CERTIFICADO', this.instrutor.credencialInstrutor));
+    } else {
+      this.documentos.push(this.criarDocumentoForm('CERTIFICADO'));
+    }
+  }
+
+  criarDocumentoForm(tipo: string, doc: any = {}): FormGroup {
+    return this.fb.group({
+      tipo: [tipo],
+      nomeCompleto: [doc.nomeCompleto || ''],
+      numeroDocumento: [doc.numeroDocumento || ''],
+      dataEmissao: [doc.dataEmissao || ''],
+      dataValidade: [doc.dataValidade || ''],
+      categoriaA: [doc.categorias?.includes('A') || false],
+      categoriaB: [doc.categorias?.includes('B') || false],
+      frente: [doc.fotoFrenteUrl || null],
+      verso: [doc.fotoVersoUrl || null],
+      statusValidacao: [doc.statusValidacao || 'PENDENTE']
+    });
+  }
+
+  toggleAccordion(tipo: string): void {
     if (tipo === 'CNH') {
       this.cnhExpanded = !this.cnhExpanded;
     } else {
@@ -39,52 +78,31 @@ export class FormDocumentos {
     }
   }
 
-  addDocumento(tipo: string) {
-    const doc = this.fb.group({
-      tipo: [tipo],
-      nomeCompleto: [''],
-      numero: [''],
-      dataEmissao: [''],
-      dataValidade: [''],
-      categoriaA: [false],
-      categoriaB: [false],
-      frente: [null],
-      verso: [null]
-    });
+onFileChange(
+  event: any,
+  docIndex: number,
+  lado: 'frente' | 'verso'
+): void {
 
-    this.documentos.push(doc);
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+
+    this.documentos
+      .at(docIndex)
+      .get(lado)
+      ?.setValue(reader.result);
+
+  };
+
+  reader.readAsDataURL(file);
+}
+
+  salvar(): void {
+    console.log('Documentos atualizados:', this.form.value);
   }
-
-  removeDocumento(index: number) {
-    this.documentos.removeAt(index);
-  }
-
-  onFileChange(event: any, docIndex: number, lado: 'frente' | 'verso') {
-    const file = event.target.files[0];
-    if (file) {
-      this.documentos.at(docIndex).get(lado)?.setValue(file);
-    }
-  }
-
-  salvar() {
-    if (this.form.valid) {
-      const formData = new FormData();
-
-      this.documentos.controls.forEach((doc, index) => {
-        formData.append(`documentos[${index}][tipo]`, doc.get('tipo')?.value);
-        formData.append(`documentos[${index}][nomeCompleto]`, doc.get('nomeCompleto')?.value);
-        formData.append(`documentos[${index}][numero]`, doc.get('numero')?.value);
-        formData.append(`documentos[${index}][dataEmissao]`, doc.get('dataEmissao')?.value);
-        formData.append(`documentos[${index}][dataValidade]`, doc.get('dataValidade')?.value);
-        formData.append(`documentos[${index}][categoriaA]`, doc.get('categoriaA')?.value);
-        formData.append(`documentos[${index}][categoriaB]`, doc.get('categoriaB')?.value);
-        if (doc.get('frente')?.value) formData.append(`documentos[${index}][frente]`, doc.get('frente')?.value);
-        if (doc.get('verso')?.value) formData.append(`documentos[${index}][verso]`, doc.get('verso')?.value);
-      });
-
-      // Aqui você envia o formData para o backend via HttpClient
-      console.log('Enviando documentos...', formData);
-    }
-  }
-
 }

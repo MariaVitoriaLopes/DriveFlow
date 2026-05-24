@@ -1,108 +1,224 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
-  OnInit,
-  ViewChildren,
-  ElementRef,
-  QueryList,
   EventEmitter,
-  Output
+  OnInit,
+  Output,
+  inject
 } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Veiculo } from '../form-veiculos/form-veiculos';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
+
+export interface Veiculo {
+  marca: string;
+  modelo: string;
+  versao?: string;
+  cor: string;
+  ano: string;
+  placa: string;
+  cambio: string;
+  categoria: 'A' | 'B';
+  recursos: string[];
+  infoExtra?: string;
+  principal: boolean;
+  fotosUrl: string[];
+}
 
 @Component({
   selector: 'app-form-add-novo-veiculo',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './form-add-novo-veiculo.html',
-  styleUrls: ['./form-add-novo-veiculo.scss'],
+  styleUrls: ['./form-add-novo-veiculo.scss']
 })
 export class FormAddNovoVeiculo implements OnInit {
   @Output() veiculoSalvo = new EventEmitter<Veiculo>();
   @Output() cancelar = new EventEmitter<void>();
 
-  @ViewChildren('fotoInput') fotoInputs!: QueryList<ElementRef<HTMLInputElement>>;
+  private fb = inject(FormBuilder);
 
   veiculoForm!: FormGroup;
 
-  fotosPreview: string[] = ['', '', '', ''];
+  fotosArquivos: File[] = [];
+  fotosPreview: string[] = [];
 
-  marcas = ['Fiat', 'Chevrolet', 'Volkswagen', 'Ford', 'Honda', 'Toyota', 'Hyundai', 'Renault'];
-  versoes = ['Básica', 'Completa', 'Sport', 'Premium'];
-  cores = ['Branco', 'Preto', 'Prata', 'Cinza', 'Vermelho', 'Azul'];
-  anos = Array.from({ length: 30 }, (_, i) => String(2026 - i));
-  cambios = ['Manual', 'Automático'];
-  categorias = ['Categoria A', 'Categoria B', 'Categoria AB'];
+  marcas = [
+    'Chevrolet', 'Volkswagen', 'Fiat', 'Ford', 'Renault', 'Toyota',
+    'Honda', 'Hyundai', 'Jeep', 'Nissan', 'Peugeot', 'Citroën',
+    'Mitsubishi', 'Kia', 'BMW', 'Mercedes-Benz', 'Audi', 'Volvo',
+    'BYD', 'GWM', 'Caoa Chery', 'JAC', 'Land Rover', 'Lexus',
+    'Mini', 'Porsche', 'Ram', 'Suzuki', 'Subaru', 'Abarth',
+    'Agrale', 'Alfa Romeo', 'Dodge', 'Iveco'
+  ];
+
+versoes = [
+  '1.0',
+  '1.0 Turbo',
+  '1.3',
+  '1.4',
+  '1.5',
+  '1.6',
+  '1.8',
+  '2.0',
+
+  'LT 1.0',
+  'LT 1.4',
+  'LTZ',
+  'Premier',
+
+  'Sense',
+  'Vision',
+  'Drive',
+  'Drive 1.0',
+  'Drive 1.3',
+
+  'Attractive',
+  'Essence',
+  'Sporting',
+
+  'Trendline',
+  'Comfortline',
+  'Highline',
+
+  'GL',
+  'GLS',
+
+  'EX',
+  'EXL',
+  'LX',
+
+  'SR',
+  'XEI',
+  'Altis',
+
+  'Limited',
+  'Longitude',
+  'Sport',
+
+  'Platinum',
+  'Titanium',
+  'Freestyle',
+
+  'Advance',
+  'Exclusive',
+
+  'RS',
+  'SS',
+
+  'Manual',
+  'Automático',
+  'CVT'
+];
+
+  cores = [
+    'Branco', 'Preto', 'Prata', 'Cinza', 'Vermelho',
+    'Azul', 'Verde', 'Amarelo', 'Marrom', 'Bege',
+    'Dourado', 'Laranja', 'Vinho'
+  ];
+
+  anos = Array.from({ length: 31 }, (_, i) => String(new Date().getFullYear() + 1 - i));
+
+  cambios = ['Manual', 'Automático', 'Automatizado', 'CVT'];
+
+  categorias = [
+    { label: 'Categoria A', value: 'A' },
+    { label: 'Categoria B', value: 'B' }
+  ];
 
   recursos = [
     'Ar-condicionado',
+    'ABS',
+    'Duplo comando',
+    'Direção elétrica',
     'Direção hidráulica',
-    'Sensor de ré',
-    'Câmera de ré',
-    'Vidro elétrico',
-    'Controle de estabilidade'
+    'Travas elétricas',
+    'Vidros elétricos',
+    'Airbag',
+    'Sensor de ré'
   ];
-
-  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.veiculoForm = this.fb.group({
       marca: ['', Validators.required],
-      versao: [''],
       modelo: ['', Validators.required],
-      cor: [''],
-      ano: [''],
-      placa: ['', Validators.required],
-      cambio: [''],
-      categoria: [''],
+      versao: [''],
+      cor: ['', Validators.required],
+      ano: ['', Validators.required],
+      placa: ['', [
+        Validators.required,
+        Validators.pattern(/^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})$/)
+      ]],
+      cambio: ['', Validators.required],
+      categoria: ['', Validators.required],
       recursos: [[]],
-      infoExtra: [''],
+      infoExtra: ['', Validators.maxLength(500)],
       principal: [false]
     });
   }
 
-  abrirSeletorFoto(index: number): void {
-    const input = this.fotoInputs.toArray()[index];
-
-    if (input) {
-      input.nativeElement.click();
-    }
-  }
-
-  onFotoSelecionada(event: Event, index: number): void {
+  onFotosSelecionadas(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
+    const arquivos = Array.from(input.files || []);
 
-    if (!file) return;
+    if (!arquivos.length) return;
 
-    if (index < 0 || index > 3) {
-      alert('Você só pode escolher até 4 fotos.');
+    if (this.fotosArquivos.length + arquivos.length > 4) {
+      alert('Você pode selecionar no máximo 4 fotos.');
+      input.value = '';
       return;
     }
 
-    const reader = new FileReader();
+    arquivos.forEach((file) => {
+      const tipoValido = ['image/png', 'image/jpeg', 'image/jpg'].includes(file.type);
 
-    reader.onload = () => {
-      this.fotosPreview[index] = reader.result as string;
-    };
+      if (!tipoValido) {
+        alert('Formato inválido. Use PNG, JPEG ou JPG.');
+        return;
+      }
 
-    reader.readAsDataURL(file);
+      this.fotosArquivos.push(file);
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.fotosPreview.push(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    input.value = '';
   }
 
   removerFoto(index: number): void {
-    this.fotosPreview[index] = '';
+    this.fotosArquivos.splice(index, 1);
+    this.fotosPreview.splice(index, 1);
+  }
+
+  formatarPlaca(): void {
+    const valor = this.veiculoForm.get('placa')?.value || '';
+
+    const placa = valor
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '')
+      .slice(0, 7);
+
+    this.veiculoForm.get('placa')?.setValue(placa, { emitEvent: false });
   }
 
   toggleRecurso(recurso: string): void {
-    const selecionados: string[] = this.veiculoForm.get('recursos')?.value || [];
+    const recursosSelecionados = this.veiculoForm.get('recursos')?.value || [];
 
-    if (selecionados.includes(recurso)) {
-      this.veiculoForm.get('recursos')?.setValue(
-        selecionados.filter(r => r !== recurso)
-      );
+    if (recursosSelecionados.includes(recurso)) {
+      this.veiculoForm.patchValue({
+        recursos: recursosSelecionados.filter((r: string) => r !== recurso)
+      });
     } else {
-      this.veiculoForm.get('recursos')?.setValue([...selecionados, recurso]);
+      this.veiculoForm.patchValue({
+        recursos: [...recursosSelecionados, recurso]
+      });
     }
   }
 
@@ -112,21 +228,12 @@ export class FormAddNovoVeiculo implements OnInit {
       return;
     }
 
-    const form = this.veiculoForm.value;
-
-    const novoVeiculo: Veiculo = {
-      marca: form.marca,
-      modelo: form.modelo,
-      placa: form.placa,
-      ano: form.ano,
-      cor: form.cor,
-      cambio: form.cambio,
-      categoria: form.categoria,
-      fotosUrl: this.fotosPreview.filter(foto => !!foto),
-      principal: form.principal
+    const veiculo: Veiculo = {
+      ...this.veiculoForm.value,
+      fotosUrl: this.fotosPreview
     };
 
-    this.veiculoSalvo.emit(novoVeiculo);
+    this.veiculoSalvo.emit(veiculo);
   }
 
   cancelarCadastro(): void {

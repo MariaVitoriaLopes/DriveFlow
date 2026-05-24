@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -29,11 +29,12 @@ export interface LocalAtendimento {
   templateUrl: './form-locais-atendimento.html',
   styleUrls: ['./form-locais-atendimento.scss'],
 })
-export class FormLocaisAtendimento implements OnInit {
+export class FormLocaisAtendimento implements OnInit, OnChanges {
   formLocais!: FormGroup;
 
+  @Input() usuarioId = '';
+
   apiUrl = 'http://localhost:8081/api/instrutores/configuracoes';
-  usuarioId = localStorage.getItem('usuarioId') || '';
 
   modoEdicao: { [index: number]: boolean } = {};
 
@@ -47,7 +48,19 @@ export class FormLocaisAtendimento implements OnInit {
       enderecos: this.fb.array([])
     });
 
-    this.carregarLocaisDoBanco();
+    if (!this.usuarioId) {
+      this.usuarioId = localStorage.getItem('usuarioId') || '';
+    }
+
+    if (this.usuarioId) {
+      this.carregarLocaisDoBanco();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['usuarioId'] && this.usuarioId && this.formLocais) {
+      this.carregarLocaisDoBanco();
+    }
   }
 
   get enderecos(): FormArray {
@@ -76,13 +89,14 @@ export class FormLocaisAtendimento implements OnInit {
 
   carregarLocaisDoBanco(): void {
     if (!this.usuarioId) {
-      alert('ID do usuário não encontrado.');
+      console.error('ID do usuário não encontrado.');
       return;
     }
 
     this.http.get<any>(`${this.apiUrl}/${this.usuarioId}`).subscribe({
       next: (instrutor) => {
         this.enderecos.clear();
+        this.modoEdicao = {};
 
         const locais = instrutor.locaisAtendimento || [];
 
@@ -91,6 +105,7 @@ export class FormLocaisAtendimento implements OnInit {
             ...local,
             titulo: `Endereço ${index + 1}`
           }));
+
           this.modoEdicao[index] = false;
         });
       },
@@ -116,6 +131,7 @@ export class FormLocaisAtendimento implements OnInit {
     });
 
     this.monitorarCep(novo);
+
     this.enderecos.push(novo);
 
     const index = this.enderecos.length - 1;
@@ -138,19 +154,23 @@ export class FormLocaisAtendimento implements OnInit {
 
     if (!local.id) {
       this.enderecos.removeAt(index);
+      delete this.modoEdicao[index];
       return;
     }
 
     this.http.delete<any>(`${this.apiUrl}/${this.usuarioId}/locais/${local.id}`).subscribe({
       next: (instrutor) => {
         this.enderecos.clear();
+        this.modoEdicao = {};
 
         const locais = instrutor.locaisAtendimento || [];
+
         locais.forEach((endereco: LocalAtendimento, i: number) => {
           this.enderecos.push(this.criarEndereco({
             ...endereco,
             titulo: `Endereço ${i + 1}`
           }));
+
           this.modoEdicao[i] = false;
         });
 
@@ -168,6 +188,11 @@ export class FormLocaisAtendimento implements OnInit {
   }
 
   salvarAlteracoes(): void {
+    if (!this.usuarioId) {
+      alert('ID do usuário não encontrado.');
+      return;
+    }
+
     if (this.formLocais.invalid) {
       alert('Preencha os campos obrigatórios.');
       return;
@@ -188,13 +213,16 @@ export class FormLocaisAtendimento implements OnInit {
     this.http.put<any>(`${this.apiUrl}/${this.usuarioId}/locais`, locais).subscribe({
       next: (instrutor) => {
         this.enderecos.clear();
+        this.modoEdicao = {};
 
         const locaisAtualizados = instrutor.locaisAtendimento || [];
+
         locaisAtualizados.forEach((endereco: LocalAtendimento, index: number) => {
           this.enderecos.push(this.criarEndereco({
             ...endereco,
             titulo: `Endereço ${index + 1}`
           }));
+
           this.modoEdicao[index] = false;
         });
 
@@ -211,7 +239,7 @@ export class FormLocaisAtendimento implements OnInit {
     grupo.get('cep')?.valueChanges.subscribe((cep) => {
       if (!cep || grupo.disabled) return;
 
-      const cepLimpo = cep.replace(/\D/g, '');
+      const cepLimpo = String(cep).replace(/\D/g, '');
 
       if (cepLimpo.length === 8) {
         this.buscarEnderecoPorCep(cepLimpo, grupo);
