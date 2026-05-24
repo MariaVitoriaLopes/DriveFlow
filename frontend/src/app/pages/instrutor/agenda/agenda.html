@@ -4,13 +4,9 @@
   <h2>Agenda</h2>
 
   <div class="content">
-
-    <!-- CALENDÁRIO -->
-    <div class="card calendar-card">
-
-      <div class="year">
-        {{ anoAtual }}
-      </div>
+    <section class="top">
+      <div>
+        <!-- <div class="year">{{ anoAtual }}</div> 
 
       <div class="calendar-header">
         <button>‹</button>
@@ -30,10 +26,9 @@
         <span>Q</span>
         <span>S</span>
         <span>S</span>
-      </div>
-
-      <div class="calendar-days">
-
+      </div> -->
+      <app-calendar [selectedDate]="selectedDate" (dateSelected)="onDateSelected($event)" class="calendario-agenda"></app-calendar>
+      <!-- <div class="calendar-days">
         @for (dia of diasCalendario; track $index) {
 
           <div class="day">
@@ -46,16 +41,12 @@
 
               @if (temAula(dia)) {
                 <small></small>
-              }
-
-            }
-
+                }
+                }
           </div>
-
-        }
-
-      </div>
-
+          } 
+        </div>
+        -->
     </div>
 
     <!-- AGENDA DE HOJE -->
@@ -101,10 +92,9 @@
       </div>
 
     </div>
-
-    <!-- ALUNO ATUAL -->
-    <div class="card student-card">
-
+    </section>
+    <section class="bottom">
+      <div class="card student-card">
       <div class="student-icons">
         <span>♔</span>
         <span>☏</span>
@@ -120,17 +110,14 @@
         </div>
 
       </div>
-
-      <p>
-        <strong>Horário:</strong>
-        08:00
-      </p>
-
+      
+      <p><strong>Horário:</strong> 08:00</p>
+      
       <p>
         <strong>Local de encontro:</strong>
         Av. Paulista, 1000, Bela Vista, São Paulo - SP
       </p>
-
+      
       <div class="actions">
 
         <button class="cancel">
@@ -144,17 +131,13 @@
       </div>
 
     </div>
-
-    <!-- COLUNA DO MEIO -->
+    
     <div class="middle-column">
 
       <!-- DISPONIBILIDADE -->
       <div class="card availability">
-
-        <span>
-          Disponibilidade para novas aulas
-        </span>
-
+        <span>Disponibilidade para novas aulas</span>
+        
         <label class="switch">
 
           <input
@@ -171,11 +154,8 @@
 
       <!-- RESUMO -->
       <div class="card summary-card">
-
-        <h3>
-          Resumo da sua agenda
-        </h3>
-
+        <h3>Resumo da sua agenda</h3>
+        
         <div class="dots-week">
 
           @for (item of resumoSemana; track item.dia) {
@@ -230,8 +210,7 @@
       </div>
 
     </div>
-
-    <!-- HORÁRIOS -->
+    
     <div class="card hours-card">
 
       <h3>
@@ -250,25 +229,16 @@
         @for (item of horarios; track item.dia) {
 
           <div class="table-row">
-
-            <span>
-              {{ item.dia }}
-            </span>
-
-            <span>
-              {{ item.inicio }}
-            </span>
-
-            <span>
-              {{ item.fim }}
-            </span>
-
-            <input
-              type="checkbox"
-              [checked]="item.bloqueio"
-              disabled
-            />
-
+            <div>
+              <span>{{ item.dia }}</span>
+            </div>
+            <div>
+              <span>{{ item.inicio }}</span>
+            </div>
+            <div>
+              <span>{{ item.fim }}</span>
+            </div>
+            <input type="checkbox" [checked]="item.bloqueio" />
           </div>
 
         }
@@ -277,12 +247,8 @@
 
     </div>
 
-    <!-- FOLGAS -->
-    <div class="card breaks-card">
-
-      <h3>
-        Folgas
-      </h3>
+    <!-- <div class="card breaks-card">
+      <h3>Folgas</h3>
 
       <div class="break-list">
 
@@ -303,8 +269,7 @@
         }
 
       </div>
-
-    </div>
-
+    </div> -->
+    </section>
   </div>
 </section>

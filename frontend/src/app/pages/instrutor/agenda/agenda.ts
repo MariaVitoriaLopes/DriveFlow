@@ -3,6 +3,13 @@ import { Component, OnInit, inject } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { HeaderInstrutor } from '../../../components/layout/header-instrutor/header-instrutor';
+import { RouterLink } from "@angular/router";
+import { CalendarComponent } from '../../../components/layout/calendario/calendario';
+
+interface Aula {
+  horario: string;
+  aluno?: string;
+}
 
 interface HorarioAgenda {
   dia: string;
@@ -18,15 +25,17 @@ interface Aula {
 
 @Component({
   selector: 'app-agenda',
-  standalone: true,
-  imports: [CommonModule, HttpClientModule, HeaderInstrutor, RouterLink],
+  imports: [HeaderInstrutor, RouterLink, CalendarComponent],
   templateUrl: './agenda.html',
   styleUrl: './agenda.scss',
 })
-export class Agenda implements OnInit {
-  private http = inject(HttpClient);
+export class Agenda {
+  selectedDate = new Date();
 
-  usuarioId = '';
+  onDateSelected(date: Date): void {
+    this.selectedDate = date;
+    console.log('Data selecionada:', date);
+  }
 
   hoje = new Date();
 

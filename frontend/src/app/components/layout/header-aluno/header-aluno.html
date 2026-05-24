@@ -1,25 +1,76 @@
-<header>
-    <picture>
+<button class="menu-toggle" type="button" (click)="toggleMenu()">
+
+  <span [class.open]="menuAberto">❯</span>
+
+</button>
+
+<div class="overlay" [class.show]="menuAberto" (click)="fecharMenuMobile()">
+</div>
+
+<header class="sidebar" [class.open]="menuAberto">
+
+  <div class="sidebar-top">
+
+    <picture class="logo">
       <a routerLink="/">
         <img src="/logos-svg/logo_primary_black.svg" alt="Logo">
       </a>
     </picture>
 
-    <nav>
-        <a routerLink="/aluno/home-aluno">Home</a>
-        <a routerLink="/aluno/agenda">Agenda</a>
-        <a routerLink="/aluno/aulas">Aulas</a>
-        <a routerLink="/aluno/desempenho">Desempenho</a>
-        <hr>
-        <a routerLink="/aluno/notificacoes">notificações</a>
-        <a [routerLink]="['/aluno/configuracoes']" [queryParams]="{ aba: 'pessoais' }">Configurações</a>
+    <nav class="sidebar-nav">
+
+      <a routerLink="/aluno/Home-aluno" routerLinkActive="active" (click)="fecharMenuMobile()">
+        Home
+      </a>
+
+      <a routerLink="/aluno/agenda" routerLinkActive="active" (click)="fecharMenuMobile()">
+        Agenda
+      </a>
+
+      <a routerLink="/aluno/aulas" routerLinkActive="active" (click)="fecharMenuMobile()">
+        Aulas
+      </a>
+
+      <a routerLink="/aluno/Desempenho" routerLinkActive="active" (click)="fecharMenuMobile()">
+        Desempenho
+      </a>
+
+      <hr>
+
+      <a routerLink="/aluno/notificacoes" routerLinkActive="active" (click)="fecharMenuMobile()">
+        Notificações
+      </a>
+
+      <a routerLink="/aluno/configuracoes" routerLinkActive="active" (click)="fecharMenuMobile()">
+        Configurações
+      </a>
+
     </nav>
 
-    <div class="ajuda">
-        <h5>Precisa de ajuda?</h5>
-        <p>Entre em contato conosco em caso de dúvidas</p>
-        <a href="">Suporte ao aluno</a>
+  </div>
+
+  <div class="sidebar-bottom">
+
+    <div class="card-box ajuda">
+
+      <h5>Precisa de ajuda?</h5>
+
+      <p>
+        Entre em contato conosco em caso de dúvidas
+      </p>
+
+      <a routerLink="/suporte">
+        Suporte ao aluno
+      </a>
+
     </div>
 
-    <a href="">Encerrar sessão</a>
+    <button class="logout-btn" type="button">
+      <a routerLink="/">
+        Encerrar sessão
+      </a>
+    </button>
+
+  </div>
+
 </header>
