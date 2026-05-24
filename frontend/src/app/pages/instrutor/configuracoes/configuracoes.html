@@ -55,15 +55,18 @@
       <div class="header">
         <h2>Locais de atendimento</h2>
 
+        <!-- Botão chama método do componente filho -->
         <button
           type="button"
           class="btn-add"
+          (click)="formLocais.adicionarEnderecoTemporario()"
         >
           Adicionar novo endereço
         </button>
       </div>
 
-      <app-form-locais-atendimento #formLocais></app-form-locais-atendimento>
+      <!-- Formulário de locais de atendimento -->
+      <app-form-locais-atendimento #formLocais [usuarioId]="usuario?.id"></app-form-locais-atendimento>
     </div>
 
     <div *ngIf="abaAtiva === 'veiculo'">

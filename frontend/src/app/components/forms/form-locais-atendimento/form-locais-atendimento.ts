@@ -31,17 +31,13 @@ export interface LocalAtendimento {
 })
 export class FormLocaisAtendimento implements OnInit, OnChanges {
   formLocais!: FormGroup;
-
   @Input() usuarioId = '';
 
   apiUrl = 'http://localhost:8081/api/instrutores/configuracoes';
-
   modoEdicao: { [index: number]: boolean } = {};
+  private enderecoTemporarioIndex: number | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private http: HttpClient
-  ) {}
+  constructor(private fb: FormBuilder, private http: HttpClient) {}
 
   ngOnInit(): void {
     this.formLocais = this.fb.group({
@@ -87,35 +83,6 @@ export class FormLocaisAtendimento implements OnInit, OnChanges {
     return grupo;
   }
 
-  carregarLocaisDoBanco(): void {
-    if (!this.usuarioId) {
-      console.error('ID do usuário não encontrado.');
-      return;
-    }
-
-    this.http.get<any>(`${this.apiUrl}/${this.usuarioId}`).subscribe({
-      next: (instrutor) => {
-        this.enderecos.clear();
-        this.modoEdicao = {};
-
-        const locais = instrutor.locaisAtendimento || [];
-
-        locais.forEach((local: LocalAtendimento, index: number) => {
-          this.enderecos.push(this.criarEndereco({
-            ...local,
-            titulo: `Endereço ${index + 1}`
-          }));
-
-          this.modoEdicao[index] = false;
-        });
-      },
-      error: (err) => {
-        console.error('Erro ao carregar locais:', err);
-        alert('Erro ao carregar locais de atendimento.');
-      }
-    });
-  }
-
   adicionarEnderecoTemporario(): void {
     const novo = this.fb.group({
       id: [''],
@@ -132,10 +99,11 @@ export class FormLocaisAtendimento implements OnInit, OnChanges {
 
     this.monitorarCep(novo);
 
-    this.enderecos.push(novo);
-
-    const index = this.enderecos.length - 1;
-    this.modoEdicao[index] = true;
+    // adiciona no topo para preencher primeiro
+    this.enderecos.insert(0, novo);
+    this.enderecoTemporarioIndex = 0;
+    this.modoEdicao[0] = true;
+    novo.enable();
   }
 
   editarEndereco(index: number): void {
@@ -162,18 +130,11 @@ export class FormLocaisAtendimento implements OnInit, OnChanges {
       next: (instrutor) => {
         this.enderecos.clear();
         this.modoEdicao = {};
-
         const locais = instrutor.locaisAtendimento || [];
-
         locais.forEach((endereco: LocalAtendimento, i: number) => {
-          this.enderecos.push(this.criarEndereco({
-            ...endereco,
-            titulo: `Endereço ${i + 1}`
-          }));
-
+          this.enderecos.push(this.criarEndereco({...endereco, titulo: `Endereço ${i + 1}`}));
           this.modoEdicao[i] = false;
         });
-
         alert('Endereço deletado com sucesso!');
       },
       error: (err) => {
@@ -214,18 +175,12 @@ export class FormLocaisAtendimento implements OnInit, OnChanges {
       next: (instrutor) => {
         this.enderecos.clear();
         this.modoEdicao = {};
-
         const locaisAtualizados = instrutor.locaisAtendimento || [];
-
         locaisAtualizados.forEach((endereco: LocalAtendimento, index: number) => {
-          this.enderecos.push(this.criarEndereco({
-            ...endereco,
-            titulo: `Endereço ${index + 1}`
-          }));
-
+          this.enderecos.push(this.criarEndereco({...endereco, titulo: `Endereço ${index + 1}`}));
           this.modoEdicao[index] = false;
         });
-
+        this.enderecoTemporarioIndex = null;
         alert('Alterações salvas com sucesso!');
       },
       error: (err) => {
@@ -238,12 +193,8 @@ export class FormLocaisAtendimento implements OnInit, OnChanges {
   monitorarCep(grupo: FormGroup): void {
     grupo.get('cep')?.valueChanges.subscribe((cep) => {
       if (!cep || grupo.disabled) return;
-
       const cepLimpo = String(cep).replace(/\D/g, '');
-
-      if (cepLimpo.length === 8) {
-        this.buscarEnderecoPorCep(cepLimpo, grupo);
-      }
+      if (cepLimpo.length === 8) this.buscarEnderecoPorCep(cepLimpo, grupo);
     });
   }
 
@@ -260,6 +211,26 @@ export class FormLocaisAtendimento implements OnInit, OnChanges {
         }
       },
       error: (err) => console.error('Erro ao buscar CEP:', err)
+    });
+  }
+
+  private carregarLocaisDoBanco(): void {
+    if (!this.usuarioId) return;
+
+    this.http.get<any>(`${this.apiUrl}/${this.usuarioId}`).subscribe({
+      next: (instrutor) => {
+        this.enderecos.clear();
+        this.modoEdicao = {};
+        const locais = instrutor.locaisAtendimento || [];
+        locais.forEach((local: LocalAtendimento, index: number) => {
+          this.enderecos.push(this.criarEndereco({...local, titulo: `Endereço ${index + 1}`}));
+          this.modoEdicao[index] = false;
+        });
+      },
+      error: (err) => {
+        console.error('Erro ao carregar locais:', err);
+        alert('Erro ao carregar locais de atendimento.');
+      }
     });
   }
 }

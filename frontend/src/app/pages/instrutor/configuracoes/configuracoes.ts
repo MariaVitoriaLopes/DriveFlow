@@ -3,11 +3,12 @@ import {
   inject,
   OnInit,
   ChangeDetectorRef,
+  ViewChild
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ActivatedRoute,Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { HeaderInstrutor } from '../../../components/layout/header-instrutor/header-instrutor';
 import { FormVeiculos, Veiculo } from '../../../components/forms/form-veiculos/form-veiculos';
@@ -32,10 +33,10 @@ type AbaConfig = 'pessoais' | 'endereco' | 'veiculo' | 'documentos' | 'configura
     FormLocaisAtendimento,
     FormInformacoesPessoais,
     ConfigSistema,
-    FormDocumentos,
+    FormDocumentos
   ],
   templateUrl: './configuracoes.html',
-  styleUrls: ['./configuracoes.scss'],
+  styleUrls: ['./configuracoes.scss']
 })
 export class Configuracoes implements OnInit {
   private fb = inject(FormBuilder);
@@ -52,10 +53,7 @@ export class Configuracoes implements OnInit {
   abasValidas: AbaConfig[] = ['pessoais', 'endereco', 'veiculo', 'documentos', 'configuracoes'];
   abaAtiva: AbaConfig = 'pessoais';
 
-  usuario: any = {
-    nome: 'João Santos'
-  };
-
+  usuario: any = { nome: 'João Santos' };
   veiculos: Veiculo[] = [];
   mostrandoFormNovoVeiculo = false;
   modalAberto = false;
@@ -66,16 +64,6 @@ export class Configuracoes implements OnInit {
     senha: [''],
     cpf: [''],
     dataNascimento: ['']
-  });
-
-  formEndereco = this.fb.group({
-    cep: [''],
-    logradouro: [''],
-    numero: [''],
-    complemento: [''],
-    bairro: [''],
-    cidade: [''],
-    uf: ['']
   });
 
   formVeiculo = this.fb.group({
@@ -95,12 +83,14 @@ export class Configuracoes implements OnInit {
     emailPromocional: [false]
   });
 
+  // referência para o componente de locais de atendimento
+  @ViewChild('formLocais') formLocais!: FormLocaisAtendimento;
+
   ngOnInit(): void {
     this.carregarUsuarioLogado();
 
     this.route.queryParams.subscribe((params: any) => {
       const aba = params['aba'];
-
       if (aba && this.abasValidas.includes(aba)) {
         this.abaAtiva = aba;
       }
@@ -109,33 +99,33 @@ export class Configuracoes implements OnInit {
     this.carregarConfiguracoes();
   }
 
-carregarUsuarioLogado(): void {
-  const usuarioStorage = localStorage.getItem('usuario');
-  const usuarioIdStorage = localStorage.getItem('usuarioId');
+  carregarUsuarioLogado(): void {
+    const usuarioStorage = localStorage.getItem('usuario');
+    const usuarioIdStorage = localStorage.getItem('usuarioId');
 
-  if (usuarioStorage) {
-    try {
-      this.usuarioLogado = JSON.parse(usuarioStorage);
-      this.usuario = this.usuarioLogado;
-    } catch (error) {
-      console.error('Erro ao converter usuário do localStorage:', error);
-      this.usuarioLogado = {};
+    if (usuarioStorage) {
+      try {
+        this.usuarioLogado = JSON.parse(usuarioStorage);
+        this.usuario = this.usuarioLogado;
+      } catch (error) {
+        console.error('Erro ao converter usuário do localStorage:', error);
+        this.usuarioLogado = {};
+      }
     }
+
+    this.usuarioId =
+      usuarioIdStorage ||
+      this.usuarioLogado.id ||
+      this.usuarioLogado?.usuario?.id ||
+      '';
+
+    if (this.usuarioId) {
+      localStorage.setItem('usuarioId', this.usuarioId);
+    }
+
+    console.log('USUÁRIO LOGADO:', this.usuarioLogado);
+    console.log('ID USADO NAS CONFIGURAÇÕES:', this.usuarioId);
   }
-
-  this.usuarioId =
-    usuarioIdStorage ||
-    this.usuarioLogado.id ||
-    this.usuarioLogado?.usuario?.id ||
-    '';
-
-  if (this.usuarioId) {
-    localStorage.setItem('usuarioId', this.usuarioId);
-  }
-
-  console.log('USUÁRIO LOGADO:', this.usuarioLogado);
-  console.log('ID USADO NAS CONFIGURAÇÕES:', this.usuarioId);
-}
 
   carregarConfiguracoes(): void {
     if (!this.usuarioId) {
@@ -146,7 +136,6 @@ carregarUsuarioLogado(): void {
     this.http.get<any>(`${this.apiUrl}/${this.usuarioId}`).subscribe({
       next: (instrutor) => {
         console.log('CONFIGURAÇÕES RECEBIDAS:', instrutor);
-
         this.usuario = instrutor;
         this.veiculos = instrutor.veiculos || [];
 
@@ -168,30 +157,26 @@ carregarUsuarioLogado(): void {
     this.abaAtiva = aba;
   }
 
-  abrirFormNovoVeiculo(): void {
-    this.mostrandoFormNovoVeiculo = true;
+  // endereço
+  adicionarNovoEndereco() {
+    if (this.formLocais) {
+      this.formLocais.adicionarEnderecoTemporario();
+    }
   }
 
-  cancelarNovoVeiculo(): void {
-    this.mostrandoFormNovoVeiculo = false;
-  }
-
-  salvarNovoVeiculo(veiculo: Veiculo): void {
+  // resto das funções de veículos, documentos, configurações e apagar conta continuam iguais
+  abrirFormNovoVeiculo(): void { this.mostrandoFormNovoVeiculo = true; }
+  cancelarNovoVeiculo(): void { this.mostrandoFormNovoVeiculo = false; }
+  salvarNovoVeiculo(veiculo: Veiculo): void { 
     const novaLista = [...this.veiculos, veiculo];
     this.salvarListaVeiculos(novaLista);
   }
-
   atualizarVeiculo(veiculoAtualizado: Veiculo): void {
-    const novaLista = this.veiculos.map(v =>
-      v.id === veiculoAtualizado.id ? veiculoAtualizado : v
-    );
-
+    const novaLista = this.veiculos.map(v => v.id === veiculoAtualizado.id ? veiculoAtualizado : v);
     this.salvarListaVeiculos(novaLista);
   }
-
   deletarVeiculo(veiculo: Veiculo): void {
     if (!veiculo.id) return;
-
     this.http.delete<any>(`${this.apiUrl}/${this.usuarioId}/veiculos/${veiculo.id}`).subscribe({
       next: (instrutor) => {
         this.veiculos = instrutor.veiculos || [];
@@ -204,16 +189,13 @@ carregarUsuarioLogado(): void {
       }
     });
   }
-
   salvarListaVeiculos(lista: Veiculo[]): void {
     this.http.put<any>(`${this.apiUrl}/${this.usuarioId}/veiculos`, lista).subscribe({
       next: (instrutor) => {
         this.veiculos = instrutor.veiculos || [];
         this.mostrandoFormNovoVeiculo = false;
         this.abaAtiva = 'veiculo';
-
         this.cdr.detectChanges();
-
         alert('Veículo salvo com sucesso!');
       },
       error: (err) => {
@@ -223,77 +205,39 @@ carregarUsuarioLogado(): void {
     });
   }
 
-  abrirModal(): void {
-    this.modalAberto = true;
-  }
-
-  fecharModal(): void {
+  abrirModal(): void { this.modalAberto = true; }
+  fecharModal(): void { this.modalAberto = false; }
+  selecionarDocumento(tipo: string): void {
+    console.log('Documento selecionado:', tipo);
     this.modalAberto = false;
+    this.router.navigate(['/instrutor/add-novo-documento'], { queryParams: { tipoDocumento: tipo } });
   }
 
-selecionarDocumento(tipo: string): void {
-
-  console.log('Documento selecionado:', tipo);
-
-  this.modalAberto = false;
-
-  this.router.navigate(['/instrutor/add-novo-documento'], {
-    queryParams: {
-      tipoDocumento: tipo
-    }
-  });
-}
-
-  trackByVeiculoId(index: number, veiculo: Veiculo): string {
-    return veiculo.id || index.toString();
-  }
-
-  salvarPessoais(): void {
-    console.log(this.formPessoais.value);
-  }
-
-  salvarEndereco(): void {
-    console.log(this.formEndereco.value);
-  }
-
-  salvarVeiculo(): void {
-    console.log(this.formVeiculo.value);
-  }
-
-  salvarDocumentos(): void {
-    console.log(this.formDocumentos.value);
-  }
-
-  salvarConfiguracoes(): void {
-    console.log(this.formConfiguracoes.value);
-  }
-
+  trackByVeiculoId(index: number, veiculo: Veiculo): string { return veiculo.id || index.toString(); }
+  salvarPessoais(): void { console.log(this.formPessoais.value); }
+  salvarVeiculo(): void { console.log(this.formVeiculo.value); }
+  salvarDocumentos(): void { console.log(this.formDocumentos.value); }
+  salvarConfiguracoes(): void { console.log(this.formConfiguracoes.value); }
   apagarMinhaConta(): void {
-  if (!this.usuarioId) {
-    alert('ID do usuário não encontrado. Faça login novamente.');
-    return;
-  }
-
-  const confirmar = confirm(
-    'Tem certeza que deseja apagar sua conta? Essa ação não poderá ser desfeita.'
-  );
-
-  if (!confirmar) return;
-
-  this.http.delete(`http://localhost:8081/api/usuarios/${this.usuarioId}`).subscribe({
-    next: () => {
-      alert('Conta apagada com sucesso.');
-
-      localStorage.removeItem('usuario');
-      localStorage.removeItem('usuarioId');
-      localStorage.removeItem('token');
-
-      this.router.navigate(['/login']);
-    },
-    error: (err) => {
-      console.error('Erro ao apagar conta:', err);
-      alert('Erro ao apagar conta. Verifique se a rota DELETE /api/usuarios/{id} existe no backend.');
+    if (!this.usuarioId) {
+      alert('ID do usuário não encontrado. Faça login novamente.');
+      return;
     }
-  });
-}
+    const confirmar = confirm('Tem certeza que deseja apagar sua conta? Essa ação não poderá ser desfeita.');
+    if (!confirmar) return;
+
+    this.http.delete(`http://localhost:8081/api/usuarios/${this.usuarioId}`).subscribe({
+      next: () => {
+        alert('Conta apagada com sucesso.');
+        localStorage.removeItem('usuario');
+        localStorage.removeItem('usuarioId');
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error('Erro ao apagar conta:', err);
+        alert('Erro ao apagar conta. Verifique se a rota DELETE /api/usuarios/{id} existe no backend.');
+      }
+    });
+  }
 }
