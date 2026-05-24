@@ -4,8 +4,9 @@
   <h2>Agenda</h2>
 
   <div class="content">
-    <div class="card calendar-card">
-      <div class="year">{{ anoAtual }}</div>
+    <section class="top">
+      <div>
+        <!-- <div class="year">{{ anoAtual }}</div> 
 
       <div class="calendar-header">
         <button>‹</button>
@@ -21,9 +22,9 @@
         <span>Q</span>
         <span>S</span>
         <span>S</span>
-      </div>
-
-      <div class="calendar-days">
+      </div> -->
+      <app-calendar [selectedDate]="selectedDate" (dateSelected)="onDateSelected($event)" class="calendario-agenda"></app-calendar>
+      <!-- <div class="calendar-days">
         @for (dia of diasCalendario; track $index) {
           <div class="day">
             @if (dia) {
@@ -33,11 +34,12 @@
 
               @if (temAula(dia)) {
                 <small></small>
-              }
-            }
+                }
+                }
           </div>
-        }
-      </div>
+          } 
+        </div>
+        -->
     </div>
 
     <div class="card today-card">
@@ -60,8 +62,9 @@
         }
       </div>
     </div>
-
-    <div class="card student-card">
+    </section>
+    <section class="bottom">
+      <div class="card student-card">
       <div class="student-icons">
         <span>♔</span>
         <span>☏</span>
@@ -75,24 +78,24 @@
           <small>Primeira aula</small>
         </div>
       </div>
-
+      
       <p><strong>Horário:</strong> 08:00</p>
-
+      
       <p>
         <strong>Local de encontro:</strong>
         Av. Paulista, 1000, Bela Vista, São Paulo - SP
       </p>
-
+      
       <div class="actions">
         <button class="cancel">Cancelar aula</button>
         <button class="start">Iniciar aula</button>
       </div>
     </div>
-
+    
     <div class="middle-column">
       <div class="card availability">
         <span>Disponibilidade para novas aulas</span>
-
+        
         <label class="switch">
           <input type="checkbox" checked />
           <span></span>
@@ -101,7 +104,7 @@
 
       <div class="card summary-card">
         <h3>Resumo da sua agenda</h3>
-
+        
         <div class="dots-week">
           <div>
             <span>Dom</span>
@@ -148,7 +151,7 @@
         <button class="edit" routerLink="/instrutor/cadastro-agenda">Editar agenda</button>
       </div>
     </div>
-
+    
     <div class="card hours-card">
       <h3>Horários</h3>
 
@@ -162,16 +165,22 @@
 
         @for (item of horarios; track $index) {
           <div class="table-row">
-            <span>{{ item.dia }}</span>
-            <span>{{ item.inicio }}</span>
-            <span>{{ item.fim }}</span>
+            <div>
+              <span>{{ item.dia }}</span>
+            </div>
+            <div>
+              <span>{{ item.inicio }}</span>
+            </div>
+            <div>
+              <span>{{ item.fim }}</span>
+            </div>
             <input type="checkbox" [checked]="item.bloqueio" />
           </div>
         }
       </div>
     </div>
 
-    <div class="card breaks-card">
+    <!-- <div class="card breaks-card">
       <h3>Folgas</h3>
 
       <div class="break-list">
@@ -182,6 +191,7 @@
           </div>
         }
       </div>
-    </div>
+    </div> -->
+    </section>
   </div>
 </section>

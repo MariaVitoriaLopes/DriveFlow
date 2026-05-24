@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { HeaderInstrutor } from '../../../components/layout/header-instrutor/header-instrutor';
 import { RouterLink } from "@angular/router";
+import { CalendarComponent } from '../../../components/layout/calendario/calendario';
 
 interface Aula {
   horario: string;
@@ -16,11 +17,17 @@ interface HorarioAgenda {
 
 @Component({
   selector: 'app-agenda',
-  imports: [HeaderInstrutor, RouterLink],
+  imports: [HeaderInstrutor, RouterLink, CalendarComponent],
   templateUrl: './agenda.html',
   styleUrl: './agenda.scss',
 })
 export class Agenda {
+  selectedDate = new Date();
+
+  onDateSelected(date: Date): void {
+    this.selectedDate = date;
+    console.log('Data selecionada:', date);
+  }
 
   hoje = new Date();
 

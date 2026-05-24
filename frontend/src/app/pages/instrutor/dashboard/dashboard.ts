@@ -60,11 +60,8 @@ export class Dashboard {
   }
 
   onDateSelected(date: Date): void {
-
     this.selectedDate = date;
-
     console.log('Data selecionada:', date);
-
   }
 
   private generateWeekStats(): void {
