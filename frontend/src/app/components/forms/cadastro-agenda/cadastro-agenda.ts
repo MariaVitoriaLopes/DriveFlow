@@ -1,38 +1,44 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
-  AbstractControl,
   FormArray,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  Validators
+  Validators,
+  AbstractControl,
+  ValidationErrors
 } from '@angular/forms';
+
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { HeaderInstrutor } from '../../layout/header-instrutor/header-instrutor';
+import { Router } from '@angular/router';
+
+import { HeaderInstrutor } from '../../../components/layout/header-instrutor/header-instrutor';
 
 @Component({
   selector: 'app-cadastro-agenda',
   standalone: true,
   imports: [
     CommonModule,
-     ReactiveFormsModule, 
+    ReactiveFormsModule,
     HttpClientModule,
-    HeaderInstrutor,
+    HeaderInstrutor
   ],
   templateUrl: './cadastro-agenda.html',
   styleUrls: ['./cadastro-agenda.scss']
 })
 export class CadastroAgenda implements OnInit {
+
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
-
-  apiUrl = 'http://localhost:8081/api/instrutores/agenda';
-  usuarioId = localStorage.getItem('usuarioId') || '';
+  private router = inject(Router);
 
   salvando = false;
 
+  agendaForm!: FormGroup;
+
   duracoesAula = [45, 50, 55, 60];
+
   opcoesDe5A30 = [5, 10, 15, 20, 25, 30];
 
   diasSemana = [
@@ -45,14 +51,24 @@ export class CadastroAgenda implements OnInit {
     { nome: 'Domingo', valor: 'DOMINGO' }
   ];
 
-  agendaForm!: FormGroup;
-
   ngOnInit(): void {
+
     this.agendaForm = this.fb.group({
-      duracaoAula: [60, Validators.required],
-      valorAula: [70, [Validators.required, Validators.min(1)]],
-      intervaloAula: [15, Validators.required],
-      toleranciaEspera: [15, Validators.required],
+
+      duracaoAula: [50, Validators.required],
+
+      valorAula: [
+        1,
+        [
+          Validators.required,
+          Validators.min(1)
+        ]
+      ],
+
+      intervaloAula: [10, Validators.required],
+
+      toleranciaEspera: [5, Validators.required],
+
       disponibilidades: this.fb.array([])
     });
 
@@ -63,78 +79,101 @@ export class CadastroAgenda implements OnInit {
     return this.agendaForm.get('disponibilidades') as FormArray;
   }
 
-  getDiaControl(diaSemana: string): FormGroup {
-    const existente = this.disponibilidades.controls.find(
-      control => control.get('diaSemana')?.value === diaSemana
-    );
-
-    if (existente) {
-      return existente as FormGroup;
-    }
+  criarDiaForm(dia: string): FormGroup {
 
     return this.fb.group({
-      diaSemana: [diaSemana],
-      disponivel: [false],
-      horaInicio: ['08:00'],
-      horaFim: ['12:00'],
-      bloqueado: [true]
+      diaSemana: [dia],
+      disponivel: [true],
+      bloqueado: [false],
+
+      horaInicio: [
+        '08:00',
+        Validators.required
+      ],
+
+      horaFim: [
+        '18:00',
+        Validators.required
+      ]
+
+    }, {
+      validators: this.validarHorario
     });
   }
 
-  criarDiaForm(diaSemana: string): FormGroup {
-    return this.fb.group(
-      {
-        diaSemana: [diaSemana, Validators.required],
-        disponivel: [true],
-        horaInicio: ['08:00', Validators.required],
-        horaFim: ['12:00', Validators.required],
-        bloqueado: [false]
-      },
-      { validators: this.validarHorario }
-    );
+  validarHorario(control: AbstractControl): ValidationErrors | null {
+
+    const inicio = control.get('horaInicio')?.value;
+    const fim = control.get('horaFim')?.value;
+
+    if (!inicio || !fim) return null;
+
+    if (inicio < '06:00' || inicio > '22:00') {
+      return { horarioInvalido: true };
+    }
+
+    if (fim > '23:00') {
+      return { horarioInvalido: true };
+    }
+
+    if (inicio >= fim) {
+      return { horarioInvalido: true };
+    }
+
+    return null;
   }
 
-  toggleDia(diaSemana: string): void {
+  toggleDia(dia: string): void {
+
     const index = this.disponibilidades.controls.findIndex(
-      control => control.get('diaSemana')?.value === diaSemana
+      control => control.get('diaSemana')?.value === dia
     );
 
     if (index >= 0) {
-      const dia = this.disponibilidades.at(index) as FormGroup;
-      const disponivel = dia.get('disponivel')?.value;
 
-      dia.patchValue({
-        disponivel: !disponivel,
-        bloqueado: disponivel
-      });
+      this.disponibilidades.removeAt(index);
 
-      this.atualizarCamposBloqueados(dia);
-      return;
+    } else {
+
+      this.disponibilidades.push(
+        this.criarDiaForm(dia)
+      );
     }
+  }
 
-    this.disponibilidades.push(this.criarDiaForm(diaSemana));
+  getDiaControl(dia: string): FormGroup {
+
+    const control = this.disponibilidades.controls.find(
+      c => c.get('diaSemana')?.value === dia
+    );
+
+    return control as FormGroup;
+  }
+
+  getNomeDia(valor: string): string {
+
+    return this.diasSemana.find(
+      d => d.valor === valor
+    )?.nome || valor;
   }
 
   alternarBloqueio(index: number): void {
-    const dia = this.disponibilidades.at(index) as FormGroup;
-    const bloqueado = dia.get('bloqueado')?.value;
 
-    dia.patchValue({
-      disponivel: !bloqueado
-    });
+    const dia = this.disponibilidades.at(index);
 
-    this.atualizarCamposBloqueados(dia);
-  }
-
-  atualizarCamposBloqueados(dia: FormGroup): void {
     const bloqueado = dia.get('bloqueado')?.value;
 
     if (bloqueado) {
-      dia.get('horaInicio')?.disable({ emitEvent: false });
-      dia.get('horaFim')?.disable({ emitEvent: false });
+
+      dia.get('horaInicio')?.disable();
+
+      dia.get('horaFim')?.disable();
+
     } else {
-      dia.get('horaInicio')?.enable({ emitEvent: false });
-      dia.get('horaFim')?.enable({ emitEvent: false });
+
+      dia.get('horaInicio')?.enable();
+
+      dia.get('horaFim')?.enable();
     }
   }
 
@@ -142,110 +181,107 @@ export class CadastroAgenda implements OnInit {
     this.disponibilidades.removeAt(index);
   }
 
-  validarHorario(control: AbstractControl) {
-    const horaInicio = control.get('horaInicio')?.value;
-    const horaFim = control.get('horaFim')?.value;
-    const bloqueado = control.get('bloqueado')?.value;
-
-    if (bloqueado) return null;
-
-    if (!horaInicio || !horaFim) return { horarioInvalido: true };
-
-    const inicio = CadastroAgenda.converterHoraParaMinutos(horaInicio);
-    const fim = CadastroAgenda.converterHoraParaMinutos(horaFim);
-
-    const seisHoras = 6 * 60;
-    const vinteDuas = 22 * 60;
-    const vinteTres = 23 * 60;
-
-    if (
-      inicio < seisHoras ||
-      inicio > vinteDuas ||
-      fim <= inicio ||
-      fim > vinteTres
-    ) {
-      return { horarioInvalido: true };
-    }
-
-    return null;
-  }
-
-  static converterHoraParaMinutos(hora: string): number {
-    const [h, m] = hora.split(':').map(Number);
-    return h * 60 + m;
-  }
-
-  getNomeDia(valor: string): string {
-    return this.diasSemana.find(dia => dia.valor === valor)?.nome || valor;
-  }
-
   carregarAgenda(): void {
-    if (!this.usuarioId) return;
 
-    this.http
-      .get<any>(`${this.apiUrl}/${this.usuarioId}`)
-      .subscribe({
-        next: agenda => {
-          if (!agenda) return;
+    const usuarioId = localStorage.getItem('usuarioId');
 
-          this.agendaForm.patchValue({
-            duracaoAula: agenda.duracaoAula ?? 60,
-            valorAula: agenda.valorAula ?? 70,
-            intervaloAula: agenda.intervaloAula ?? 15,
-            toleranciaEspera: agenda.toleranciaEspera ?? 15
+    if (!usuarioId) return;
+
+    this.http.get<any>(
+      `http://localhost:8081/api/instrutores/agenda/${usuarioId}`
+    ).subscribe({
+
+      next: (agenda) => {
+
+        if (!agenda) return;
+
+        this.agendaForm.patchValue({
+
+          duracaoAula: agenda.duracaoAula,
+          valorAula: agenda.valorAula,
+          intervaloAula: agenda.intervaloAula,
+          toleranciaEspera: agenda.toleranciaEspera
+        });
+
+        this.disponibilidades.clear();
+
+        if (agenda.disponibilidades?.length) {
+
+          agenda.disponibilidades.forEach((dia: any) => {
+
+            const form = this.criarDiaForm(dia.diaSemana);
+
+            form.patchValue(dia);
+
+            this.disponibilidades.push(form);
+
+            if (dia.bloqueado) {
+
+              form.get('horaInicio')?.disable();
+
+              form.get('horaFim')?.disable();
+            }
           });
-
-          this.disponibilidades.clear();
-
-          agenda.disponibilidades?.forEach((item: any) => {
-            const diaForm = this.criarDiaForm(item.diaSemana);
-
-            diaForm.patchValue({
-              disponivel: !item.bloqueado,
-              horaInicio: item.horaInicio,
-              horaFim: item.horaFim,
-              bloqueado: item.bloqueado
-            });
-
-            this.atualizarCamposBloqueados(diaForm);
-            this.disponibilidades.push(diaForm);
-          });
-        },
-        error: () => {
-          console.log('Nenhuma agenda cadastrada ainda.');
         }
-      });
+      },
+
+      error: (erro) => {
+        console.log('Agenda ainda não cadastrada', erro);
+      }
+    });
   }
 
   salvarAlteracoes(): void {
+
     if (this.agendaForm.invalid) {
+
       this.agendaForm.markAllAsTouched();
+
       return;
     }
 
-    const payload = {
-      usuarioId: this.usuarioId,
-      ...this.agendaForm.getRawValue()
-    };
-
     this.salvando = true;
 
-    this.http
-      .put(`${this.apiUrl}/${this.usuarioId}`, payload)
-      .subscribe({
-        next: () => {
-          this.salvando = false;
-          alert('Agenda salva com sucesso!');
-        },
-        error: erro => {
-          this.salvando = false;
-          console.error(erro);
-          alert('Erro ao salvar agenda.');
-        }
-      });
+    const usuarioId = localStorage.getItem('usuarioId');
+
+    const payload = {
+
+      duracaoAula: this.agendaForm.value.duracaoAula,
+
+      valorAula: this.agendaForm.value.valorAula,
+
+      intervaloAula: this.agendaForm.value.intervaloAula,
+
+      toleranciaEspera: this.agendaForm.value.toleranciaEspera,
+
+      disponibilidades: this.disponibilidades.getRawValue()
+    };
+
+    this.http.put(
+      `http://localhost:8081/api/instrutores/agenda/${usuarioId}`,
+      payload
+    ).subscribe({
+
+      next: () => {
+
+        this.salvando = false;
+
+        this.router.navigate(['/instrutor/agenda']);
+      },
+
+      error: (erro) => {
+
+        this.salvando = false;
+
+        console.error('Erro ao salvar agenda:', erro);
+
+        alert('Erro ao salvar agenda.');
+      }
+    });
   }
 
   descartarAlteracoes(): void {
-    this.carregarAgenda();
+
+    this.router.navigate(['/instrutor/agenda']);
   }
 }

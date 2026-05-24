@@ -1,11 +1,13 @@
 package backend.controller;
 
+import backend.dto.InstrutorCardDTO;
 import backend.dto.RedefinirSenhaDTO;
 import backend.model.Usuario;
 import backend.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 
@@ -15,47 +17,55 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UsuarioController {
 
-    private final UsuarioService service; // 🔥 O nome da variável aqui é "service"
-
     @PostMapping("/cadastro")
     public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {
         System.out.println("Recebendo requisição de cadastro para o perfil: " + usuario.getPerfil());
-        Usuario usuarioSalvo = service.cadastrar(usuario);
+        Usuario usuarioSalvo = usuarioService.cadastrar(usuario);
         return ResponseEntity.ok(usuarioSalvo);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credenciais) {
         try {
-            Usuario usuarioLogado = service.login(credenciais.get("email"), credenciais.get("senha"));
+            Usuario usuarioLogado = usuarioService.login(credenciais.get("email"), credenciais.get("senha"));
             return ResponseEntity.ok(usuarioLogado);
         } catch (RuntimeException e) {
             return ResponseEntity.status(401).body(Map.of("mensagem", e.getMessage()));
         }
     }
 
+    // Padronizado como usuarioService para bater com todas as suas chamadas abaixo
+    private final UsuarioService usuarioService;
+
+    // Rota padrão para listar todos os usuários (caso use na listagem geral)
     @GetMapping
     public ResponseEntity<List<Usuario>> listarTodos() {
-        return ResponseEntity.ok(service.listarTodos());
+        return ResponseEntity.ok(usuarioService.listarTodos());
     }
 
-    @PutMapping("/{id}/dados-pessoais")
-    public ResponseEntity<Usuario> atualizarDados(@PathVariable String id, @RequestBody Usuario usuario) {
-        return ResponseEntity.ok(service.atualizarDadosPessoais(id, usuario));
-    }
-
-    // Alterar a Senha
+    // Rota para alterar/redefinir senha
     @PutMapping("/{id}/redefinir-senha")
     public ResponseEntity<String> alterarSenha(@PathVariable String id, @RequestBody RedefinirSenhaDTO dto) {
-        service.redefinirSenha(id, dto);
+        usuarioService.redefinirSenha(id, dto);
         return ResponseEntity.ok("Senha alterada com sucesso!");
     }
 
+    // 1️⃣ Endpoint para a home do Aluno (Listar cards dos instrutores)
+    @GetMapping("/instrutores")
+    public ResponseEntity<List<InstrutorCardDTO>> obterInstrutoresHome() {
+        return ResponseEntity.ok(usuarioService.listarInstrutoresParaHome());
+    }
 
+    // 3️⃣ Atualização dos dados pessoais que agora salva o endereço completo
+    @PutMapping("/{id}/dados-pessoais")
+    public ResponseEntity<Usuario> atualizarDados(@PathVariable String id, @RequestBody Usuario usuario) {
+        return ResponseEntity.ok(usuarioService.atualizarDadosPessoaisComEndereco(id, usuario));
+    }
+
+    // Rota para deletar conta do usuário
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarConta(@PathVariable String id) {
-
-        service.deletarConta(id);
+        usuarioService.deletarConta(id);
         return ResponseEntity.noContent().build();
     }
 }
