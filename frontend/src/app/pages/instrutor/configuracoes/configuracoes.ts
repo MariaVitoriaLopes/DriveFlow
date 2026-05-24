@@ -1,14 +1,22 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+
 import { HeaderInstrutor } from '../../../components/layout/header-instrutor/header-instrutor';
-import { FormInformacoesPessoais } from '../../../components/forms/form-informacoes-pessoais/form-informacoes-pessoais';
-import { FormLocaisAtendimento } from '../../../components/forms/form-locais-atendimento/form-locais-atendimento';
-import { FormVeiculos } from '../../../components/forms/form-veiculos/form-veiculos';
-import { FormDocumentos } from '../../../components/forms/form-documentos/form-documentos';
-import { ConfigSistema } from '../../../components/forms/config-sistema/config-sistema';
+import { FormVeiculos, Veiculo } from '../../../components/forms/form-veiculos/form-veiculos';
 import { FormAddNovoVeiculo } from '../../../components/forms/form-add-novo-veiculo/form-add-novo-veiculo';
+import { FormLocaisAtendimento } from '../../../components/forms/form-locais-atendimento/form-locais-atendimento';
+import { FormInformacoesPessoais } from '../../../components/forms/form-informacoes-pessoais/form-informacoes-pessoais';
+import { ConfigSistema } from '../../../components/forms/config-sistema/config-sistema';
+
+type AbaConfig = 'pessoais' | 'endereco' | 'veiculo' | 'documentos' | 'configuracoes';
 
 @Component({
   selector: 'app-configuracoes',
@@ -16,31 +24,39 @@ import { FormAddNovoVeiculo } from '../../../components/forms/form-add-novo-veic
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    HttpClientModule,
     HeaderInstrutor,
-    FormInformacoesPessoais,
-    FormLocaisAtendimento,
     FormVeiculos,
-    FormDocumentos,
-    ConfigSistema,
     FormAddNovoVeiculo,
+    FormLocaisAtendimento,
+    FormInformacoesPessoais,
+    ConfigSistema,
   ],
   templateUrl: './configuracoes.html',
   styleUrls: ['./configuracoes.scss'],
 })
 export class Configuracoes implements OnInit {
   private fb = inject(FormBuilder);
-  private router = inject(Router);
+  private http = inject(HttpClient);
+  private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
 
-  usuario: any;
+  apiUrl = 'http://localhost:8081/api/instrutores/configuracoes';
 
-  abaAtiva: 'pessoais' | 'endereco' | 'veiculo' | 'documentos' | 'configuracoes' = 'pessoais';
+  usuarioLogado: any = {};
+  usuarioId = '';
+
+  abasValidas: AbaConfig[] = ['pessoais', 'endereco', 'veiculo', 'documentos', 'configuracoes'];
+  abaAtiva: AbaConfig = 'pessoais';
+
+  usuario: any = {
+    nome: 'João Santos'
+  };
+
+  veiculos: Veiculo[] = [];
+  mostrandoFormNovoVeiculo = false;
   modalAberto = false;
 
-  // Controle para mostrar o form de adicionar novo veículo
-  mostraAddNovoVeiculo = false;
-
-  // Formulários
   formPessoais = this.fb.group({
     nome: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
@@ -77,71 +93,159 @@ export class Configuracoes implements OnInit {
   });
 
   ngOnInit(): void {
-    const user = localStorage.getItem('usuario');
-    if (user) {
-      this.usuario = JSON.parse(user);
+    this.carregarUsuarioLogado();
+
+    this.route.queryParams.subscribe((params: any) => {
+      const aba = params['aba'];
+
+      if (aba && this.abasValidas.includes(aba)) {
+        this.abaAtiva = aba;
+      }
+    });
+
+    this.carregarConfiguracoes();
+  }
+
+  carregarUsuarioLogado(): void {
+    const usuarioStorage = localStorage.getItem('usuario');
+    const usuarioIdStorage = localStorage.getItem('usuarioId');
+
+    if (usuarioStorage) {
+      try {
+        this.usuarioLogado = JSON.parse(usuarioStorage);
+        this.usuario = this.usuarioLogado;
+      } catch (error) {
+        console.error('Erro ao converter usuário do localStorage:', error);
+        this.usuarioLogado = {};
+      }
     }
 
-    this.route.queryParams.subscribe((params: { [key: string]: string }) => {
-      const aba = params['aba'];
-      if (aba && ['pessoais','endereco','veiculo','documentos','configuracoes'].includes(aba)) {
-        this.abaAtiva = aba as any;
+    this.usuarioId = usuarioIdStorage || this.usuarioLogado.id || '';
+
+    console.log('USUÁRIO LOGADO:', this.usuarioLogado);
+    console.log('ID USADO NAS CONFIGURAÇÕES:', this.usuarioId);
+  }
+
+  carregarConfiguracoes(): void {
+    if (!this.usuarioId) {
+      alert('ID do usuário não encontrado. Faça login novamente.');
+      return;
+    }
+
+    this.http.get<any>(`${this.apiUrl}/${this.usuarioId}`).subscribe({
+      next: (instrutor) => {
+        console.log('CONFIGURAÇÕES RECEBIDAS:', instrutor);
+
+        this.usuario = instrutor;
+        this.veiculos = instrutor.veiculos || [];
+
+        this.formPessoais.patchValue({
+          nome: instrutor.nome || this.usuarioLogado.nome || '',
+          email: instrutor.email || this.usuarioLogado.email || ''
+        });
+
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao buscar configurações:', err);
+        alert('Erro ao buscar dados do instrutor.');
       }
     });
   }
 
-  // =========================
-  // Métodos de troca de aba
-  // =========================
-  trocarAba(aba: 'pessoais' | 'endereco' | 'veiculo' | 'documentos' | 'configuracoes') {
+  trocarAba(aba: AbaConfig): void {
     this.abaAtiva = aba;
   }
 
-  abrirModal() {
+  abrirFormNovoVeiculo(): void {
+    this.mostrandoFormNovoVeiculo = true;
+  }
+
+  cancelarNovoVeiculo(): void {
+    this.mostrandoFormNovoVeiculo = false;
+  }
+
+  salvarNovoVeiculo(veiculo: Veiculo): void {
+    const novaLista = [...this.veiculos, veiculo];
+    this.salvarListaVeiculos(novaLista);
+  }
+
+  atualizarVeiculo(veiculoAtualizado: Veiculo): void {
+    const novaLista = this.veiculos.map(v =>
+      v.id === veiculoAtualizado.id ? veiculoAtualizado : v
+    );
+
+    this.salvarListaVeiculos(novaLista);
+  }
+
+  deletarVeiculo(veiculo: Veiculo): void {
+    if (!veiculo.id) return;
+
+    this.http.delete<any>(`${this.apiUrl}/${this.usuarioId}/veiculos/${veiculo.id}`).subscribe({
+      next: (instrutor) => {
+        this.veiculos = instrutor.veiculos || [];
+        this.cdr.detectChanges();
+        alert('Veículo deletado com sucesso!');
+      },
+      error: (err) => {
+        console.error('Erro ao deletar veículo:', err);
+        alert('Erro ao deletar veículo.');
+      }
+    });
+  }
+
+  salvarListaVeiculos(lista: Veiculo[]): void {
+    this.http.put<any>(`${this.apiUrl}/${this.usuarioId}/veiculos`, lista).subscribe({
+      next: (instrutor) => {
+        this.veiculos = instrutor.veiculos || [];
+        this.mostrandoFormNovoVeiculo = false;
+        this.abaAtiva = 'veiculo';
+
+        this.cdr.detectChanges();
+
+        alert('Veículo salvo com sucesso!');
+      },
+      error: (err) => {
+        console.error('Erro ao salvar veículo:', err);
+        alert('Erro ao salvar veículo.');
+      }
+    });
+  }
+
+  abrirModal(): void {
     this.modalAberto = true;
   }
 
-  fecharModal() {
+  fecharModal(): void {
     this.modalAberto = false;
   }
 
-  selecionarDocumento(tipo: 'CNH' | 'CERTIFICADO') {
+  selecionarDocumento(tipo: string): void {
+    console.log('Documento selecionado:', tipo);
     this.modalAberto = false;
-    this.router.navigate(['/instrutor/add-novo-documento'], { queryParams: { tipoDocumento: tipo } });
   }
 
-  // =========================
-  // Abrir form adicionar novo veículo
-  // =========================
-  abrirAddNovoVeiculo() {
-    this.mostraAddNovoVeiculo = true;
+  trackByVeiculoId(index: number, veiculo: Veiculo): string {
+    return veiculo.id || index.toString();
   }
 
-  // =========================
-  // Evento disparado quando veículo for salvo
-  // =========================
-  onVeiculoSalvo(veiculo: any) {
-    alert('Veículo cadastrado com sucesso!');
-    this.mostraAddNovoVeiculo = false;
-
-    // Aqui você pode atualizar a lista de veículos se tiver
-    console.log('Veículo cadastrado:', veiculo);
+  salvarPessoais(): void {
+    console.log(this.formPessoais.value);
   }
 
-  // =========================
-  // Métodos de salvar (opcional)
-  // =========================
-  salvarPessoais() { console.log(this.formPessoais.value); }
-  salvarEndereco() { console.log(this.formEndereco.value); }
-  salvarVeiculo() { console.log(this.formVeiculo.value); }
-  salvarDocumentos() { console.log(this.formDocumentos.value); }
-  salvarConfiguracoes() { console.log(this.formConfiguracoes.value); }
+  salvarEndereco(): void {
+    console.log(this.formEndereco.value);
+  }
 
-  descartarAlteracoes() {
-    this.formPessoais.reset();
-    this.formEndereco.reset();
-    this.formVeiculo.reset();
-    this.formDocumentos.reset();
-    this.formConfiguracoes.reset();
+  salvarVeiculo(): void {
+    console.log(this.formVeiculo.value);
+  }
+
+  salvarDocumentos(): void {
+    console.log(this.formDocumentos.value);
+  }
+
+  salvarConfiguracoes(): void {
+    console.log(this.formConfiguracoes.value);
   }
 }

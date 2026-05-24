@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-form-cadastro',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './form-cadastro.html',
   styleUrl: './form-cadastro.scss',
 })
@@ -21,73 +23,98 @@ export class FormCadastro implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  form = this.fb.group({
-    nome: ['', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
-    cpf: ['', [Validators.required]],
-    senha: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(8),
-        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s]+$/)
-      ]
-    ]
-  });
+  mostrarSenha = false;
+  mostrarRepetirSenha = false;
+
+  form = this.fb.group(
+    {
+      nome: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+      cpf: ['', [Validators.required]],
+      senha: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s]+$/)
+        ]
+      ],
+      confirmarSenha: ['', [Validators.required]],
+      termos: [false, [Validators.requiredTrue]]
+    },
+    { validators: this.senhasIguais }
+  );
 
   ngOnInit(): void {}
 
+  toggleSenha(): void {
+    this.mostrarSenha = !this.mostrarSenha;
+  }
+
+  toggleRepetirSenha(): void {
+    this.mostrarRepetirSenha = !this.mostrarRepetirSenha;
+  }
+
+  senhasIguais(form: AbstractControl) {
+    const senha = form.get('senha')?.value;
+    const confirmarSenha = form.get('confirmarSenha')?.value;
+
+    return senha === confirmarSenha ? null : { senhasDiferentes: true };
+  }
+
   onTipoChange(event: any) {
     this.isInstrutor = event.target.checked;
+    this.form.get('cpf')?.reset();
   }
 
   onCpfCnhInput(event: any) {
-  let valor: string = event.target.value.replace(/\D/g, '');
+    let valor: string = event?.target?.value?.replace(/\D/g, '') || '';
 
-  if (this.isInstrutor) {
-    // CNH: apenas números, máximo 11
-    if (valor.length > 11) valor = valor.slice(0, 11);
-  } else {
-    // CPF: XXX.XXX.XXX-XX
-    if (valor.length > 11) valor = valor.slice(0, 11);
-    if (valor.length > 9) valor = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
-    else if (valor.length > 6) valor = valor.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
-    else if (valor.length > 3) valor = valor.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+    if (this.isInstrutor) {
+      if (valor.length > 11) valor = valor.slice(0, 11);
+    } else {
+      if (valor.length > 11) valor = valor.slice(0, 11);
+
+      if (valor.length > 9) {
+        valor = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+      } else if (valor.length > 6) {
+        valor = valor.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+      } else if (valor.length > 3) {
+        valor = valor.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+      }
+    }
+
+    this.form.get('cpf')?.setValue(valor, { emitEvent: false });
   }
 
-  this.form.get('cpf')?.setValue(valor, { emitEvent: false });
-}
-
   onSubmit() {
-    if (this.form.valid) {
-
-      // 🔴 AJUSTE AQUI: Usando o operador '||' para garantir que nunca envie um valor nulo/vazio ao Java
-      const dadosParaEnviar = {
-        nome: this.form.value.nome || '',
-        email: this.form.value.email || '',
-        senha: this.form.value.senha || '',
-        cpf: this.form.value.cpf || '',
-        perfil: this.isInstrutor ? 'INSTRUTOR' : 'ALUNO',
-      };
-
-      console.log('Enviando para o MongoDB através do Java:', dadosParaEnviar);
-
-      this.http.post('http://localhost:8081/api/usuarios/cadastro', dadosParaEnviar)
-        .subscribe({
-          next: (resposta) => {
-            alert('Cadastro realizado com sucesso! Verifique seu banco de dados.');
-            this.form.reset();
-            this.isInstrutor = false; // Reseta a caixinha do instrutor também
-            this.router.navigate(['/login']);
-          },
-          error: (erro) => {
-            console.error('Erro na comunicação com o Backend:', erro);
-            alert('Erro ao cadastrar. O seu projeto Java está rodando na porta 8081?');
-          }
-        });
-    } else {
-      alert('Por favor, preencha todos os campos e cumpra os requisitos da senha.');
+    if (this.form.invalid) {
+      alert('Preencha todos os campos corretamente, aceite os termos e confirme a senha.');
+      this.form.markAllAsTouched();
+      return;
     }
+
+    const dadosParaEnviar = {
+      nome: this.form.value.nome || '',
+      email: this.form.value.email || '',
+      senha: this.form.value.senha || '',
+      cpf: this.form.value.cpf || '',
+      perfil: this.isInstrutor ? 'INSTRUTOR' : 'ALUNO',
+    };
+
+    this.http.post('http://localhost:8081/api/usuarios/cadastro', dadosParaEnviar)
+      .subscribe({
+        next: () => {
+          alert('Cadastro realizado com sucesso!');
+          this.form.reset();
+          this.isInstrutor = false;
+          this.router.navigate(['/login']);
+        },
+        error: (erro) => {
+          console.error('Erro na comunicação com o Backend:', erro);
+          alert('Erro ao cadastrar. Verifique se o backend está rodando na porta 8081.');
+        }
+      });
   }
 
   get searchSenha() {

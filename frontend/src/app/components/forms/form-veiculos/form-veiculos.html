@@ -1,22 +1,42 @@
-<div class="veiculo-card">
+<div class="veiculo-card" *ngIf="veiculo">
   <div class="header">
-    <h3>{{ veiculo.marca }} {{ veiculo.modelo }} {{ veiculo.cor }} {{ veiculo.ano }}</h3>
+    <h3>
+      {{ veiculo.marca || 'Marca' }}
+      {{ veiculo.modelo || 'Modelo' }}
+      {{ veiculo.cor || '' }}
+      {{ veiculo.ano || '' }}
+    </h3>
   </div>
 
   <div class="imagens">
-    <div class="foto-principal">
-      <img *ngIf="previewImagem" [src]="previewImagem" alt="Foto veículo" />
-      <label *ngIf="editMode" class="upload-btn">
-        <input type="file" (change)="onFileChange($event)" />
-        Alterar foto
-      </label>
-    </div>
-    <div class="outras-fotos">
-      <div class="foto-add">
-        <span>Adicionar foto</span>
-      </div>
-      <div class="foto-add">
-        <span>Adicionar foto</span>
+    <p>Fotos do veículo — máximo 4 imagens.</p>
+
+    <div class="fotos-grid">
+      <div
+        class="foto-box"
+        *ngFor="let img of fotosPreview; let i = index"
+        (click)="editMode ? abrirSeletorFoto(i) : null">
+
+        <input
+          type="file"
+          accept="image/png, image/jpeg, image/jpg"
+          hidden
+          #fotoInput
+          (change)="onFotoSelecionada($event, i)">
+
+        <img *ngIf="img" [src]="img" alt="Foto {{ i + 1 }}">
+
+        <span *ngIf="!img">
+          {{ editMode ? '+' : 'Sem foto' }}
+        </span>
+
+        <button
+          *ngIf="editMode && img"
+          type="button"
+          class="btn-remover-foto"
+          (click)="removerFoto(i); $event.stopPropagation()">
+          Remover
+        </button>
       </div>
     </div>
   </div>
@@ -26,10 +46,6 @@
       <div>
         <label>Marca</label>
         <input formControlName="marca" />
-      </div>
-      <div>
-        <label>Versão (Opcional)</label>
-        <input formControlName="versao" />
       </div>
     </div>
 
@@ -45,6 +61,7 @@
         <label>Cor</label>
         <input formControlName="cor" />
       </div>
+
       <div>
         <label>Ano</label>
         <input formControlName="ano" type="number" />
@@ -56,10 +73,12 @@
         <label>Placa</label>
         <input formControlName="placa" />
       </div>
+
       <div>
         <label>Câmbio</label>
         <input formControlName="cambio" />
       </div>
+
       <div>
         <label>Categoria</label>
         <input formControlName="categoria" />
@@ -68,20 +87,27 @@
 
     <div class="checkbox">
       <label>
-        <input type="checkbox" formControlName="definidoComoPadrao" />
+        <input type="checkbox" formControlName="principal" />
         Definir como carro para as aulas
       </label>
     </div>
 
     <div class="acoes">
-      <button type="button" class="deletar" (click)="onDeletar()">Deletar veículo</button>
-        <button class="editar-btn" (click)="toggleEdit()">
-        {{ editMode ? 'Cancelar' : 'Editar veículo' }}
-        </button>
-    </div>
-    
-    <button>Descartar alterações</button>
-    <button type="button" class="salvar" (click)="onSalvar()" [disabled]="!editMode">Salvar alterações</button>
-  </form>
+      <button type="button" class="deletar" (click)="onDeletar()">
+        Deletar veículo
+      </button>
 
+      <button type="button" class="editar-btn" (click)="toggleEdit()">
+        {{ editMode ? 'Cancelar' : 'Editar veículo' }}
+      </button>
+    </div>
+
+    <button type="button" (click)="toggleEdit()" *ngIf="editMode">
+      Descartar alterações
+    </button>
+
+    <button type="button" class="salvar" (click)="onSalvar()" [disabled]="!editMode">
+      Salvar alterações
+    </button>
+  </form>
 </div>

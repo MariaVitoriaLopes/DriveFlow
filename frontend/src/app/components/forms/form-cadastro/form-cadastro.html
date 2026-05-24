@@ -13,8 +13,15 @@
 
   <label>Senha:</label>
   <div class="input-icon">
-    <input type="password" formControlName="senha" placeholder="Escolha uma senha segura">
-    <span class="icon">👁️</span>
+    <input
+      class="input-form"
+      [type]="mostrarSenha ? 'text' : 'password'"
+      formControlName="senha"
+      placeholder="Escolha uma senha segura"
+    >
+    <span class="icon" (click)="toggleSenha()">
+      {{ mostrarSenha ? '🙈' : '👁️' }}
+    </span>
   </div>
 
   <ul class="requisitos">
@@ -27,8 +34,15 @@
 
   <label>Repita a senha:</label>
   <div class="input-icon">
-    <input type="password" placeholder="Insira a mesma senha">
-    <span class="icon">👁️</span>
+    <input
+      class="input-form"
+      [type]="mostrarRepetirSenha ? 'text' : 'password'"
+      formControlName="confirmarSenha"
+      placeholder="Insira a mesma senha"
+    >
+    <span class="icon" (click)="toggleRepetirSenha()">
+      {{ mostrarRepetirSenha ? '🙈' : '👁️' }}
+    </span>
   </div>
 
   <div class="escolha-perfil" >
@@ -44,7 +58,7 @@
   </div>
 
   <div class="termos">
-    <input type="checkbox">
+    <input type="checkbox" formControlName="termos">
     <span>Concordo com os termos</span>
   </div>
 

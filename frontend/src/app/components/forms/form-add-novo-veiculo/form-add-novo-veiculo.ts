@@ -1,117 +1,135 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild, ElementRef, EventEmitter, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { catchError } from 'rxjs';
+import {
+  Component,
+  OnInit,
+  ViewChildren,
+  ElementRef,
+  QueryList,
+  EventEmitter,
+  Output
+} from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Veiculo } from '../form-veiculos/form-veiculos';
 
 @Component({
   selector: 'app-form-add-novo-veiculo',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './form-add-novo-veiculo.html',
   styleUrls: ['./form-add-novo-veiculo.scss'],
 })
 export class FormAddNovoVeiculo implements OnInit {
+  @Output() veiculoSalvo = new EventEmitter<Veiculo>();
+  @Output() cancelar = new EventEmitter<void>();
 
-  @Output() veiculoSalvo = new EventEmitter<any>();
-
-  @ViewChild('mainFile') mainFile!: ElementRef;
-  @ViewChild('sideFile') sideFile!: ElementRef;
+  @ViewChildren('fotoInput') fotoInputs!: QueryList<ElementRef<HTMLInputElement>>;
 
   veiculoForm!: FormGroup;
 
-  marcas = ['Fiat', 'Chevrolet', 'Volkswagen', 'Ford'];
-  versoes = ['LT 1.0', 'LT 1.4', 'EX 1.6'];
-  cores = ['Branco', 'Preto', 'Prata'];
-  anos = Array.from({length: 30}, (_, i) => 2023 - i);
+  fotosPreview: string[] = ['', '', '', ''];
+
+  marcas = ['Fiat', 'Chevrolet', 'Volkswagen', 'Ford', 'Honda', 'Toyota', 'Hyundai', 'Renault'];
+  versoes = ['Básica', 'Completa', 'Sport', 'Premium'];
+  cores = ['Branco', 'Preto', 'Prata', 'Cinza', 'Vermelho', 'Azul'];
+  anos = Array.from({ length: 30 }, (_, i) => String(2026 - i));
   cambios = ['Manual', 'Automático'];
-  categorias = ['Categoria A (Moto)', 'Categoria B (Carro)'];
-  recursos = ['Ar-condicionado', 'ABS', 'Duplo comando', 'Direção elétrica', 'Direção hidráulica', 'Travas elétricas'];
+  categorias = ['Categoria A', 'Categoria B', 'Categoria AB'];
 
-  mainImageUrl: string | null = null;
-  sideImages: (string | null)[] = [null, null, null];
+  recursos = [
+    'Ar-condicionado',
+    'Direção hidráulica',
+    'Sensor de ré',
+    'Câmera de ré',
+    'Vidro elétrico',
+    'Controle de estabilidade'
+  ];
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {}
+  constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.veiculoForm = this.fb.group({
-      marca: [''],
+      marca: ['', Validators.required],
       versao: [''],
-      modelo: [''],
+      modelo: ['', Validators.required],
       cor: [''],
       ano: [''],
-      placa: [''],
+      placa: ['', Validators.required],
       cambio: [''],
       categoria: [''],
       recursos: [[]],
       infoExtra: [''],
-      padrao: [false]
+      principal: [false]
     });
   }
 
-  uploadMainImage() {
-    this.mainFile.nativeElement.click();
+  abrirSeletorFoto(index: number): void {
+    const input = this.fotoInputs.toArray()[index];
+
+    if (input) {
+      input.nativeElement.click();
+    }
   }
 
-  onMainImageSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) this.mainImageUrl = URL.createObjectURL(file);
+  onFotoSelecionada(event: Event, index: number): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) return;
+
+    if (index < 0 || index > 3) {
+      alert('Você só pode escolher até 4 fotos.');
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      this.fotosPreview[index] = reader.result as string;
+    };
+
+    reader.readAsDataURL(file);
   }
 
-  uploadSideImage(index: number) {
-    this.sideFile.nativeElement.click();
+  removerFoto(index: number): void {
+    this.fotosPreview[index] = '';
   }
 
-  onSideImageSelected(event: any, index: number) {
-    const file = event.target.files[0];
-    if (file) this.sideImages[index] = URL.createObjectURL(file);
-  }
+  toggleRecurso(recurso: string): void {
+    const selecionados: string[] = this.veiculoForm.get('recursos')?.value || [];
 
-  toggleRecurso(rec: string) {
-    const recursos = this.veiculoForm.value.recursos;
-    if (recursos.includes(rec)) {
-      this.veiculoForm.patchValue({ recursos: recursos.filter((r: string) => r !== rec) });
+    if (selecionados.includes(recurso)) {
+      this.veiculoForm.get('recursos')?.setValue(
+        selecionados.filter(r => r !== recurso)
+      );
     } else {
-      this.veiculoForm.patchValue({ recursos: [...recursos, rec] });
+      this.veiculoForm.get('recursos')?.setValue([...selecionados, recurso]);
     }
   }
 
-  submit() {
-    if (!this.veiculoForm.valid) return;
-
-    const formData = new FormData();
-    Object.entries(this.veiculoForm.value).forEach(([key, value]) => {
-      if (key === 'recursos') {
-        formData.append(key, JSON.stringify(value));
-      } else {
-        formData.append(key, value as any);
-      }
-    });
-
-    if (this.mainFile.nativeElement.files[0]) {
-      formData.append('imagemPrincipal', this.mainFile.nativeElement.files[0]);
+  submit(): void {
+    if (this.veiculoForm.invalid) {
+      this.veiculoForm.markAllAsTouched();
+      return;
     }
 
-    this.sideFile.nativeElement.files?.forEach((file: File) => {
-      formData.append('imagensLaterais', file);
-    });
+    const form = this.veiculoForm.value;
 
-    // POST direto para API
-    this.http.post('http://localhost:8081/api/veiculos', formData)
-      .pipe(
-        catchError(err => {
-          alert('Erro ao salvar veículo!');
-          throw err;
-        })
-      )
-      .subscribe((res: any) => {
-        // Backend respondeu sucesso → emite evento para pai
-        this.veiculoSalvo.emit(res);
+    const novoVeiculo: Veiculo = {
+      marca: form.marca,
+      modelo: form.modelo,
+      placa: form.placa,
+      ano: form.ano,
+      cor: form.cor,
+      cambio: form.cambio,
+      categoria: form.categoria,
+      fotosUrl: this.fotosPreview.filter(foto => !!foto),
+      principal: form.principal
+    };
 
-        // Limpa o formulário
-        this.veiculoForm.reset();
-        this.mainImageUrl = null;
-        this.sideImages = [null, null, null];
-      });
+    this.veiculoSalvo.emit(novoVeiculo);
+  }
+
+  cancelarCadastro(): void {
+    this.cancelar.emit();
   }
 }

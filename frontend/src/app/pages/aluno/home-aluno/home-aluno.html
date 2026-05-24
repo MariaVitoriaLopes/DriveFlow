@@ -12,32 +12,40 @@
     <button (click)="toggleModalFiltro()">Filtros</button>
   </div>
 
-  <div class="resultados-info">
-    <span>Resultados:</span>
-    <span>6 de {{ instrutores.length }} em exibição</span>
-  </div>
+<div class="resultados-info">
+  <span>Resultados:</span>
+  <span>{{ instrutores.length }} instrutores encontrados</span>
+</div>
 
-  <div class="cards">
+<div class="cards">
 
-      <!-- Modal de filtro -->
   <div *ngIf="exibeModalFiltro" class="modal-filtro">
-    <!-- Aqui você vai puxar o componente de modal -->
-      <app-filtro></app-filtro>
+    <app-filtro></app-filtro>
   </div>
 
-    <div class="card" *ngFor="let i of instrutores">
-      <img [src]="i.carro" alt="Carro do instrutor" />
-      <div class="info">
-        <div class="perfil">
-          <img *ngIf="i.foto" [src]="i.foto" alt="Foto do instrutor" />
-          <span>{{ i.nome }}</span>
-        </div>
-        <span class="categoria">Categoria {{ i.categoria }}</span>
-        <span class="local">{{ i.local }}</span>
-        <span class="preco">R$ {{ i.preco }} aula</span>
-        <span class="avaliacao">{{ i.avaliacao }} ★ ({{ i.totalAvaliacoes }})</span>
-        <button class="ver-mais">Ver mais</button>
+  <div class="card" *ngFor="let i of instrutores">
+    <img [src]="i.carro" alt="Carro do instrutor" />
+
+    <div class="info">
+      <div class="perfil">
+        <img *ngIf="i.foto" [src]="i.foto" alt="Foto do instrutor" />
+        <span>{{ i.nome }}</span>
       </div>
+
+      <span class="categoria">Categoria {{ i.categoria }}</span>
+      <span class="local">{{ i.local }}</span>
+
+      <span class="preco" *ngIf="i.preco">
+        R$ {{ i.preco }} aula
+      </span>
+
+      <span class="preco" *ngIf="!i.preco">
+        Valor ainda não cadastrado
+      </span>
+
+      <button class="ver-mais" (click)="verPerfil(i.id)">Ver mais</button>
     </div>
   </div>
+
+</div>
 </div>

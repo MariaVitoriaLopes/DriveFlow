@@ -18,6 +18,7 @@ import { CadastroAgenda } from './components/forms/cadastro-agenda/cadastro-agen
 import path from 'path';
 
 import { HomeAluno } from './pages/aluno/home-aluno/home-aluno';
+import { PerfilInstrutor } from './pages/aluno/perfil-instrutor/perfil-instrutor';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -31,11 +32,11 @@ export const routes: Routes = [
   { path: 'instrutor/configuracoes', component: Configuracoes} ,
   { path: 'instrutor/dashboard', component: Dashboard},
   { path: 'instrutor/notificacoes', component: Notificacoes },
-  { path: 'instrutor/add', component: NovoDocumento},
   { path: 'instrutor/add-novo-documento', component: NovoDocumento},
   { path: 'instrutor/cadastro-agenda', component: CadastroAgenda},
 
   { path: 'aluno/home-aluno', component: HomeAluno },
+  { path: 'aluno/perfil-instrutor', component: PerfilInstrutor },
 
   // Rota de teste para o backend
   { path: 'testebackend', component:  AppComponent},
