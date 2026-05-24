@@ -24,7 +24,10 @@
   </div>
 
   <div class="card" *ngFor="let i of instrutores">
-    <img [src]="i.carro" alt="Carro do instrutor" />
+    <img
+      [src]="i.carro || '/images/carro-placeholder.png'"
+      alt="Carro do instrutor"
+    />
 
     <div class="info">
       <div class="perfil">
@@ -32,14 +35,14 @@
         <span>{{ i.nome }}</span>
       </div>
 
-      <span class="categoria">Categoria {{ i.categoria }}</span>
+      <span class="categoria">{{ i.categoria }}</span>
       <span class="local">{{ i.local }}</span>
 
-      <span class="preco" *ngIf="i.preco">
+      <span class="preco" *ngIf="i.preco !== null && i.preco !== undefined">
         R$ {{ i.preco }} aula
       </span>
 
-      <span class="preco" *ngIf="!i.preco">
+      <span class="preco" *ngIf="i.preco === null || i.preco === undefined">
         Valor ainda não cadastrado
       </span>
 

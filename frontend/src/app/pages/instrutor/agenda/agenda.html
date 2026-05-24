@@ -4,12 +4,21 @@
   <h2>Agenda</h2>
 
   <div class="content">
+
+    <!-- CALENDÁRIO -->
     <div class="card calendar-card">
-      <div class="year">{{ anoAtual }}</div>
+
+      <div class="year">
+        {{ anoAtual }}
+      </div>
 
       <div class="calendar-header">
         <button>‹</button>
-        <strong>{{ mesAtual }}</strong>
+
+        <strong>
+          {{ mesAtual }}
+        </strong>
+
         <button>›</button>
       </div>
 
@@ -24,9 +33,13 @@
       </div>
 
       <div class="calendar-days">
+
         @for (dia of diasCalendario; track $index) {
+
           <div class="day">
+
             @if (dia) {
+
               <span [class.today]="dia === diaAtual">
                 {{ dia }}
               </span>
@@ -34,49 +47,84 @@
               @if (temAula(dia)) {
                 <small></small>
               }
+
             }
+
           </div>
+
         }
+
       </div>
+
     </div>
 
+    <!-- AGENDA DE HOJE -->
     <div class="card today-card">
+
       <div class="today-header">
         <h3>Agenda de hoje</h3>
-        <div class="count">4</div>
+
+        <div class="count">
+          {{ aulasHoje.length }}
+        </div>
       </div>
 
       <div class="schedule-list">
+
         @for (aula of aulasHoje; track $index) {
-          <div class="schedule-item" [class.with-student]="aula.aluno">
-            <span>{{ aula.horario }}</span>
+
+          <div
+            class="schedule-item"
+            [class.with-student]="aula.aluno"
+          >
+
+            <span>
+              {{ aula.horario }}
+            </span>
 
             @if (aula.aluno) {
+
               <div class="avatar"></div>
-              <p>{{ aula.aluno }}</p>
+
+              <p>
+                {{ aula.aluno }}
+              </p>
+
               <button>⋮</button>
+
             }
+
           </div>
+
         }
+
       </div>
+
     </div>
 
+    <!-- ALUNO ATUAL -->
     <div class="card student-card">
+
       <div class="student-icons">
         <span>♔</span>
         <span>☏</span>
       </div>
 
       <div class="student-header">
+
         <div class="avatar big"></div>
 
         <div>
           <h3>Ana</h3>
           <small>Primeira aula</small>
         </div>
+
       </div>
 
-      <p><strong>Horário:</strong> 08:00</p>
+      <p>
+        <strong>Horário:</strong>
+        08:00
+      </p>
 
       <p>
         <strong>Local de encontro:</strong>
@@ -84,75 +132,114 @@
       </p>
 
       <div class="actions">
-        <button class="cancel">Cancelar aula</button>
-        <button class="start">Iniciar aula</button>
+
+        <button class="cancel">
+          Cancelar aula
+        </button>
+
+        <button class="start">
+          Iniciar aula
+        </button>
+
       </div>
+
     </div>
 
+    <!-- COLUNA DO MEIO -->
     <div class="middle-column">
+
+      <!-- DISPONIBILIDADE -->
       <div class="card availability">
-        <span>Disponibilidade para novas aulas</span>
+
+        <span>
+          Disponibilidade para novas aulas
+        </span>
 
         <label class="switch">
-          <input type="checkbox" checked />
+
+          <input
+            type="checkbox"
+            [checked]="disponibilidadeNovasAulas"
+            (change)="alterarDisponibilidade()"
+          />
+
           <span></span>
+
         </label>
+
       </div>
 
+      <!-- RESUMO -->
       <div class="card summary-card">
-        <h3>Resumo da sua agenda</h3>
+
+        <h3>
+          Resumo da sua agenda
+        </h3>
 
         <div class="dots-week">
-          <div>
-            <span>Dom</span>
-            <small></small>
-          </div>
-          <div>
-            <span>Seg</span>
-            <small></small>
-          </div>
-          <div>
-            <span>Ter</span>
-            <small></small>
-          </div>
-          <div>
-            <span>Qua</span>
-            <small></small>
-          </div>
-          <div>
-            <span>Qui</span>
-            <small class="strong"></small>
-          </div>
-          <div>
-            <span>Sex</span>
-            <small class="strong"></small>
-          </div>
-          <div>
-            <span>Sáb</span>
-            <small class="dark"></small>
-          </div>
+
+          @for (item of resumoSemana; track item.dia) {
+
+            <div>
+
+              <span>
+                {{ item.dia }}
+              </span>
+
+              <small
+                [ngClass]="intensidadeBolinha(item.quantidade)"
+              ></small>
+
+            </div>
+
+          }
+
         </div>
 
         <div class="inputs">
+
           <label>
             Duração das aulas
-            <input type="text" value="60 minutos" readonly />
+
+            <input
+              type="text"
+              [value]="duracaoAula + ' minutos'"
+              readonly
+            />
           </label>
 
           <label>
             Intervalos entre aulas
-            <input type="text" value="15 minutos" readonly />
+
+            <input
+              type="text"
+              [value]="intervaloAulas + ' minutos'"
+              readonly
+            />
           </label>
+
         </div>
 
-        <button class="edit" routerLink="/instrutor/cadastro-agenda">Editar agenda</button>
+        <button
+          class="edit"
+          routerLink="/instrutor/cadastro-agenda"
+        >
+          Editar agenda
+        </button>
+
       </div>
+
     </div>
 
+    <!-- HORÁRIOS -->
     <div class="card hours-card">
-      <h3>Horários</h3>
+
+      <h3>
+        Horários
+      </h3>
 
       <div class="hours-table">
+
         <div class="table-head">
           <span>Dias</span>
           <span>Início</span>
@@ -160,28 +247,64 @@
           <span>Bloqueio</span>
         </div>
 
-        @for (item of horarios; track $index) {
+        @for (item of horarios; track item.dia) {
+
           <div class="table-row">
-            <span>{{ item.dia }}</span>
-            <span>{{ item.inicio }}</span>
-            <span>{{ item.fim }}</span>
-            <input type="checkbox" [checked]="item.bloqueio" />
+
+            <span>
+              {{ item.dia }}
+            </span>
+
+            <span>
+              {{ item.inicio }}
+            </span>
+
+            <span>
+              {{ item.fim }}
+            </span>
+
+            <input
+              type="checkbox"
+              [checked]="item.bloqueio"
+              disabled
+            />
+
           </div>
+
         }
+
       </div>
+
     </div>
 
+    <!-- FOLGAS -->
     <div class="card breaks-card">
-      <h3>Folgas</h3>
+
+      <h3>
+        Folgas
+      </h3>
 
       <div class="break-list">
+
         @for (folga of folgas; track $index) {
+
           <div class="break-item">
-            <strong>{{ folga }}</strong>
-            <span>{{ mesAtual }}</span>
+
+            <strong>
+              {{ folga }}
+            </strong>
+
+            <span>
+              {{ mesAtual }}
+            </span>
+
           </div>
+
         }
+
       </div>
+
     </div>
+
   </div>
 </section>

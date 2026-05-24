@@ -3,7 +3,17 @@
 <section class="config-page">
   <aside class="sidebar">
     <div class="profile">
-      <div class="avatar"></div>
+      <div class="avatar">
+        <img
+          *ngIf="fotoUsuario; else semFoto"
+          [src]="fotoUsuario"
+          alt="Foto do usuário"
+        />
+
+        <ng-template #semFoto>
+          <span>{{ inicialUsuario }}</span>
+        </ng-template>
+      </div>
 
       <h2>{{ usuario?.usuario?.nome || usuario?.nome || 'Instrutor' }}</h2>
       <p>Perfil ativo</p>

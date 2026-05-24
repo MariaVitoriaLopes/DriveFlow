@@ -2,6 +2,7 @@
 
 <div class="agenda-container">
   <h1>Cadastrar agenda</h1>
+
   <p>
     Adicione os horários para a disponibilidade do aluno. Isso permitirá que um aluno marque aulas dentro dessa agenda.
   </p>
@@ -50,11 +51,11 @@
       <label
         class="dia-btn"
         *ngFor="let dia of diasSemana"
-        [class.ativo]="getDiaControl(dia.valor).get('disponivel')?.value"
+        [class.ativo]="diaSelecionado(dia.valor)"
       >
         <input
           type="checkbox"
-          [checked]="getDiaControl(dia.valor).get('disponivel')?.value"
+          [checked]="diaSelecionado(dia.valor)"
           (change)="toggleDia(dia.valor)"
         />
         {{ dia.nome }}
@@ -127,7 +128,11 @@
         Descartar alterações
       </button>
 
-      <button type="submit" class="btn-roxo" [disabled]="agendaForm.invalid || salvando">
+      <button
+        type="submit"
+        class="btn-roxo"
+        [disabled]="agendaForm.invalid || salvando"
+      >
         {{ salvando ? 'Salvando...' : 'Salvar alterações' }}
       </button>
     </div>

@@ -1,21 +1,41 @@
 <app-header-aluno></app-header-aluno>
 
-<div class="page" *ngIf="instrutor">
+<div class="page" *ngIf="instrutor; else carregando">
 
   <section class="main-card">
 
-    <div class="gallery">
-      <img class="main-img" [src]="instrutor?.veiculo?.fotoPrincipal || '/images/carro.png'" alt="Carro">
+<div class="gallery">
+  <img
+    class="main-img"
+    [src]="instrutor.veiculo.fotoPrincipal"
+    alt="Carro"
+  >
 
-      <div class="thumbs">
-        <img [src]="instrutor?.veiculo?.fotoPrincipal || '/images/carro.png'" alt="Carro">
-        <div class="empty-img">⌧</div>
-        <div class="empty-img">⌧</div>
-      </div>
-    </div>
+  <div class="thumbs">
+    <ng-container *ngIf="instrutor.veiculo.fotos?.length; else semFotos">
+      <img
+        *ngFor="let foto of instrutor.veiculo.fotos"
+        [src]="foto"
+        alt="Foto do carro"
+      >
+    </ng-container>
+
+    <ng-template #semFotos>
+      <div class="empty-img">⌧</div>
+    </ng-template>
+  </div>
+</div>
 
     <div class="profile">
-      <div class="avatar">♡</div>
+      <div class="avatar">
+        <img
+          *ngIf="instrutor?.fotoPerfil"
+          [src]="instrutor.fotoPerfil"
+          alt="Foto do instrutor"
+        />
+
+        <span *ngIf="!instrutor?.fotoPerfil">♡</span>
+      </div>
 
       <div class="profile-info">
         <h3>
@@ -119,7 +139,18 @@
       <input value="12:00" readonly>
     </div>
 
-    <button class="schedule-btn">Agendar aula</button>
+    <button
+      class="schedule-btn"
+      (click)="agendarAula()"
+    >
+      Agendar aula
+    </button>
   </aside>
 
 </div>
+
+<ng-template #carregando>
+  <div class="loading">
+    <p>{{ mensagemCarregamento }}</p>
+  </div>
+</ng-template>

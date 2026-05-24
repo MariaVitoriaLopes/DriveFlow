@@ -50,82 +50,95 @@ export class HomeAluno implements OnInit {
       this.usuario = JSON.parse(user);
     }
 
-    this.pegarLocalizacao();
     this.carregarInstrutores();
+
+    setTimeout(() => {
+      this.pegarLocalizacao();
+    }, 0);
   }
 
   carregarInstrutores(): void {
-    this.http.get<any[]>(this.apiUrl).subscribe({
+    this.http.get<any>(this.apiUrl).subscribe({
       next: (res) => {
-        this.instrutores = res.map((instrutor) => {
-          const veiculo = instrutor.veiculos?.[0] || instrutor.veiculo || null;
+        console.log('Resposta bruta da API:', res);
 
-          const localFavorito =
-            instrutor.locaisAtendimento?.find((l: any) => l.favorito === true) ||
-            instrutor.locaisAtendimento?.[0] ||
-            instrutor.localAtendimento ||
-            null;
+        const lista = Array.isArray(res)
+          ? res
+          : res?.content ||
+            res?.data ||
+            res?.instrutores ||
+            res?.usuarios ||
+            [];
 
-          return {
-            id:
-              instrutor.id ||
-              instrutor._id ||
-              instrutor.usuario?.id ||
-              '',
+        console.log('Lista usada no map:', lista);
 
-            nome:
-              instrutor.usuario?.nome ||
-              instrutor.nome ||
-              'Instrutor',
+        if (!lista.length) {
+          console.warn('Nenhum instrutor retornado pela API.');
+          this.instrutores = [];
+          this.cdr.detectChanges();
+          return;
+        }
 
-            foto:
-              instrutor.usuario?.foto ||
-              instrutor.foto ||
-              '',
+        this.instrutores = lista.map((instrutor: any) => ({
+          id: instrutor.instrutorId || instrutor.id || instrutor._id || '',
 
-            categoria:
-              veiculo?.categoria ||
-              'Não informada',
+          nome: instrutor.nome || instrutor.usuario?.nome || 'Instrutor',
 
-            carro:
-              veiculo?.fotoPrincipal ||
-              veiculo?.foto ||
-              veiculo?.imagem ||
-              veiculo?.mainImageUrl ||
-              '/images/carro-placeholder.png',
+          foto: instrutor.fotoPerfilUrl || instrutor.foto || instrutor.usuario?.foto || '',
 
-            local: this.formatarLocal(localFavorito),
+          categoria:
+            instrutor.categoriaVeiculo ||
+            instrutor.veiculo?.categoria ||
+            instrutor.veiculos?.[0]?.categoria ||
+            'Não informada',
 
-            preco:
-              instrutor.agenda?.valorAula ||
-              instrutor.valorAula ||
-              null
-          };
-        });
+          carro:
+            instrutor.fotoPrincipalVeiculo ||
+            instrutor.fotosVeiculo?.[0] ||
+            instrutor.veiculo?.fotoPrincipal ||
+            instrutor.veiculo?.fotos?.[0] ||
+            instrutor.veiculos?.[0]?.fotoPrincipal ||
+            instrutor.veiculos?.[0]?.fotos?.[0] ||
+            '/images/carro-placeholder.png',
+
+          local:
+            instrutor.bairroCidade ||
+            instrutor.localidade ||
+            this.formatarLocal(instrutor.localAtendimento) ||
+            this.formatarLocal(instrutor.locaisAtendimento?.[0]),
+
+          preco: instrutor.valorAula ?? instrutor.agenda?.valorAula ?? null
+        }));
+
+        console.log('Cards montados:', this.instrutores);
 
         this.cdr.detectChanges();
       },
+
       error: (err) => {
         console.error('Erro ao buscar instrutores:', err);
+        this.instrutores = [];
+        this.cdr.detectChanges();
       }
     });
   }
 
-  verPerfil(instrutorId: string): void {
-    if (!instrutorId) {
-      console.error('Instrutor sem ID');
-      return;
-    }
+verPerfil(instrutorId: string): void {
+  console.log('ID clicado no Ver mais:', instrutorId);
 
-    sessionStorage.setItem('instrutorIdSelecionado', instrutorId);
-
-    this.router.navigate(['/aluno/perfil-instrutor'], {
-      state: { instrutorId }
-    });
+  if (!instrutorId) {
+    console.error('Instrutor sem ID');
+    return;
   }
 
+  sessionStorage.setItem('instrutorIdSelecionado', instrutorId);
+
+  this.router.navigateByUrl('/aluno/perfil-instrutor', {
+    state: { instrutorId }
+  });
+}
   formatarLocal(local: any): string {
-    if (!local) return 'Local não informado';
+    if (!local) return '';
 
     const bairro =
       local.bairro ||
@@ -141,62 +154,69 @@ export class HomeAluno implements OnInit {
     if (bairro) return bairro;
     if (cidade) return cidade;
 
-    return local.logradouro || 'Local não informado';
+    return local.logradouro || local.rua || '';
   }
 
   pegarLocalizacao(): void {
     this.localizacao = 'Buscando localização...';
 
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
+    if (!('geolocation' in navigator)) {
+      this.localizacao = 'Praia Grande, SP';
+      this.cdr.detectChanges();
+      return;
+    }
 
-          try {
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
-              {
-                headers: {
-                  Accept: 'application/json'
-                }
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
+            {
+              headers: {
+                Accept: 'application/json'
               }
-            );
+            }
+          );
 
-            const data = await response.json();
+          const data = await response.json();
 
-            const bairro =
-              data.address?.suburb ||
-              data.address?.neighbourhood ||
-              data.address?.city_district ||
-              '';
+          const bairro =
+            data.address?.suburb ||
+            data.address?.neighbourhood ||
+            data.address?.city_district ||
+            '';
 
-            const cidade =
-              data.address?.city ||
-              data.address?.town ||
-              data.address?.village ||
-              '';
+          const cidade =
+            data.address?.city ||
+            data.address?.town ||
+            data.address?.village ||
+            '';
 
-            this.localizacao = bairro
-              ? `${bairro}, ${cidade}`
-              : cidade || 'Endereço não encontrado';
+          this.localizacao = bairro
+            ? `${bairro}, ${cidade}`
+            : cidade || 'Praia Grande, SP';
 
-            this.cdr.detectChanges();
-
-          } catch (erro) {
-            console.error('Erro localização:', erro);
-            this.localizacao = 'Praia Grande, SP';
-            this.cdr.detectChanges();
-          }
-        },
-        () => {
+          this.cdr.detectChanges();
+        } catch (erro) {
+          console.error('Erro localização:', erro);
           this.localizacao = 'Praia Grande, SP';
           this.cdr.detectChanges();
         }
-      );
-    } else {
-      this.localizacao = 'Praia Grande, SP';
-    }
+      },
+      (erro) => {
+        console.warn('Permissão de localização negada ou erro:', erro);
+        this.localizacao = 'Praia Grande, SP';
+        this.cdr.detectChanges();
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 5000,
+        maximumAge: 60000
+      }
+    );
   }
 
   toggleModalFiltro(): void {
