@@ -16,16 +16,25 @@
     position: fixed;
     top: 0;
     left: 0;
+
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
     width: 260px;
-    height: 100%;
-    padding: 24px 24px;
+    height: 100dvh;
+
+    padding: 24px;
+
     border-right: 1px solid #dcdce4;
+
     background: #fafafa;
+
     overflow-y: auto;
+
     z-index: 100;
+
+    transition: transform 0.3s ease;
 }
 
 .sidebar-top {
@@ -63,13 +72,18 @@
     a {
         display: flex;
         align-items: center;
-        font-size: 14px;
+
         height: 34px;
+
         padding: 0 12px;
+
         border-radius: 10px;
+
         color: #1a1a1a;
+
         font-size: 0.96rem;
         font-weight: 500;
+
         text-decoration: none;
 
         transition: 0.2s ease;
@@ -91,9 +105,11 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+
     margin-top: 24px;
 
-    h5, p {
+    h5,
+    p {
         font-size: small;
     }
 }
@@ -102,9 +118,12 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+
     padding: 16px;
+
     border: 1px solid #d8d8e2;
     border-radius: 14px;
+
     background: #f5f1ff;
 
     h5 {
@@ -121,14 +140,21 @@
 
     button {
         height: 40px;
+
         border: none;
         border-radius: 10px;
+
         background: #7008e7;
+
         color: #fff;
+
         font-size: 0.88rem;
         font-weight: 600;
+
         cursor: pointer;
+
         transition: 0.2s ease;
+
         &:hover {
             background: #5d05c3;
         }
@@ -144,31 +170,104 @@
 
 .logout-btn {
     width: fit-content;
+
     border: none;
+
     background: transparent;
+
     color: #e11d2e;
+
     font-size: 0.9rem;
     font-weight: 500;
+
     margin-top: 12px;
 
     cursor: pointer;
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+}
+
+.menu-toggle {
+    display: none;
+}
+
+.overlay {
+    display: none;
 }
 
 @media (max-width: 1024px) {
+
     :host {
-        width: 100%;
-        min-width: 100%;
+        width: 0;
+        min-width: 0;
+    }
+
+    .menu-toggle {
+        position: fixed;
+
+        top: 16px;
+        left: 16px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 42px;
+        height: 42px;
+
+        border: none;
+        border-radius: 12px;
+
+        background: #7008e7;
+
+        color: white;
+
+        cursor: pointer;
+
+        z-index: 1001;
+
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+
+        span {
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .open {
+            transform: rotate(180deg);
+        }
+    }
+
+    .overlay {
+        position: fixed;
+        inset: 0;
+
+        background: rgba(0, 0, 0, 0.4);
+
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.3s ease;
+        z-index: 998;
+        display: block;
+
+        &.show {
+            opacity: 1;
+            visibility: visible;
+        }
     }
 
     .sidebar {
-        position: relative;
-        width: 100%;
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid #dcdce4;
-    }
+        transform: translateX(-100%);
+        width: 290px;
+        z-index: 999;
+        box-shadow: 4px 0 30px rgba(0, 0, 0, 0.15);
+        padding-top: 52px;
 
-    .sidebar-bottom {
-        margin-top: 24px;
+        &.open {
+            transform: translateX(0);
+        }
     }
 }
