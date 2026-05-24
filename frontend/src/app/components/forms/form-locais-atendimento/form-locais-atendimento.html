@@ -1,4 +1,4 @@
-<form [formGroup]="formLocais" (ngSubmit)="onSubmit()">
+<form [formGroup]="formLocais" (ngSubmit)="salvarAlteracoes()">
   <div class="locais-container">
     
     <!-- Cabeçalho -->
@@ -9,10 +9,19 @@
 
     <!-- Lista de endereços -->
     <div formArrayName="enderecos">
-      <div *ngFor="let endereco of enderecos.controls; let i = index" [formGroupName]="i" class="endereco-card">
-        <h3>{{ endereco.get('titulo')?.value }}</h3>
+      <div
+        *ngFor="let endereco of enderecos.controls; let i = index"
+        [formGroupName]="i"
+        class="endereco-card"
+      >
+        <div class="card-header">
+          <h3>{{ endereco.get('titulo')?.value }}</h3>
 
-        <!-- Linha 1 -->
+          <button type="button" (click)="editarEndereco(i)">
+            Editar
+          </button>
+        </div>
+
         <div class="linha">
           <label>CEP
             <input formControlName="cep" type="text" placeholder="00000-000">
@@ -31,7 +40,6 @@
           </label>
         </div>
 
-        <!-- Linha 2 -->
         <div class="linha">
           <label>Bairro
             <input formControlName="bairro" type="text" placeholder="Bairro">
@@ -41,27 +49,37 @@
             <input formControlName="cidade" type="text" placeholder="Cidade">
           </label>
 
-          <label>Unidade Federativa
+          <label>UF
             <input formControlName="uf" type="text" placeholder="UF">
           </label>
         </div>
 
-        <!-- Ações -->
         <div class="acoes">
-<label>
-  <input type="checkbox" [checked]="endereco.get('favorito')?.value"
-         (change)="marcarFavorito(i)">
-  Definir como favorito
-</label>
-          <a class="delete" (click)="deletarEndereco(i)">Deletar endereço</a>
+          <label>
+            <input
+              type="checkbox"
+              [checked]="endereco.get('favorito')?.value"
+              [disabled]="endereco.disabled"
+              (change)="marcarFavorito(i)"
+            >
+            Definir como favorito
+          </label>
+
+          <button type="button" class="delete" (click)="deletarEndereco(i)">
+            Deletar endereço
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Rodapé com botões -->
     <div class="footer">
-      <button type="button" class="btn-descartar" (click)="descartarAlteracoes()">Descartar alterações</button>
-      <button type="submit" class="btn-salvar">Salvar alterações</button>
+      <button type="button" class="btn-descartar" (click)="descartarAlteracoes()">
+        Descartar alterações
+      </button>
+
+      <button type="submit" class="btn-salvar">
+        Salvar alterações
+      </button>
     </div>
   </div>
 </form>

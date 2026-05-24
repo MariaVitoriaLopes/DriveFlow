@@ -1,58 +1,140 @@
 <app-header-instrutor></app-header-instrutor>
 
 <section class="config-page">
-
   <aside class="sidebar">
     <div class="profile">
       <div class="avatar"></div>
-      <h2>{{ usuario?.usuario?.nome || usuario?.nome }}</h2>
+
+      <h2>{{ usuario?.usuario?.nome || usuario?.nome || 'Instrutor' }}</h2>
       <p>Perfil ativo</p>
-      <span class="status"><span></span>Disponível</span>
+
+      <span class="status">
+        <span></span>
+        Disponível
+      </span>
     </div>
 
     <nav class="menu">
-      <button type="button" [class.active]="abaAtiva === 'pessoais'" (click)="trocarAba('pessoais')">Informações pessoais</button>
-      <button type="button" [class.active]="abaAtiva === 'endereco'" (click)="trocarAba('endereco')">Endereço</button>
-      <button type="button" [class.active]="abaAtiva === 'veiculo'" (click)="trocarAba('veiculo')">Veículo</button>
-      <button type="button" [class.active]="abaAtiva === 'documentos'" (click)="trocarAba('documentos')">Documentos</button>
-      <button type="button" [class.active]="abaAtiva === 'configuracoes'" (click)="trocarAba('configuracoes')">Configurações</button>
+      <button type="button" [class.active]="abaAtiva === 'pessoais'" (click)="trocarAba('pessoais')">
+        Informações pessoais
+      </button>
+
+      <button type="button" [class.active]="abaAtiva === 'endereco'" (click)="trocarAba('endereco')">
+        Endereço
+      </button>
+
+      <button type="button" [class.active]="abaAtiva === 'veiculo'" (click)="trocarAba('veiculo')">
+        Veículo
+      </button>
+
+      <button type="button" [class.active]="abaAtiva === 'documentos'" (click)="trocarAba('documentos')">
+        Documentos
+      </button>
+
+      <button type="button" [class.active]="abaAtiva === 'configuracoes'" (click)="trocarAba('configuracoes')">
+        Configurações
+      </button>
     </nav>
 
-    <button type="button" class="delete-btn">Apagar minha conta</button>
+    <button
+      type="button"
+      class="delete-btn"
+      (click)="apagarMinhaConta()"
+    >
+      Apagar minha conta
+    </button>
   </aside>
 
   <div class="aba-conteudo">
-    <!-- INFORMAÇÕES PESSOAIS -->
+
     <div *ngIf="abaAtiva === 'pessoais'">
       <app-form-informacoes-pessoais></app-form-informacoes-pessoais>
     </div>
 
-    <!-- ENDEREÇO -->
     <div *ngIf="abaAtiva === 'endereco'">
-      <h1>Endereços</h1>
-      <button type="button" routerLink="/instrutor/add-novo-endereco">Adicionar novo endereço</button>
-      <app-form-locais-atendimento></app-form-locais-atendimento>
+      <div class="header">
+        <h2>Locais de atendimento</h2>
+
+        <button
+          type="button"
+          class="btn-add"
+        >
+          Adicionar novo endereço
+        </button>
+      </div>
+
+      <app-form-locais-atendimento #formLocais></app-form-locais-atendimento>
     </div>
 
-    <!-- VEÍCULO -->
     <div *ngIf="abaAtiva === 'veiculo'">
-      <form [formGroup]="formVeiculo" (ngSubmit)="salvarVeiculo()">
+      <section class="veiculos-section">
         <h1>Veículo</h1>
-      </form>
+
+        <button
+          *ngIf="!mostrandoFormNovoVeiculo"
+          type="button"
+          (click)="abrirFormNovoVeiculo()"
+        >
+          Adicionar novo veículo
+        </button>
+
+        <div *ngIf="!mostrandoFormNovoVeiculo">
+          <p *ngIf="veiculos.length === 0">
+            Nenhum veículo cadastrado ainda.
+          </p>
+
+          <app-form-veiculos
+            *ngFor="let veiculo of veiculos; trackBy: trackByVeiculoId"
+            [veiculo]="veiculo"
+            (veiculoAtualizado)="atualizarVeiculo($event)"
+            (veiculoDeletado)="deletarVeiculo($event)"
+          ></app-form-veiculos>
+        </div>
+
+        <div *ngIf="mostrandoFormNovoVeiculo">
+          <app-form-add-novo-veiculo
+            (veiculoSalvo)="salvarNovoVeiculo($event)"
+            (cancelar)="cancelarNovoVeiculo()"
+          ></app-form-add-novo-veiculo>
+        </div>
+      </section>
     </div>
 
-    <!-- DOCUMENTOS -->
     <div *ngIf="abaAtiva === 'documentos'">
-      <form [formGroup]="formDocumentos" (ngSubmit)="salvarDocumentos()">
+      <div class="header">
         <h1>Documentos</h1>
-      </form>
+
+        <button type="button" (click)="abrirModal()">
+          Adicionar novo documento
+        </button>
+      </div>
+
+      <div class="modal-backdrop" *ngIf="modalAberto">
+        <div class="modal">
+          <button type="button" (click)="selecionarDocumento('CNH')">
+            CNH
+          </button>
+
+          <button type="button" (click)="selecionarDocumento('CERTIFICADO')">
+            Certificado
+          </button>
+
+          <button type="button" class="close-btn" (click)="fecharModal()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <app-form-documentos
+        [instrutor]="usuario"
+        [abaAtiva]="abaAtiva"
+      ></app-form-documentos>
     </div>
 
-    <!-- CONFIGURAÇÕES -->
     <div *ngIf="abaAtiva === 'configuracoes'">
-      <form [formGroup]="formConfiguracoes" (ngSubmit)="salvarConfiguracoes()">
-        <h1>Configurações</h1>
-      </form>
+      <h1>Configurações</h1>
+      <app-config-sistema></app-config-sistema>
     </div>
+
   </div>
 </section>

@@ -1,1 +1,148 @@
-<p>form-add-novo-veiculo works!</p>
+<form [formGroup]="veiculoForm" class="veiculo-form">
+  <h2>Novo veículo</h2>
+
+  <div class="upload-section">
+    <label class="upload-area">
+      <input
+        type="file"
+        accept="image/png, image/jpeg, image/jpg"
+        multiple
+        hidden
+        (change)="onFotosSelecionadas($event)"
+      />
+
+      <span>+</span>
+      <p>Selecionar até 4 fotos</p>
+    </label>
+
+    <div class="fotos-grid">
+      <div class="foto-box" *ngFor="let img of fotosPreview; let i = index">
+        <img [src]="img" alt="Foto do veículo" />
+
+        <button type="button" (click)="removerFoto(i)">
+          Remover
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <label>
+      Marca
+      <select formControlName="marca">
+        <option value="">Selecione a marca</option>
+        <option *ngFor="let m of marcas" [value]="m">{{ m }}</option>
+      </select>
+    </label>
+
+    <label>
+      Modelo
+      <input type="text" formControlName="modelo" placeholder="Ex: Onix, HB20, Gol">
+    </label>
+
+    <label>
+      Versão
+      <select formControlName="versao">
+        <option value="">Selecione a versão</option>
+
+        <option
+          *ngFor="let v of versoes"
+          [value]="v">
+
+          {{ v }}
+
+        </option>
+      </select>
+    </label>
+
+    <label>
+      Cor
+      <select formControlName="cor">
+        <option value="">Selecione a cor</option>
+        <option *ngFor="let c of cores" [value]="c">{{ c }}</option>
+      </select>
+    </label>
+
+    <label>
+      Ano
+      <select formControlName="ano">
+        <option value="">Ano</option>
+        <option *ngFor="let a of anos" [value]="a">{{ a }}</option>
+      </select>
+    </label>
+
+    <label>
+      Placa
+      <input
+        type="text"
+        formControlName="placa"
+        placeholder="ABC1D23 ou ABC1234"
+        maxlength="8"
+        (input)="formatarPlaca()"
+      >
+      <small *ngIf="veiculoForm.get('placa')?.invalid && veiculoForm.get('placa')?.touched">
+        Placa inválida.
+      </small>
+    </label>
+
+    <label>
+      Câmbio
+      <select formControlName="cambio">
+        <option value="">Selecione</option>
+        <option *ngFor="let c of cambios" [value]="c">{{ c }}</option>
+      </select>
+    </label>
+
+    <label>
+      Categoria
+      <select formControlName="categoria">
+        <option value="">Categoria</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="recursos-section">
+    <h3>Recursos extras</h3>
+
+    <div class="recursos-grid">
+      <button
+        type="button"
+        *ngFor="let r of recursos"
+        (click)="toggleRecurso(r)"
+        [class.active]="veiculoForm.value.recursos?.includes(r)">
+        {{ r }}
+      </button>
+    </div>
+  </div>
+
+  <label class="textarea-label">
+    Informações extras
+    <textarea
+      formControlName="infoExtra"
+      maxlength="500"
+      placeholder="Bom para iniciantes, utilizado em provas, etc...">
+    </textarea>
+    <span>{{ veiculoForm.value.infoExtra?.length || 0 }}/500</span>
+  </label>
+
+  <div class="info-box">
+    Este veículo deve estar em situação regular e com a documentação atualizada!
+  </div>
+
+  <label class="checkbox-row">
+    <input type="checkbox" formControlName="principal">
+    Definir como carro para as aulas
+  </label>
+
+  <div class="buttons">
+    <button type="button" class="btn-primary" (click)="submit()" [disabled]="veiculoForm.invalid">
+      Salvar veículo
+    </button>
+
+    <button type="button" class="btn-secondary" (click)="cancelarCadastro()">
+      Cancelar
+    </button>
+  </div>
+</form>

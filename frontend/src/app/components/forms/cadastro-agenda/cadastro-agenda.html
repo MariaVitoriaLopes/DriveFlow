@@ -1,78 +1,136 @@
 <app-header-instrutor></app-header-instrutor>
 
 <div class="agenda-container">
-  <h2>Cadastrar Agenda</h2>
-  <p>Selecione os dias em que você está disponível. Clique no botão do dia para marcar como disponível. Se o botão estiver desmarcado, o dia será indisponível.</p>
+  <h1>Cadastrar agenda</h1>
+  <p>
+    Adicione os horários para a disponibilidade do aluno. Isso permitirá que um aluno marque aulas dentro dessa agenda.
+  </p>
 
-  <form [formGroup]="agendaForm" (ngSubmit)="salvarAgenda()">
+  <form [formGroup]="agendaForm" (ngSubmit)="salvarAlteracoes()">
 
-    <!-- Configurações gerais -->
-    <div class="config-geral">
+    <h3>Selecione a duração de aula e intervalo</h3>
+
+    <div class="config-grid">
       <label>
-        Duração padrão da aula:
+        Duração padrão de aula
         <select formControlName="duracaoAula">
-          <option *ngFor="let min of duracaoOptions" [value]="min">{{ min }} minutos</option>
+          <option *ngFor="let op of duracoesAula" [value]="op">
+            {{ op }} minutos
+          </option>
         </select>
       </label>
 
       <label>
-        Valor da aula:
+        Valor da aula
         <input type="number" formControlName="valorAula" min="1" />
       </label>
 
       <label>
-        Intervalo entre aulas:
+        Duração do intervalo entre aulas
         <select formControlName="intervaloAula">
-          <option *ngFor="let min of duracaoOptions" [value]="min">{{ min }} minutos</option>
+          <option *ngFor="let op of opcoesDe5A30" [value]="op">
+            {{ op }} minutos
+          </option>
         </select>
       </label>
 
       <label>
-        Tolerância de espera:
+        Tolerância de espera
         <select formControlName="toleranciaEspera">
-          <option *ngFor="let min of toleranciaOptions" [value]="min">{{ min }} minutos</option>
+          <option *ngFor="let op of opcoesDe5A30" [value]="op">
+            {{ op }} minutos
+          </option>
         </select>
       </label>
     </div>
 
-    <!-- Dias da semana -->
-    <div class="dias-semana">
-    <button type="button" *ngFor="let dia of dias" (click)="toggleDisponivel(dia)" [class.disponivel]="dia.disponivel">
+    <h3>Selecione os dias de disponibilidade</h3>
+
+    <div class="dias-grid">
+      <label
+        class="dia-btn"
+        *ngFor="let dia of diasSemana"
+        [class.ativo]="getDiaControl(dia.valor).get('disponivel')?.value"
+      >
+        <input
+          type="checkbox"
+          [checked]="getDiaControl(dia.valor).get('disponivel')?.value"
+          (change)="toggleDia(dia.valor)"
+        />
         {{ dia.nome }}
-    </button>
+      </label>
     </div>
 
-    <!-- Horários por dia -->
-    <div class="horarios" *ngFor="let dia of dias">
-      <div *ngIf="dia.disponivel" class="dia-card">
-        <h3>{{ dia.nome }} (Disponível)</h3>
+    <h3>Selecione os horários</h3>
 
-        <!-- Horários fixos para evitar index dynamic issues -->
-        <div class="periodo">
-          <strong>Manhã</strong>
-          <input type="time" [(ngModel)]="dia.horarios.Manha.inicio" />
-          até
-          <input type="time" [(ngModel)]="dia.horarios.Manha.fim" />
+    <div formArrayName="disponibilidades" class="horarios-lista">
+      <div
+        class="horario-card"
+        *ngFor="let diaForm of disponibilidades.controls; let i = index"
+        [formGroupName]="i"
+        [class.bloqueado]="diaForm.get('bloqueado')?.value"
+      >
+        <div class="card-topo">
+          <div>
+            <strong>{{ getNomeDia(diaForm.get('diaSemana')?.value) }}</strong>
+            <span>
+              {{ diaForm.get('bloqueado')?.value ? 'Indisponível' : 'Disponível' }}
+            </span>
+          </div>
+
+          <label class="check-indisponivel">
+            <input
+              type="checkbox"
+              formControlName="bloqueado"
+              (change)="alternarBloqueio(i)"
+            />
+            Tornar indisponível
+          </label>
         </div>
 
-        <div class="periodo">
-          <strong>Tarde</strong>
-          <input type="time" [(ngModel)]="dia.horarios.Tarde.inicio" />
-          até
-          <input type="time" [(ngModel)]="dia.horarios.Tarde.fim" />
+        <p>Escolha o horário de início e fim do seu expediente.</p>
+
+        <div class="inputs-horario">
+          <input
+            type="time"
+            formControlName="horaInicio"
+            min="06:00"
+            max="22:00"
+          />
+
+          <span>até</span>
+
+          <input
+            type="time"
+            formControlName="horaFim"
+            min="06:00"
+            max="23:00"
+          />
         </div>
 
-        <div class="periodo">
-          <strong>Noite</strong>
-          <input type="time" [(ngModel)]="dia.horarios.Noite.inicio" />
-          até
-          <input type="time" [(ngModel)]="dia.horarios.Noite.fim" />
-        </div>
+        <small class="erro" *ngIf="diaForm.errors?.['horarioInvalido']">
+          O horário precisa começar entre 06:00 e 22:00 e terminar até 23:00.
+        </small>
+
+        <button
+          type="button"
+          class="deletar"
+          (click)="removerDia(i)"
+        >
+          Deletar período
+        </button>
       </div>
     </div>
 
     <div class="acoes">
-      <button type="submit">Salvar Agenda</button>
+      <button type="button" class="btn-cinza" (click)="descartarAlteracoes()">
+        Descartar alterações
+      </button>
+
+      <button type="submit" class="btn-roxo" [disabled]="agendaForm.invalid || salvando">
+        {{ salvando ? 'Salvando...' : 'Salvar alterações' }}
+      </button>
     </div>
+
   </form>
 </div>

@@ -1,44 +1,51 @@
 <app-header-aluno></app-header-aluno>
 
-<div class="page">
-  <div class="container">
-    <header class="topo">
-      <div>
-<!--        <h1>Olá, {{ usuario?.usuario?.nome || usuario?.nome }}!</h1>-->
-        <p>Bem-vindo à sua jornada rumo à CNH. Encontre instrutores, agende aulas e acompanhe sua evolução.</p>
+<div class="container">
+  <header>
+    <h1>Olá, {{ usuario?.usuario?.nome || usuario?.nome }}!</h1>
+    <p>Bem-vindo à sua jornada rumo à CNH. Encontre instrutores, agende aulas e acompanhe sua evolução de forma simples e segura.</p>
+    <button class="localizacao">{{ localizacao }}</button>
+  </header>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Pesquise um instrutor" />
+    <button (click)="toggleModalFiltro()">Filtros</button>
+  </div>
+
+<div class="resultados-info">
+  <span>Resultados:</span>
+  <span>{{ instrutores.length }} instrutores encontrados</span>
+</div>
+
+<div class="cards">
+
+  <div *ngIf="exibeModalFiltro" class="modal-filtro">
+    <app-filtro></app-filtro>
+  </div>
+
+  <div class="card" *ngFor="let i of instrutores">
+    <img [src]="i.carro" alt="Carro do instrutor" />
+
+    <div class="info">
+      <div class="perfil">
+        <img *ngIf="i.foto" [src]="i.foto" alt="Foto do instrutor" />
+        <span>{{ i.nome }}</span>
       </div>
-      <button class="localizacao">{{ localizacao }}</button>
-    </header>
-    <div class="search-bar">
-      <input type="text" placeholder="Pesquise um instrutor"/>
-      <button class="btn-filtro" (click)="toggleModalFiltro()">Filtros</button>
-    </div>
-    <div class="resultados-info">
-      <span>Resultados:</span>
-      <span>6 de {{ instrutores.length }} em exibição</span>
-    </div>
-    <div class="conteudo">
-      <div class="cards">
-        <div class="card" *ngFor="let i of instrutores">
-          <img class="carro" [src]="i.carro" alt="Carro do instrutor"/>
-          <div class="info">
-            <div class="top-card">
-              <div class="perfil">
-                <img *ngIf="i.foto" [src]="i.foto" alt="Foto"/>
-                <span>{{ i.nome }}</span>
-              </div>
-              <span class="avaliacao">{{ i.avaliacao }} ★ ({{ i.totalAvaliacoes }})</span>
-            </div>
-            <span class="categoria">Categoria {{ i.categoria }}</span>
-            <span class="local">{{ i.local }}</span>
-            <span class="preco">R$ {{ i.preco }} aula</span>
-            <button class="ver-mais">Ver mais</button>
-          </div>
-        </div>
-      </div>
-      <aside *ngIf="exibeModalFiltro" class="sidebar-filtro">
-        <app-filtro></app-filtro>
-      </aside>
+
+      <span class="categoria">Categoria {{ i.categoria }}</span>
+      <span class="local">{{ i.local }}</span>
+
+      <span class="preco" *ngIf="i.preco">
+        R$ {{ i.preco }} aula
+      </span>
+
+      <span class="preco" *ngIf="!i.preco">
+        Valor ainda não cadastrado
+      </span>
+
+      <button class="ver-mais" (click)="verPerfil(i.id)">Ver mais</button>
     </div>
   </div>
+
+</div>
 </div>
