@@ -19,6 +19,7 @@ import path from 'path';
 
 import { HomeAluno } from './pages/aluno/home-aluno/home-aluno';
 import { PerfilInstrutor } from './pages/aluno/perfil-instrutor/perfil-instrutor';
+import { ConfiguracoesA } from './pages/aluno/configuracoes/configuracoes';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -37,6 +38,7 @@ export const routes: Routes = [
 
   { path: 'aluno/home-aluno', component: HomeAluno },
   { path: 'aluno/perfil-instrutor', component: PerfilInstrutor },
+  { path: 'aluno/configuracoes', component: ConfiguracoesA} ,
 
   // Rota de teste para o backend
   { path: 'testebackend', component:  AppComponent},

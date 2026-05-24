@@ -1,0 +1,179 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+app-header-aluno{
+    width: 15%;
+}
+
+.config-page {
+  width: 85%;
+  min-height: 100vh;
+  padding: 20px;
+
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+
+  background: #f5f5f7;
+}
+
+.sidebar {
+  position: sticky;
+  top: 20px;
+
+  height: fit-content;
+  min-height: calc(100vh - 40px);
+
+  background: #fff;
+  border: 1px solid #dcdcdc;
+  border-radius: 24px;
+  padding: 32px 20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 5px solid #6c2cff;
+    margin-bottom: 20px;
+    background: #d9d9d9;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2f2f2f;
+  }
+
+  p {
+    margin-top: 6px;
+    color: #7b7b7b;
+    font-size: 15px;
+  }
+
+  .status {
+    margin-top: 12px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #6c2cff;
+    font-weight: 600;
+
+    span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #6c2cff;
+    }
+  }
+}
+
+.menu {
+  margin-top: 40px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  button {
+    width: 100%;
+    border: none;
+    background: transparent;
+
+    padding: 16px;
+    border-radius: 14px;
+
+    text-align: left;
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.2s;
+    color: #2d2d2d;
+
+    &:hover {
+      background: #f2f2f2;
+    }
+
+    &.active {
+      background: #f1ecff;
+      color: #6c2cff;
+    }
+  }
+}
+
+.delete-btn {
+  margin-top: 25px;
+
+  width: 100%;
+  height: 56px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: #ff1c1c;
+  color: #fff;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.aba-conteudo {
+  width: 100%;
+}
+
+.content-card {
+  background: #fff;
+  border: 1px solid #dcdcdc;
+  border-radius: 24px;
+  padding: 40px;
+}
+
+h1 {
+  font-size: 25px;
+  margin-bottom: 30px;
+  color: #2d2d2d;
+}
+
+@media (max-width: 1100px) {
+  .config-page {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: relative;
+    top: 0;
+    min-height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .config-page {
+    padding: 12px;
+  }
+
+  .content-card {
+    padding: 24px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+}

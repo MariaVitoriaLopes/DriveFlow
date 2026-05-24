@@ -6,13 +6,13 @@
     </picture>
 
     <nav>
-        <a routerLink="/aluno/Home-aluno">Home</a>
+        <a routerLink="/aluno/home-aluno">Home</a>
         <a routerLink="/aluno/agenda">Agenda</a>
         <a routerLink="/aluno/aulas">Aulas</a>
-        <a routerLink="/aluno/Desempenho">Desempenho</a>
+        <a routerLink="/aluno/desempenho">Desempenho</a>
         <hr>
         <a routerLink="/aluno/notificacoes">notificações</a>
-        <a routerLink="/aluno/configuracoes">Configurações</a>
+        <a [routerLink]="['/aluno/configuracoes']" [queryParams]="{ aba: 'pessoais' }">Configurações</a>
     </nav>
 
     <div class="ajuda">
