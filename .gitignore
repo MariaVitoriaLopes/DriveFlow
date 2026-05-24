@@ -1,6 +1,5 @@
 # Java
 backend/target/
-backend/.mvn/
 backend/.idea/
 *.class
 
