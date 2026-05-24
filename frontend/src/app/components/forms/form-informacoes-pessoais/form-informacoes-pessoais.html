@@ -39,7 +39,11 @@
 
     <label>
       {{ perfil === 'INSTRUTOR' ? 'CNH' : 'CPF' }}
-      <input type="text" formControlName="documento" placeholder="{{ perfil === 'INSTRUTOR' ? 'Informe sua CNH' : '000.000.000-00' }}" (input)="onDocumentoInput($event)">
+      <input
+        type="text"
+        formControlName="documento"
+        [placeholder]="perfil === 'INSTRUTOR' ? 'Informe sua CNH' : '000.000.000-00'"
+        (input)="onDocumentoInput($event)">
     </label>
 
     <label>Data de nascimento
