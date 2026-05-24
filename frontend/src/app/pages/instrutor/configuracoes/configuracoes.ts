@@ -35,7 +35,7 @@ type AbaConfig = 'pessoais' | 'endereco' | 'veiculo' | 'documentos' | 'configura
     FormDocumentos,
   ],
   templateUrl: './configuracoes.html',
-  styleUrl: './configuracoes.scss',
+  styleUrls: ['./configuracoes.scss'],
 })
 export class Configuracoes implements OnInit {
   private fb = inject(FormBuilder);

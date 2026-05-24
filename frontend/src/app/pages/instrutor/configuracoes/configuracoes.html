@@ -36,8 +36,8 @@
       </button>
     </nav>
 
-    <button
-      type="button"
+    <button 
+      type="button" 
       class="delete-btn"
       (click)="apagarMinhaConta()"
     >
@@ -55,10 +55,7 @@
       <div class="header">
         <h2>Locais de atendimento</h2>
 
-        <button
-          type="button"
-          class="btn-add"
-        >
+        <button type="button" class="btn-add" (click)="formLocais.adicionarEnderecoTemporario()">
           Adicionar novo endereço
         </button>
       </div>
@@ -73,8 +70,7 @@
         <button
           *ngIf="!mostrandoFormNovoVeiculo"
           type="button"
-          (click)="abrirFormNovoVeiculo()"
-        >
+          (click)="abrirFormNovoVeiculo()">
           Adicionar novo veículo
         </button>
 
@@ -87,15 +83,15 @@
             *ngFor="let veiculo of veiculos; trackBy: trackByVeiculoId"
             [veiculo]="veiculo"
             (veiculoAtualizado)="atualizarVeiculo($event)"
-            (veiculoDeletado)="deletarVeiculo($event)"
-          ></app-form-veiculos>
+            (veiculoDeletado)="deletarVeiculo($event)">
+          </app-form-veiculos>
         </div>
 
         <div *ngIf="mostrandoFormNovoVeiculo">
           <app-form-add-novo-veiculo
             (veiculoSalvo)="salvarNovoVeiculo($event)"
-            (cancelar)="cancelarNovoVeiculo()"
-          ></app-form-add-novo-veiculo>
+            (cancelar)="cancelarNovoVeiculo()">
+          </app-form-add-novo-veiculo>
         </div>
       </section>
     </div>
@@ -103,32 +99,22 @@
     <div *ngIf="abaAtiva === 'documentos'">
       <div class="header">
         <h1>Documentos</h1>
-
-        <button type="button" (click)="abrirModal()">
-          Adicionar novo documento
-        </button>
+        <button type="button" (click)="abrirModal()">Adicionar novo documento</button>
       </div>
 
       <div class="modal-backdrop" *ngIf="modalAberto">
         <div class="modal">
-          <button type="button" (click)="selecionarDocumento('CNH')">
-            CNH
-          </button>
-
-          <button type="button" (click)="selecionarDocumento('CERTIFICADO')">
-            Certificado
-          </button>
-
-          <button type="button" class="close-btn" (click)="fecharModal()">
-            Cancelar
-          </button>
+          <button type="button" (click)="selecionarDocumento('CNH')">CNH</button>
+          <button type="button" (click)="selecionarDocumento('CERTIFICADO')">Certificado</button>
+          <button type="button" class="close-btn" (click)="fecharModal()">Cancelar</button>
         </div>
       </div>
 
-      <app-form-documentos
+            <app-form-documentos
+        *ngIf="abaAtiva === 'documentos'"
         [instrutor]="usuario"
-        [abaAtiva]="abaAtiva"
-      ></app-form-documentos>
+        [abaAtiva]="abaAtiva">
+      </app-form-documentos>
     </div>
 
     <div *ngIf="abaAtiva === 'configuracoes'">

@@ -12,8 +12,8 @@
         <a routerLink="/instrutor/alunos">Alunos</a>
         <hr>
         <a routerLink="/instrutor/notificacoes">notificações</a>
-        <a routerLink="/instrutor/documentos">Documentos</a>
-        <a routerLink="/instrutor/configuracoes">Configurações</a>
+        <a [routerLink]="['/instrutor/configuracoes']" [queryParams]="{ aba: 'documentos' }">Documentos</a>
+        <a [routerLink]="['/instrutor/configuracoes']" [queryParams]="{ aba: 'pessoais' }">Configurações</a>
     </nav>
 
     <div class="linkAgendamento">
@@ -27,8 +27,10 @@
     <div class="ajuda">
         <h5>Precisa de ajuda?</h5>
         <p>Entre em contato conosco em caso de dúvidas</p>
-        <a href="">Suporte ao instrutor</a>
+        <a routerLink="/suporte">Suporte ao instrutor</a>
     </div>
 
-    <a href="">Encerrar sessão</a>
+    <button type="button">Encerrar sessão</button>
 </header>
+
+

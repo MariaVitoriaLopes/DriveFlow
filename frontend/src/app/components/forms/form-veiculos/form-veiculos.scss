@@ -1,0 +1,45 @@
+.veiculo-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h3 { font-weight: 600; }
+    .editar-btn { background: #555; color: #fff; border-radius: 5px; padding: 5px 12px; cursor: pointer; }
+  }
+
+  .imagens {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+
+    .foto-principal {
+      flex: 1;
+      img { width: 100%; height: auto; border-radius: 8px; }
+      .upload-btn { margin-top: 5px; cursor: pointer; input { display: none; } }
+    }
+
+    .outras-fotos { display: flex; flex-direction: column; gap: 10px;
+      .foto-add { width: 100px; height: 80px; border: 1px dashed #ccc; display: flex; justify-content: center; align-items: center; border-radius: 6px; cursor: pointer; font-size: 12px; color: #888; }
+    }
+  }
+
+  .form-veiculo { display: flex; flex-direction: column; gap: 12px;
+
+    .row { display: flex; gap: 10px; div { flex: 1; display: flex; flex-direction: column; label { font-weight: 500; } input { padding: 5px 8px; border-radius: 5px; border: 1px solid #ccc; &:disabled { background: #eee; } } } }
+
+    .checkbox { label { display: flex; align-items: center; gap: 6px; } }
+
+    .acoes { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;
+      .salvar { background: #7b5df5; color: #fff; border-radius: 5px; border: none; padding: 6px 12px; cursor: pointer; &:disabled { background: #c0aaf9; cursor: not-allowed; } }
+      .deletar { background: #e74c3c; color: #fff; border-radius: 5px; border: none; padding: 6px 12px; cursor: pointer; }
+    }
+  }
+
+  .adicionar { width: 100%; margin-top: 10px; background: #555; color: #fff; border-radius: 6px; border: none; padding: 8px; cursor: pointer; }
+}

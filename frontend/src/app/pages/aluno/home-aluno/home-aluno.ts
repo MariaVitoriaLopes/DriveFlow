@@ -30,12 +30,12 @@ interface Instrutor {
 })
 export class HomeAluno implements OnInit {
 
-  private apiUrl = 'http://localhost:8081/api/usuarios/instrutores';
-
   localizacao: string = 'Obtendo localização...';
   instrutores: Instrutor[] = [];
   exibeModalFiltro: boolean = false;
   usuario: any;
+
+  private apiUrl = 'http://localhost:8081/api/usuarios/instrutores';
 
   constructor(
     private router: Router,
@@ -153,8 +153,6 @@ export class HomeAluno implements OnInit {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
 
-          this.localizacao = 'Buscando endereço...';
-
           try {
             const response = await fetch(
               `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
@@ -191,20 +189,13 @@ export class HomeAluno implements OnInit {
             this.cdr.detectChanges();
           }
         },
-        (erro) => {
-          console.error('Erro geolocalização:', erro);
+        () => {
           this.localizacao = 'Praia Grande, SP';
           this.cdr.detectChanges();
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
         }
       );
     } else {
       this.localizacao = 'Praia Grande, SP';
-      this.cdr.detectChanges();
     }
   }
 

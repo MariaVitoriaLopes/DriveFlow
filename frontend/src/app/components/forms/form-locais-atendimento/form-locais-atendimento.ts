@@ -27,7 +27,7 @@ export interface LocalAtendimento {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
   templateUrl: './form-locais-atendimento.html',
-  styleUrl: './form-locais-atendimento.scss',
+  styleUrls: ['./form-locais-atendimento.scss'],
 })
 export class FormLocaisAtendimento implements OnInit, OnChanges {
   formLocais!: FormGroup;
