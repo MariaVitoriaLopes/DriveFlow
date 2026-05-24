@@ -3,7 +3,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { HeaderInstrutor } from '../../../components/layout/header-instrutor/header-instrutor';
-import { RouterLink } from "@angular/router";
 import { CalendarComponent } from '../../../components/layout/calendario/calendario';
 
 interface Aula {
@@ -17,19 +16,15 @@ interface HorarioAgenda {
   fim: string;
   bloqueio: boolean;
 }
-
-interface Aula {
-  horario: string;
-  aluno?: string;
-}
-
 @Component({
   selector: 'app-agenda',
-  imports: [HeaderInstrutor, RouterLink, CalendarComponent],
+  imports: [HeaderInstrutor, RouterLink, CalendarComponent, HttpClientModule, CommonModule],
   templateUrl: './agenda.html',
   styleUrl: './agenda.scss',
 })
 export class Agenda {
+  private http = inject(HttpClient);
+  
   selectedDate = new Date();
 
   onDateSelected(date: Date): void {
@@ -70,7 +65,10 @@ export class Agenda {
     { dia: 'Sáb', quantidade: 0 },
   ];
 
+  usuarioId = '';
+
   ngOnInit(): void {
+
     this.usuarioId =
       localStorage.getItem('usuarioId') ||
       localStorage.getItem('userId') ||
@@ -89,7 +87,7 @@ export class Agenda {
     this.http
       .get<any>(`http://localhost:8081/api/instrutores/agenda/${this.usuarioId}`)
       .subscribe({
-        next: (agenda) => {
+        next: (agenda : any) => {
           console.log('AGENDA RECEBIDA:', agenda);
 
           if (!agenda) return;
@@ -112,7 +110,7 @@ export class Agenda {
           this.gerarFolgas();
         },
 
-        error: (erro) => {
+        error: (erro : any) => {
           console.error('Erro ao carregar agenda:', erro);
         }
       });
