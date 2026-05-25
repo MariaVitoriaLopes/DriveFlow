@@ -24,4 +24,14 @@ export class Filtro {
     this.cambioSelecionado = 'Manual';
   }
 
+  menuAberto = false;
+
+  toggleMenu() {
+    this.menuAberto = !this.menuAberto;
+  }
+
+  fecharMenu() {
+    this.menuAberto = false;
+  }
+
 }
