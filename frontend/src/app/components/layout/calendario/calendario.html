@@ -17,9 +17,7 @@
         </button>
     </div>
     <div class="week-days">
-        @for (dia of diasSemana; track dia) {
-            <span>{{ dia }}</span>
-        }
+    <span *ngFor="let dia of diasSemana; let i = index; trackBy: trackByIndex">{{ dia }}</span>
     </div>
     <div class="calendar-days">
         @for (day of calendarDays; track $index) {

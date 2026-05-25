@@ -79,6 +79,10 @@ export class CalendarComponent implements OnInit {
     }
   }
 
+  trackByIndex(index: number, item: any) {
+  return index;
+}
+
   previousMonth(): void {
     if (this.currentMonth === 0) {
       this.currentMonth = 11;

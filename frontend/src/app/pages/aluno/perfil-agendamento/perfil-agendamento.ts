@@ -1,138 +1,184 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { CalendarComponent } from '../../../components/layout/calendario/calendario';
 
-interface Instrutor {
-  id: string;
-  nome: string;
-  bio: string;
-  fotoPerfilUrl?: string;
-  veiculoId?: string;
-  veiculo?: { marca: string; modelo: string; cor: string; ano: string; placa: string; };
-  enderecoFavorito?: string;
-}
-
-interface AgendaConfig {
-  duracaoAula: number;
-  intervaloAula: number;
-  toleranciaAtraso: number;
-  valorAula: number;
-  taxa: number;
-}
-
-interface HorarioSlot {
+interface HorarioSlotDTO {
   inicio: string;
-  fimUmaAula: string;
-  fimDuasAulas: string;
+  fim: string;
   podeUmaAula: boolean;
   podeDuasAulas: boolean;
 }
 
-@Component({
-  selector: 'app-agendamento',
-  standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule, RouterModule],
-  templateUrl: './perfil-agendamento.html',
-  styleUrls: ['./perfil-agendamento.scss']
-})
-export class PerfilAgendamento implements OnInit {
-  private http = inject(HttpClient);
-  public router = inject(Router);
-  private route = inject(ActivatedRoute);
+interface Veiculo {
+  id: string;
+  marca: string;
+  modelo: string;
+  ano: number;
+  principal: boolean;
+}
 
-  instrutorId!: string;
-  alunoId: string = localStorage.getItem('usuarioId') || '';
-  instrutor?: Instrutor;
-  agendaConfig?: AgendaConfig;
-  dataSelecionada: string = '';
-  horariosDisponiveis: HorarioSlot[] = [];
+interface LocalAtendimento {
+  logradouro: string;
+  bairro: string;
+  cidade: string;
+  uf: string;
+  favorito: boolean;
+}
+
+interface InstrutorPerfilCompletoDTO {
+  usuario: { id: string; nome: string; fotoUrl: string; bio: string };
+  veiculos: Veiculo[];
+  locaisAtendimento: LocalAtendimento[];
+  duracaoAula: number;
+  toleranciaEspera: number;
+  intervaloAula: number;
+  valorAula: number;
+}
+
+@Component({
+  selector: 'app-perfil-agendamento',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule, CalendarComponent],
+  templateUrl: './perfil-agendamento.html',
+  styleUrls: ['./perfil-agendamento.scss'],
+})
+export class PerfilAgendamentoComponent implements OnInit {
+  instrutor!: InstrutorPerfilCompletoDTO;
+  dataSelecionada: Date = new Date();
+  horariosDisponiveis: HorarioSlotDTO[] = [];
   horarioInicio: string = '';
   quantidadeAulas: number = 1;
   horarioFim: string = '';
   total: number = 0;
-  veiculoSelecionadoId?: string;
-  localEncontro?: string;
+  localEncontro: string = '';
   mensagemErro: string = '';
+  mapaUrlSeguro: SafeResourceUrl | null = null;
 
-  ngOnInit() {
-    this.instrutorId = history.state.instrutorId || sessionStorage.getItem('instrutorId') || '';
-    if (!this.instrutorId) { 
-      this.router.navigate(['/']); 
-      return; 
-    }
-    this.carregarDadosInstrutor();
-    this.carregarAgendaConfig();
+  constructor(
+    public router: Router,
+    private http: HttpClient,
+    private sanitizer: DomSanitizer
+  ) {}
+
+ngOnInit(): void {
+  const instrutorId = sessionStorage.getItem('instrutorIdSelecionado') || localStorage.getItem('instrutorIdSelecionado');
+
+  if (!instrutorId) {
+    this.mensagemErro = 'Instrutor não encontrado.';
+    return;
   }
 
-  carregarDadosInstrutor() {
-    this.http.get<Instrutor>(`/api/instrutores/configuracoes/${this.instrutorId}`).subscribe(
-      data => {
-        this.instrutor = {
-          id: data.id,
-          nome: data.nome,
-          bio: data.bio,
-          fotoPerfilUrl: data.fotoPerfilUrl || '/assets/images/avatar-placeholder.png',
-          veiculoId: data.veiculoId,
-          veiculo: data.veiculo,
-          enderecoFavorito: data.enderecoFavorito
-        };
-        this.localEncontro = this.instrutor.enderecoFavorito;
-        this.veiculoSelecionadoId = this.instrutor.veiculoId;
+  this.carregarInstrutor(instrutorId);
+}
+
+  carregarInstrutor(instrutorId: string) {
+    this.http.get<InstrutorPerfilCompletoDTO>(`/api/instrutores/configuracoes/${instrutorId}`).subscribe({
+      next: (instr) => {
+        this.instrutor = instr;
+
+        const local = instr.locaisAtendimento.find(l => l.favorito) || instr.locaisAtendimento[0];
+        if (local) this.localEncontro = `${local.logradouro}, ${local.bairro}, ${local.cidade}-${local.uf}`;
+
+        if (this.localEncontro)
+          this.mapaUrlSeguro = this.sanitizer.bypassSecurityTrustResourceUrl(
+            `https://maps.google.com/?q=${encodeURIComponent(this.localEncontro)}`
+          );
+
+        this.buscarHorariosPorDiaSemana(this.dataSelecionada);
       },
-      err => this.mensagemErro = 'Erro ao carregar dados do instrutor.'
-    );
+      error: () => (this.mensagemErro = 'Erro ao carregar dados do instrutor.')
+    });
   }
 
-  carregarAgendaConfig() {
-    this.http.get<AgendaConfig>(`/api/agenda-config/usuario/${this.instrutorId}`).subscribe(
-      data => this.agendaConfig = data,
-      err => this.mensagemErro = 'Instrutor sem agenda configurada.'
-    );
+  buscarHorariosPorDiaSemana(data: Date) {
+    if (!this.instrutor) return;
+
+    const diasSemana = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+    const diaNome = diasSemana[data.getDay()];
+
+    this.http.get<HorarioSlotDTO[]>(`/api/instrutores/configuracoes/${this.instrutor.usuario.id}/agenda/${diaNome}`)
+      .subscribe({
+        next: (horarios) => {
+          this.horariosDisponiveis = horarios;
+          this.mensagemErro = horarios.length === 0 ? 'Não há horários disponíveis neste dia.' : '';
+        },
+        error: () => (this.mensagemErro = 'Erro ao buscar horários disponíveis.')
+      });
   }
 
-  buscarHorarios() {
-    if (!this.dataSelecionada) return;
-    this.http.get<HorarioSlot[]>(`/api/aulas/disponiveis?instrutorId=${this.instrutorId}&data=${this.dataSelecionada}`).subscribe(
-      slots => this.horariosDisponiveis = slots,
-      err => this.mensagemErro = 'Não foi possível carregar horários disponíveis.'
-    );
+  onDataChange() {
+    if (!this.instrutor) return;
+    this.horarioInicio = '';
+    this.horarioFim = '';
+    this.total = 0;
+    this.buscarHorariosPorDiaSemana(this.dataSelecionada);
   }
 
   atualizarFimETotal() {
-    const slot = this.horariosDisponiveis.find(h => h.inicio === this.horarioInicio);
-    if (!slot || !this.agendaConfig) return;
-    this.horarioFim = this.quantidadeAulas === 1 ? slot.fimUmaAula : slot.fimDuasAulas;
-    this.total = (this.agendaConfig.valorAula * this.quantidadeAulas) + (this.agendaConfig.taxa || 0);
+    const slot = this.horariosDisponiveis.find(s => s.inicio === this.horarioInicio);
+    if (!slot || !this.instrutor) return;
+
+    let minutosTotais = 0;
+    for (let i = 0; i < this.quantidadeAulas; i++) {
+      minutosTotais += this.instrutor.duracaoAula;
+      if (i < this.quantidadeAulas - 1) minutosTotais += this.instrutor.intervaloAula;
+    }
+
+    const [h, m] = slot.inicio.split(':').map(Number);
+    minutosTotais += h * 60 + m;
+    const fimHora = Math.floor(minutosTotais / 60);
+    const fimMinuto = minutosTotais % 60;
+    this.horarioFim = `${fimHora.toString().padStart(2, '0')}:${fimMinuto.toString().padStart(2, '0')}`;
+
+    this.total = this.instrutor.valorAula * this.quantidadeAulas;
   }
 
   agendarAula() {
-    if (!this.horarioInicio || !this.horarioFim || !this.veiculoSelecionadoId || !this.localEncontro || !this.agendaConfig) {
-      this.mensagemErro = 'Preencha todos os campos obrigatórios.';
+    if (!this.horarioInicio || !this.dataSelecionada || !this.instrutor) {
+      this.mensagemErro = 'Selecione data e horário.';
       return;
     }
 
+    const alunoId = localStorage.getItem('usuarioId') || '';
+    const veiculo = this.instrutor.veiculos.find(v => v.principal) || this.instrutor.veiculos[0];
+
     const payload = {
-      instrutorId: this.instrutorId,
-      alunoId: this.alunoId,
-      data: this.dataSelecionada,
+      instrutorId: this.instrutor.usuario.id,
+      alunoId,
+      data: this.dataSelecionada.toISOString().split('T')[0],
       horarioInicio: this.horarioInicio,
       horarioFim: this.horarioFim,
       quantidadeAulas: this.quantidadeAulas,
-      duracaoAula: this.agendaConfig.duracaoAula,
-      intervaloAula: this.agendaConfig.intervaloAula,
-      valorAula: this.agendaConfig.valorAula,
-      taxa: this.agendaConfig.taxa,
+      duracaoAula: this.instrutor.duracaoAula,
+      intervaloAula: this.instrutor.intervaloAula,
+      valorAula: this.instrutor.valorAula,
+      taxa: 0.12,
       total: this.total,
+      status: 'AGENDADA',
       localEncontro: this.localEncontro,
-      veiculoId: this.veiculoSelecionadoId,
-      status: 'AGENDADA'
+      veiculoId: veiculo?.id || ''
     };
 
-    this.http.post('/api/aulas/agendar', payload).subscribe(
-      () => { alert('Aula agendada com sucesso!'); this.router.navigate(['/']); },
-      err => this.mensagemErro = err.error?.message || 'Erro ao agendar aula.'
-    );
+    this.http.post('/api/aulas/agendar', payload).subscribe({
+      next: () => this.router.navigate(['/']),
+      error: () => (this.mensagemErro = 'Erro ao agendar aula.')
+    });
+  }
+
+  selectDay(day: any) {
+    if (!day.date || !this.instrutor) return;
+    this.dataSelecionada = day.date;
+    this.horarioInicio = '';
+    this.horarioFim = '';
+    this.total = 0;
+    this.buscarHorariosPorDiaSemana(this.dataSelecionada);
+  }
+
+  trackByIndex(index: number, item: any) {
+    return index;
   }
 }

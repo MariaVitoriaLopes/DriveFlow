@@ -72,14 +72,16 @@ export class PerfilInstrutor implements OnInit {
     });
   }
 
-  agendarAula() {
-    if (!this.instrutor) return;
+agendarAula() {
+  if (!this.instrutor) return;
 
-    // Armazena o instrutorId para a página de agendamento
-    const instrutorId = this.instrutor.id;
-    sessionStorage.setItem('instrutorId', instrutorId);
+  // Corrigido: usar this.instrutor
+  sessionStorage.setItem('instrutorIdSelecionado', this.instrutor.id);
 
-    // Redireciona para a página de agendamento
-    this.router.navigate(['/aluno/perfil-agendamento'], { state: { instrutorId } });
-  }
+  // Salva também no localStorage se quiser
+  localStorage.setItem('instrutorIdSelecionado', this.instrutor.id);
+
+  // Redireciona para a página de agendamento
+  this.router.navigate(['/aluno/perfil-agendamento']);
+}
 }

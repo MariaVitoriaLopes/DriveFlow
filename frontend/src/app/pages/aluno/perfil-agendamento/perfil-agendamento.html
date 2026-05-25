@@ -1,42 +1,48 @@
 <div class="agendamento-container">
-  <div class="calendario">
-    <h2>Agendar</h2>
-    <input type="date" [(ngModel)]="dataSelecionada" (change)="buscarHorarios()" />
-    <div *ngIf="mensagemErro" class="erro">{{ mensagemErro }}</div>
+  <div class="agendamento-left">
+    <h2>Agendar Aula</h2>
 
-    <select [(ngModel)]="horarioInicio" (change)="atualizarFimETotal()">
+  <div class="calendar-wrapper" *ngIf="instrutor">
+    <app-calendar 
+      [instrutorId]="instrutor.usuario.id"
+      [selectedDate]="dataSelecionada"
+      (dateChange)="onDataChange()">
+    </app-calendar>
+  </div>
+
+    <label>Horário Inicial</label>
+    <select [(ngModel)]="horarioInicio" name="horarioInicio" (change)="atualizarFimETotal()">
       <option value="">Selecione um horário</option>
-      <option *ngFor="let slot of horariosDisponiveis" [value]="slot.inicio" [disabled]="quantidadeAulas===2 && !slot.podeDuasAulas || quantidadeAulas===1 && !slot.podeUmaAula">
-        {{ slot.inicio }} ({{ quantidadeAulas }} aula{{ quantidadeAulas>1?'s':'' }})
+      <option *ngFor="let slot of horariosDisponiveis; let i = index; trackBy: trackByIndex" [value]="slot.inicio">
+        {{ slot.inicio }} ({{ quantidadeAulas }} aula{{ quantidadeAulas > 1 ? 's' : '' }})
       </option>
     </select>
 
-    <label>Quantidade de aulas:</label>
-    <select [(ngModel)]="quantidadeAulas" (change)="atualizarFimETotal()">
+    <label>Quantidade de aulas</label>
+    <select [(ngModel)]="quantidadeAulas" name="quantidadeAulas" (change)="atualizarFimETotal()">
       <option [value]="1">1</option>
       <option [value]="2">2</option>
     </select>
+
+    <div *ngIf="mensagemErro" class="mensagem-erro">{{ mensagemErro }}</div>
   </div>
 
-  <div class="informacoes">
-    <div class="instrutor">
-      <img [src]="instrutor?.fotoPerfilUrl" alt="Foto do instrutor" />
-      <h3>{{ instrutor?.nome }}</h3>
-      <p>{{ instrutor?.bio }}</p>
-      <p>Veículo: {{ instrutor?.veiculo?.marca }} {{ instrutor?.veiculo?.modelo }} {{ instrutor?.veiculo?.ano }}</p>
-      <p>Endereço: {{ instrutor?.enderecoFavorito }}</p>
+  <div class="agendamento-right" *ngIf="instrutor">
+    <h3>Informações do Instrutor</h3>
+
+    <div class="card-info">
+      <div class="info-item"><label>Duração da aula</label><input [value]="instrutor.duracaoAula + ' min'" readonly></div>
+      <div class="info-item"><label>Tolerância a atrasos</label><input [value]="instrutor.toleranciaEspera + ' min'" readonly></div>
+      <div class="info-item"><label>Local de encontro</label><input [value]="localEncontro" readonly></div>
+      <div class="info-item"><label>Veículo</label><input [value]="instrutor.veiculos.find(v=>v.principal)?.marca + ' ' + instrutor.veiculos.find(v=>v.principal)?.modelo + ' ' + instrutor.veiculos.find(v=>v.principal)?.ano" readonly></div>
+      <div class="info-item"><label>Horário Final</label><input [value]="horarioFim" readonly></div>
+      <div class="info-item"><label>Valor da hora</label><input [value]="'R$ ' + instrutor.valorAula.toFixed(2)" readonly></div>
+      <div class="info-item"><label>Total</label><input [value]="'R$ ' + total.toFixed(2)" readonly></div>
     </div>
 
-    <label>Local de Encontro</label>
-    <input type="text" [(ngModel)]="localEncontro" />
-
-    <label>Horário Final</label>
-    <input type="text" [value]="horarioFim" readonly />
-
-    <label>Total</label>
-    <input type="text" [value]="'R$ '+total.toFixed(2)" readonly />
-
-    <button class="btn-cancelar" (click)="router.navigate(['/'])">Cancelar</button>
-    <button class="btn-agendar" (click)="agendarAula()">Agendar aula</button>
+    <div class="botoes">
+      <button class="btn-cancelar" (click)="router.navigate(['/'])">Cancelar</button>
+      <button class="btn-agendar" (click)="agendarAula()">Agendar aula</button>
+    </div>
   </div>
 </div>

@@ -20,7 +20,7 @@ import path from 'path';
 import { HomeAluno } from './pages/aluno/home-aluno/home-aluno';
 import { PerfilInstrutor } from './pages/aluno/perfil-instrutor/perfil-instrutor';
 import { ConfiguracoesA } from './pages/aluno/configuracoes/configuracoes';
-import { PerfilAgendamento } from './pages/aluno/perfil-agendamento/perfil-agendamento';
+import { PerfilAgendamentoComponent } from './pages/aluno/perfil-agendamento/perfil-agendamento';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -39,7 +39,7 @@ export const routes: Routes = [
 
   { path: 'aluno/home-aluno', component: HomeAluno },
   { path: 'aluno/perfil-instrutor', component: PerfilInstrutor },
-  { path: 'aluno/perfil-agendamento', component: PerfilAgendamento },
+  { path: 'aluno/perfil-agendamento', component: PerfilAgendamentoComponent },
   { path: 'aluno/configuracoes', component: ConfiguracoesA} ,
 
   // Rota de teste para o backend
