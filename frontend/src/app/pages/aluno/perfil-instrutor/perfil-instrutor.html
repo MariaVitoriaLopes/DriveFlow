@@ -1,0 +1,156 @@
+<app-header-aluno></app-header-aluno>
+
+<div class="page" *ngIf="instrutor; else carregando">
+
+  <section class="main-card">
+
+<div class="gallery">
+  <img
+    class="main-img"
+    [src]="instrutor.veiculo.fotoPrincipal"
+    alt="Carro"
+  >
+
+  <div class="thumbs">
+    <ng-container *ngIf="instrutor.veiculo.fotos?.length; else semFotos">
+      <img
+        *ngFor="let foto of instrutor.veiculo.fotos"
+        [src]="foto"
+        alt="Foto do carro"
+      >
+    </ng-container>
+
+    <ng-template #semFotos>
+      <div class="empty-img">⌧</div>
+    </ng-template>
+  </div>
+</div>
+
+    <div class="profile">
+      <div class="avatar">
+        <img
+          *ngIf="instrutor?.fotoPerfil"
+          [src]="instrutor.fotoPerfil"
+          alt="Foto do instrutor"
+        />
+
+        <span *ngIf="!instrutor?.fotoPerfil">♡</span>
+      </div>
+
+      <div class="profile-info">
+        <h3>
+          {{ instrutor?.nome }}
+          <span *ngIf="instrutor?.verificado">✦ Verificado</span>
+        </h3>
+        <p>{{ instrutor?.descricao }}</p>
+      </div>
+    </div>
+
+    <h3 class="section-title">Veículo</h3>
+
+    <div class="vehicle-grid">
+      <div>
+        <label>Categoria</label>
+        <input [value]="instrutor?.veiculo?.categoria || 'Não informado'" readonly>
+      </div>
+
+      <div>
+        <label>Câmbio</label>
+        <input [value]="instrutor?.veiculo?.cambio || 'Não informado'" readonly>
+      </div>
+
+      <div>
+        <label>Marca</label>
+        <input [value]="instrutor?.veiculo?.marca || 'Não informado'" readonly>
+      </div>
+
+      <div>
+        <label>Versão</label>
+        <input [value]="instrutor?.veiculo?.versao || 'Não informado'" readonly>
+      </div>
+    </div>
+
+    <h3 class="section-title">Recursos extras</h3>
+
+    <div class="extras-grid">
+      <button
+        class="active"
+        *ngFor="let recurso of instrutor?.veiculo?.recursos">
+        {{ recurso }} ✓
+      </button>
+    </div>
+
+  </section>
+
+  <aside class="schedule-card">
+    <h3>Agendamento</h3>
+
+    <p>
+      <strong>Localidade:</strong>
+      {{ instrutor?.localidade || 'Local não informado' }}
+    </p>
+
+        <iframe
+        class="map"
+        [src]="mapaUrlSeguro"
+        loading="lazy">
+        </iframe>
+
+    <p><strong>Agenda:</strong> Maio</p>
+
+    <div class="calendar">
+      <div class="calendar-top">
+        <button>‹</button>
+        <strong>Maio</strong>
+        <button>›</button>
+      </div>
+
+      <div class="days-name">
+        <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+      </div>
+
+      <div class="days">
+        <span>26</span><span>27</span><span>28</span><span>29</span><span>30</span>
+        <span class="selected">1</span>
+        <span>2</span>
+      </div>
+    </div>
+
+    <div class="availability-title">
+      <strong>Disponibilidade</strong>
+      <span>Disponível</span>
+    </div>
+
+    <div class="week-days">
+      <button>Segunda</button>
+      <button>Terça</button>
+      <button>Quarta</button>
+      <button>Quinta</button>
+      <button>Sexta</button>
+      <button>Sábado</button>
+      <button class="disabled">Domingo</button>
+    </div>
+
+    <p><strong>Horário:</strong> 1 de Maio de 2026</p>
+
+    <div class="hours">
+      <input value="08:00" readonly>
+      <span>até</span>
+      <input value="12:00" readonly>
+    </div>
+
+    <button
+      class="schedule-btn"
+      (click)="agendarAula()"
+    >
+      Agendar aula
+    </button>
+  </aside>
+
+</div>
+
+<ng-template #carregando>
+  <div class="loading">
+    <p>{{ mensagemCarregamento }}</p>
+  </div>
+</ng-template>

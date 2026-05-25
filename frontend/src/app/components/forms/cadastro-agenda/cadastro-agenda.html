@@ -1,0 +1,141 @@
+<app-header-instrutor></app-header-instrutor>
+
+<div class="agenda-container">
+  <h1>Cadastrar agenda</h1>
+
+  <p>
+    Adicione os horários para a disponibilidade do aluno. Isso permitirá que um aluno marque aulas dentro dessa agenda.
+  </p>
+
+  <form [formGroup]="agendaForm" (ngSubmit)="salvarAlteracoes()">
+
+    <h3>Selecione a duração de aula e intervalo</h3>
+
+    <div class="config-grid">
+      <label>
+        Duração padrão de aula
+        <select formControlName="duracaoAula">
+          <option *ngFor="let op of duracoesAula" [value]="op">
+            {{ op }} minutos
+          </option>
+        </select>
+      </label>
+
+      <label>
+        Valor da aula
+        <input type="number" formControlName="valorAula" min="1" />
+      </label>
+
+      <label>
+        Duração do intervalo entre aulas
+        <select formControlName="intervaloAula">
+          <option *ngFor="let op of opcoesDe5A30" [value]="op">
+            {{ op }} minutos
+          </option>
+        </select>
+      </label>
+
+      <label>
+        Tolerância de espera
+        <select formControlName="toleranciaEspera">
+          <option *ngFor="let op of opcoesDe5A30" [value]="op">
+            {{ op }} minutos
+          </option>
+        </select>
+      </label>
+    </div>
+
+    <h3>Selecione os dias de disponibilidade</h3>
+
+    <div class="dias-grid">
+      <label
+        class="dia-btn"
+        *ngFor="let dia of diasSemana"
+        [class.ativo]="diaSelecionado(dia.valor)"
+      >
+        <input
+          type="checkbox"
+          [checked]="diaSelecionado(dia.valor)"
+          (change)="toggleDia(dia.valor)"
+        />
+        {{ dia.nome }}
+      </label>
+    </div>
+
+    <h3>Selecione os horários</h3>
+
+    <div formArrayName="disponibilidades" class="horarios-lista">
+      <div
+        class="horario-card"
+        *ngFor="let diaForm of disponibilidades.controls; let i = index"
+        [formGroupName]="i"
+        [class.bloqueado]="diaForm.get('bloqueado')?.value"
+      >
+        <div class="card-topo">
+          <div>
+            <strong>{{ getNomeDia(diaForm.get('diaSemana')?.value) }}</strong>
+            <span>
+              {{ diaForm.get('bloqueado')?.value ? 'Indisponível' : 'Disponível' }}
+            </span>
+          </div>
+
+          <label class="check-indisponivel">
+            <input
+              type="checkbox"
+              formControlName="bloqueado"
+              (change)="alternarBloqueio(i)"
+            />
+            Tornar indisponível
+          </label>
+        </div>
+
+        <p>Escolha o horário de início e fim do seu expediente.</p>
+
+        <div class="inputs-horario">
+          <input
+            type="time"
+            formControlName="horaInicio"
+            min="06:00"
+            max="22:00"
+          />
+
+          <span>até</span>
+
+          <input
+            type="time"
+            formControlName="horaFim"
+            min="06:00"
+            max="23:00"
+          />
+        </div>
+
+        <small class="erro" *ngIf="diaForm.errors?.['horarioInvalido']">
+          O horário precisa começar entre 06:00 e 22:00 e terminar até 23:00.
+        </small>
+
+        <button
+          type="button"
+          class="deletar"
+          (click)="removerDia(i)"
+        >
+          Deletar período
+        </button>
+      </div>
+    </div>
+
+    <div class="acoes">
+      <button type="button" class="btn-cinza" (click)="descartarAlteracoes()">
+        Descartar alterações
+      </button>
+
+      <button
+        type="submit"
+        class="btn-roxo"
+        [disabled]="agendaForm.invalid || salvando"
+      >
+        {{ salvando ? 'Salvando...' : 'Salvar alterações' }}
+      </button>
+    </div>
+
+  </form>
+</div>

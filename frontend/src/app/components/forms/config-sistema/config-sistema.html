@@ -1,0 +1,53 @@
+<form [formGroup]="formPreferencias" (ngSubmit)="salvar()" class="preferencias-form">
+  <h2>Configurações do sistema</h2>
+
+  <!-- Tema -->
+  <div class="campo">
+    <label>Tema do sistema</label>
+    <div class="radios">
+      <label><input type="radio" formControlName="tema" value="claro"> Claro</label>
+      <label><input type="radio" formControlName="tema" value="escuro"> Escuro</label>
+      <label><input type="radio" formControlName="tema" value="padrao"> Padrão do sistema</label>
+    </div>
+  </div>
+
+  <!-- Idioma -->
+  <div class="campo">
+    <label>Idioma</label>
+    <select formControlName="idioma">
+      <option value="pt-BR">Português (BR)</option>
+      <option value="en-US">English (US)</option>
+    </select>
+  </div>
+
+  <!-- Notificações -->
+  <div class="campo">
+    <label>Notificações</label>
+    <div class="checkboxes">
+      <label>
+        <input type="checkbox" formControlName="push">
+        Notificações por push
+      </label>
+      <label>
+        <input type="checkbox" formControlName="email">
+        Notificações por e-mail
+      </label>
+      <label>
+        <input type="checkbox" formControlName="lembretes">
+        Lembretes das aulas
+      </label>
+      <label>
+        <input type="checkbox" formControlName="promocoes">
+        Promoções e novidades
+      </label>
+    </div>
+  </div>
+
+  <a href="#" class="link-suporte">Suporte ao instrutor</a>
+
+  <!-- Botões -->
+  <div class="botoes">
+    <button type="button" (click)="descartar()">Descartar alterações</button>
+    <button type="submit">Salvar alterações</button>
+  </div>
+</form>

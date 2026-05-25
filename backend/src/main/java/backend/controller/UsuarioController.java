@@ -9,12 +9,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/usuarios")
 @CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 public class UsuarioController {
+
+    @PostMapping("/cadastro")
+    public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {
+        System.out.println("Recebendo requisição de cadastro para o perfil: " + usuario.getPerfil());
+        Usuario usuarioSalvo = usuarioService.cadastrar(usuario);
+        return ResponseEntity.ok(usuarioSalvo);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credenciais) {
+        try {
+            Usuario usuarioLogado = usuarioService.login(credenciais.get("email"), credenciais.get("senha"));
+            return ResponseEntity.ok(usuarioLogado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).body(Map.of("mensagem", e.getMessage()));
+        }
+    }
 
     // Padronizado como usuarioService para bater com todas as suas chamadas abaixo
     private final UsuarioService usuarioService;

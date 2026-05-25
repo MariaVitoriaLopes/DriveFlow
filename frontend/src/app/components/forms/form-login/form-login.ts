@@ -1,22 +1,19 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-form-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './form-login.html',
-  styleUrl: './form-login.scss',
+  styleUrls: ['./form-login.scss'],
 })
 export class FormLogin {
   private fb = inject(FormBuilder);
-  private http = inject(HttpClient);
+  private auth = inject(AuthService);
   private router = inject(Router);
 
   form = this.fb.group({
@@ -24,42 +21,43 @@ export class FormLogin {
     senha: ['', [Validators.required, Validators.minLength(8)]],
   });
 
+  mostrarSenha = false;
 
-  onLogin() {
-    if (this.form.valid) {
-      const credenciais = {
-        email: this.form.value.email,
-        senha: this.form.value.senha
-      };
+  toggleSenha(): void {
+    this.mostrarSenha = !this.mostrarSenha;
+  }
 
-      console.log('Enviando dados de login para o Java:', credenciais);
-
-
-      this.http.post('http://localhost:8081/api/usuarios/login', credenciais)
-        .subscribe({
-          next: (usuarioLogado: any) => {
-
-            alert(`Bem-vindo de volta, ${usuarioLogado.nome}!`);
-
-
-            localStorage.setItem('usuario', JSON.stringify(usuarioLogado));
-
-
-            if (usuarioLogado.perfil === 'INSTRUTOR') {
-              console.log('Navegando para o painel do Instrutor...');
-              this.router.navigate(['/instrutor/dashboard']);
-            } else {
-              console.log('Navegando para o painel do Aluno...');
-              this.router.navigate(['/dashboard-aluno']); // Ajuste para sua rota real
-            }
-          },
-          error: (erro) => {
-            console.error('Erro na autenticação:', erro);
-            alert('E-mail ou senha incorretos! Verifique os dados.');
-          }
-        });
-    } else {
+  onLogin(): void {
+    if (this.form.invalid) {
       alert('Por favor, preencha os campos corretamente.');
+      return;
     }
+
+    const email = this.form.value.email!;
+    const senha = this.form.value.senha!;
+
+    this.auth.login(email, senha).subscribe({
+      next: (usuarioLogado) => {
+        localStorage.setItem('usuario', JSON.stringify(usuarioLogado));
+        localStorage.setItem('usuarioId', usuarioLogado.id);
+        localStorage.setItem('userId', usuarioLogado.id);
+        localStorage.setItem('userPerfil', usuarioLogado.perfil);
+
+        alert(`Bem-vindo de volta, ${usuarioLogado.nome}!`);
+
+        if (usuarioLogado.perfil === 'INSTRUTOR') {
+          this.router.navigate(
+            ['/instrutor/configuracoes'],
+            { queryParams: { aba: 'pessoais' } }
+          );
+        } else {
+          this.router.navigate(['/aluno/home-aluno']);
+        }
+      },
+      error: (erro) => {
+        console.error('Erro na autenticação:', erro);
+        alert('E-mail ou senha incorretos! Verifique os dados.');
+      }
+    });
   }
 }

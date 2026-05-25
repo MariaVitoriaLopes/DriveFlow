@@ -4,14 +4,15 @@ label {
   font-size: 14px;
 }
 
-input[type="email"], input[type="password"] {
+input[type="email"],
+input[type="password"],
+input[type="text"] {
   width: 100%;
   padding: 10px;
   border-radius: 8px;
   border: 1px solid #ccc;
   margin-top: 5px;
 }
-
 .input-icon {
   position: relative;
 }

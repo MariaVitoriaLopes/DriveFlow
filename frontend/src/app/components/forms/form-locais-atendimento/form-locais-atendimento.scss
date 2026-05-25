@@ -1,0 +1,93 @@
+.locais-container {
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    h2 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .btn-add {
+      background-color: #1f1f1f;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  }
+
+  .endereco-card {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+
+    h3 {
+      margin: 0 0 0.5rem 0;
+    }
+
+    .linha {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.5rem;
+
+      label {
+        flex-basis: 100%;
+        font-weight: bold;
+      }
+
+      input {
+        flex: 1;
+        padding: 0.4rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+    }
+
+    .acoes {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .delete {
+        color: red;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    .btn-descartar {
+      background-color: #777;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn-salvar {
+      background-color: #6c00ff;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  }
+}

@@ -1,10 +1,32 @@
-app-header-instrutor {
-    width: 15%;
+:host {
+    --bg-page: #f5f5f7;
+    --bg-card: #ffffff;
+
+    --primary: #7008e7;
+    --primary-hover: #5e05c4;
+
+    --text-primary: #111111;
+    --text-secondary: #666674;
+
+    --border: #d7d7df;
+    --border-soft: #ececf2;
+
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
+
+    --radius-lg: 16px;
+    --radius-md: 12px;
+
+    background: var(--bg-page);
+    border: var(--border);
 }
+
+// app-header-instrutor {
+//     width: 15%;
+// }
 
 .agenda-page {
   padding: 38px;
-  background: #9F9FA9;
+  background: var(--bg-page);
   min-height: 100vh;
   font-family: Arial, sans-serif;
   color: #0d0d0d;
@@ -18,20 +40,22 @@ app-header-instrutor {
 
 .card {
   background: #fff;
-  border: 1px solid #a7a7b3;
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 20px;
   box-sizing: border-box;
 }
 
 .content {
-  display: grid;
-  grid-template-columns: 2fr 1.08fr;
-  grid-template-areas:
-    "calendar today"
-    "student middle"
-    "student hours"
-    "student breaks";
+  display: flex;
+  flex-direction: column;
+  // display: grid;
+  // grid-template-columns: 2fr 1.08fr;
+  // grid-template-areas:
+  //   "calendar today"
+  //   "student middle"
+  //   "student hours"
+  //   "student breaks";
   gap: 20px;
 }
 
@@ -121,6 +145,7 @@ app-header-instrutor {
   grid-area: today;
   height: 430px;
   padding: 26px 30px;
+  width: 100%;
 }
 
 .today-header {
@@ -480,4 +505,54 @@ app-header-instrutor {
   .breaks-card {
     height: auto;
   }
+}
+
+.bottom {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.top {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 12px;
+}
+
+.student-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  p, .actions, .student-header  {
+    margin: 0;
+  }
+}
+
+.student-card, .summary-card, .hours-card {
+  height: auto;
+  padding: 24px;
+}
+
+.hours-table, .table-head, .table-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.hours-table {
+  width: 230px;
+
+  div {
+    width: 100%;
+  }
+
+  .table-head {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+input[type='checkbox'] {
+  accent-color: var(--primary-hover);
 }
