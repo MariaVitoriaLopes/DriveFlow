@@ -34,7 +34,7 @@ public class UsuarioController {
         }
     }
 
-    // Padronizado como usuarioService para bater com todas as suas chamadas abaixo
+
     private final UsuarioService usuarioService;
 
     // Rota padrão para listar todos os usuários (caso use na listagem geral)
@@ -50,13 +50,13 @@ public class UsuarioController {
         return ResponseEntity.ok("Senha alterada com sucesso!");
     }
 
-    // 1️⃣ Endpoint para a home do Aluno (Listar cards dos instrutores)
+    // Endpoint para a home do Aluno (Listar cards dos instrutores)
     @GetMapping("/instrutores")
     public ResponseEntity<List<InstrutorCardDTO>> obterInstrutoresHome() {
         return ResponseEntity.ok(usuarioService.listarInstrutoresParaHome());
     }
 
-    // 3️⃣ Atualização dos dados pessoais que agora salva o endereço completo
+    // Atualização dos dados pessoais que agora salva o endereço completo
     @PutMapping("/{id}/dados-pessoais")
     public ResponseEntity<Usuario> atualizarDados(@PathVariable String id, @RequestBody Usuario usuario) {
         return ResponseEntity.ok(usuarioService.atualizarDadosPessoaisComEndereco(id, usuario));

@@ -19,10 +19,12 @@ public class AgendaService {
     }
 
     public ConfigAgenda salvarOuAtualizar(String usuarioId, ConfigAgenda novaAgenda) {
-        if (novaAgenda.getValorAula() < 1) {
+        // Validação de Valor Mínimo corrigida para tipo primitivo double
+        if (novaAgenda.getValorAula() < 1.0) {
             throw new IllegalArgumentException("O valor da aula deve ser no mínimo R$ 1,00.");
         }
 
+        // Validação dos Horários do Expediente Comercial
         if (novaAgenda.getDisponibilidades() != null) {
             for (DispoSemanal d : novaAgenda.getDisponibilidades()) {
                 if (!d.isBloqueado()) {
@@ -45,6 +47,7 @@ public class AgendaService {
             }
         }
 
+        // 💾 Lógica de Persistência (Update ou Insert)
         Optional<ConfigAgenda> agendaExistente = agendaRepo.findByUsuarioId(usuarioId);
         if (agendaExistente.isPresent()) {
             ConfigAgenda atual = agendaExistente.get();

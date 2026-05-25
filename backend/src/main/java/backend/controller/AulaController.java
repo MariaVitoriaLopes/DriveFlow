@@ -1,5 +1,6 @@
 package backend.controller;
 
+import backend.dto.DisponibilidadeDiaResponseDTO;
 import backend.model.Aula;
 import backend.service.AulaService;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +18,19 @@ public class AulaController {
 
     private final AulaService aulaService;
 
-    // Endpoint chamado quando o instrutor clica em qualquer dia do calendário do Angular
-
     @GetMapping("/instrutor/{instrutorId}/dia")
     public ResponseEntity<List<Aula>> obterAgendaDoDia(
             @PathVariable String instrutorId,
             @RequestParam("data") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
         return ResponseEntity.ok(aulaService.buscarAgendaDoDia(instrutorId, data));
+    }
+
+    //  Endpoint para o Angular listar os slots dinâmicos no seletor de horários do Aluno
+    @GetMapping("/disponiveis")
+    public ResponseEntity<DisponibilidadeDiaResponseDTO> obterHorariosDisponiveis(
+            @RequestParam String instrutorId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
+        return ResponseEntity.ok(aulaService.consultarHorariosDisponiveis(instrutorId, data));
     }
 
     @PostMapping("/agendar")

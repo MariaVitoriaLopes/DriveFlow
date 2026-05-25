@@ -16,7 +16,7 @@ public class InstrutorConfigController {
 
     private final InstrutorConfigService configService;
 
-    // 2️⃣ Buscar perfil completo do instrutor (Usado no "Ver Mais" do Aluno)
+    // Buscar perfil completo do instrutor (Usado no "Ver Mais" do Aluno)
     @GetMapping("/{usuarioId}")
     public ResponseEntity<Instrutor> obterConfiguracoes(@PathVariable String usuarioId) {
         return ResponseEntity.ok(configService.buscarPorUsuario(usuarioId));
@@ -30,6 +30,11 @@ public class InstrutorConfigController {
     @PutMapping("/{usuarioId}/foto")
     public ResponseEntity<Instrutor> salvarFoto(@PathVariable String usuarioId, @RequestBody String fotoUrl) {
         return ResponseEntity.ok(configService.atualizarFotoPerfil(usuarioId, fotoUrl));
+    }
+    // Endpoint para alimentar a tela de detalhes e agendamento do Aluno
+    @GetMapping("/detalhes-aluno/{instrutorId}")
+    public ResponseEntity<backend.dto.InstrutorPerfilCompletoDTO> obterDetalhesParaAgendamento(@PathVariable String instrutorId) {
+        return ResponseEntity.ok(configService.obterPerfilCompletoParaAluno(instrutorId));
     }
 
     //////////////////////// LOCAL /////////////////////////////

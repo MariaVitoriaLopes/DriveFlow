@@ -7,14 +7,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/instrutores/agenda")
+@RequestMapping("/api/agenda-config")
 @CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 public class AgendaController {
 
     private final AgendaService agendaService;
 
-    @GetMapping("/{usuarioId}")
+    //TELA: EDITAR AGENDA DO INSTRUTOR (Carregamento da página)
+
+    @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<ConfigAgenda> obterAgenda(@PathVariable String usuarioId) {
         ConfigAgenda agenda = agendaService.buscarPorUsuario(usuarioId);
         if (agenda == null) {
@@ -23,12 +25,16 @@ public class AgendaController {
         return ResponseEntity.ok(agenda);
     }
 
-    @PutMapping("/{usuarioId}")
-    public ResponseEntity<ConfigAgenda> salvarAgenda(@PathVariable String usuarioId, @RequestBody ConfigAgenda agenda) {
-        return ResponseEntity.ok(agendaService.salvarOuAtualizar(usuarioId, agenda));
+    //TELA: EDITAR AGENDA DO INSTRUTOR (Botão "Salvar alterações")
+
+    @PostMapping("/salvar")
+    public ResponseEntity<ConfigAgenda> salvarAgenda(@RequestBody ConfigAgenda agenda) {
+        return ResponseEntity.ok(agendaService.salvarOuAtualizar(agenda.getUsuarioId(), agenda));
     }
 
-    @DeleteMapping("/{usuarioId}")
+
+     //TELA: EXCLUIR CONFIGURAÇÃO DA AGENDA
+    @DeleteMapping("/usuario/{usuarioId}")
     public ResponseEntity<Void> deletarAgenda(@PathVariable String usuarioId) {
         agendaService.deletarAgenda(usuarioId);
         return ResponseEntity.noContent().build();
