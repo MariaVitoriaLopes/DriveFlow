@@ -16,18 +16,15 @@ nav {
     width: 100%;
     max-width: 1400px;
     min-height: 90px;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     position: relative;
 }
 
 nav picture {
-    width: 180px;
-    min-width: 180px;
-
+    width: 120px;
+    min-width: 90px;
     z-index: 1001;
 }
 
@@ -41,8 +38,7 @@ nav picture img {
 ========================= */
 
 .menu-mobile {
-    width: 100%;
-
+    width: 70%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -52,7 +48,6 @@ nav ul {
     display: flex;
     align-items: center;
     gap: 2rem;
-
     list-style: none;
 }
 

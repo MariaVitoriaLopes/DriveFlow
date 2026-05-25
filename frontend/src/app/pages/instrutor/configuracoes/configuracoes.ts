@@ -1,43 +1,14 @@
-import {
-  Component,
-  inject,
-  OnInit,
-  ChangeDetectorRef,
-  ViewChild
-} from '@angular/core';
-
+import { Component,inject,OnInit,ChangeDetectorRef,ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-
-import {
-  HttpClient,
-  HttpClientModule
-} from '@angular/common/http';
-
-import {
-  ActivatedRoute,
-  Router
-} from '@angular/router';
-
+import { FormBuilder,ReactiveFormsModule,Validators} from '@angular/forms';
+import {HttpClient,HttpClientModule} from '@angular/common/http';
+import {ActivatedRoute,Router} from '@angular/router';
 import { HeaderInstrutor } from '../../../components/layout/header-instrutor/header-instrutor';
-
-import {
-  FormVeiculos,
-  Veiculo
-} from '../../../components/forms/form-veiculos/form-veiculos';
-
+import {FormVeiculos,Veiculo} from '../../../components/forms/form-veiculos/form-veiculos';
 import { FormAddNovoVeiculo } from '../../../components/forms/form-add-novo-veiculo/form-add-novo-veiculo';
-
 import { FormLocaisAtendimento } from '../../../components/forms/form-locais-atendimento/form-locais-atendimento';
-
 import { FormInformacoesPessoais } from '../../../components/forms/form-informacoes-pessoais/form-informacoes-pessoais';
-
 import { ConfigSistema } from '../../../components/forms/config-sistema/config-sistema';
-
 import { FormDocumentos } from '../../../components/forms/form-documentos/form-documentos';
 
 type AbaConfig =
@@ -171,7 +142,7 @@ export class Configuracoes implements OnInit {
 
     this.fotoUsuario =
       foto.startsWith('http') ||
-      foto.startsWith('data:image')
+        foto.startsWith('data:image')
         ? foto
         : `http://localhost:8081${foto}`;
   }

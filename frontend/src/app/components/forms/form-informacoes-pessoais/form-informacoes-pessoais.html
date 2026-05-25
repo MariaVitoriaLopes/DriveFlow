@@ -3,7 +3,7 @@
   <!-- FOTO -->
 <div class="photo-upload">
   <div class="photo-preview">
-    <img *ngIf="photoPreview; else placeholder" [src]="photoPreview" alt="Preview">
+    <img *ngIf="photoPreview; else placeholder" [src]="photoPreview" alt="Preview" class="foto-usuario">
     <ng-template #placeholder>
       <div class="placeholder"></div>
     </ng-template>
@@ -11,10 +11,12 @@
 
   <!-- input real, escondido -->
   <input type="file" #fileInput accept="image/png, image/jpeg, image/jpg" (change)="onFileSelected($event)" hidden />
-
-  <div class="photo-buttons">
-    <button type="button" (click)="fileInput.click()">Enviar foto</button>
-    <button type="button" (click)="removePhoto()">Remover foto</button>
+  <div class="foto-texto">
+    <div class="photo-buttons">
+      <button type="button" (click)="fileInput.click()" class="enviar">Enviar foto</button>
+      <button type="button" (click)="removePhoto()" class="remover">Remover foto</button>
+    </div>
+    <p>Use uma imagem clara e de boa qualidade para facilitar a identificação. Formatos aceitos: PNG, JPG e JPEG.</p>
   </div>
 </div>
 
