@@ -6,6 +6,12 @@
       {{ veiculo.cor || '' }}
       {{ veiculo.ano || '' }}
     </h3>
+    <div class="form-actions">
+
+      <button type="button" class="editar-btn" (click)="toggleEdit()" class="cancel">
+        {{ editMode ? 'Cancelar' : 'Editar veículo' }}
+      </button>
+    </div>
   </div>
 
   <div class="imagens">
@@ -42,29 +48,31 @@
   </div>
 
   <form [formGroup]="veiculoForm" class="form-veiculo">
-    <div class="row">
-      <div>
-        <label>Marca</label>
-        <input formControlName="marca" />
-      </div>
-    </div>
-
-    <div class="row">
-      <div>
-        <label>Modelo</label>
-        <input formControlName="modelo" />
-      </div>
-    </div>
-
-    <div class="row">
-      <div>
-        <label>Cor</label>
-        <input formControlName="cor" />
+    <div class="linha">
+      <div class="row">
+        <div>
+          <label>Marca</label>
+          <input formControlName="marca" />
+        </div>
       </div>
 
-      <div>
-        <label>Ano</label>
-        <input formControlName="ano" type="number" />
+      <div class="row">
+        <div>
+          <label>Modelo</label>
+          <input formControlName="modelo" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Cor</label>
+          <input formControlName="cor" />
+        </div>
+
+        <div>
+          <label>Ano</label>
+          <input formControlName="ano" type="number" />
+        </div>
       </div>
     </div>
 
@@ -84,30 +92,28 @@
         <input formControlName="categoria" />
       </div>
     </div>
-
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" formControlName="principal" />
-        Definir como carro para as aulas
-      </label>
+    <div class="acoes">
+      <div class="checkbox">
+          <label>
+          <input type="checkbox" formControlName="principal" />
+          Definir como carro para as aulas
+        </label>
+      </div>
+      <button type="button" class="deletar" (click)="onDeletar()" class="delete">
+        Deletar veículo
+      </button>
     </div>
 
     <div class="acoes">
-      <button type="button" class="deletar" (click)="onDeletar()">
-        Deletar veículo
-      </button>
-
-      <button type="button" class="editar-btn" (click)="toggleEdit()">
-        {{ editMode ? 'Cancelar' : 'Editar veículo' }}
-      </button>
+      <div class="form-actions">
+        <button type="button" (click)="toggleEdit()" *ngIf="editMode" class="cancel">
+          Descartar alterações
+        </button>
+        <button type="button" class="salvar" (click)="onSalvar()" [disabled]="!editMode">
+          Salvar alterações
+        </button>
+      </div>
     </div>
 
-    <button type="button" (click)="toggleEdit()" *ngIf="editMode">
-      Descartar alterações
-    </button>
-
-    <button type="button" class="salvar" (click)="onSalvar()" [disabled]="!editMode">
-      Salvar alterações
-    </button>
   </form>
 </div>

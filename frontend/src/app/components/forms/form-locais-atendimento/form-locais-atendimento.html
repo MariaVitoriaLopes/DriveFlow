@@ -1,6 +1,6 @@
 <form [formGroup]="formLocais" (ngSubmit)="salvarAlteracoes()">
   <div class="locais-container">
-    <div formArrayName="enderecos">
+    <div formArrayName="enderecos" class="enderecos">
       <div *ngFor="let endereco of enderecos.controls; let i = index" [formGroupName]="i" class="endereco-card">
         <div class="card-header">
           <h3>{{ endereco.get('titulo')?.value }}</h3>
@@ -13,18 +13,18 @@
           <label>CEP
             <input formControlName="cep" type="text" placeholder="00000-000">
           </label>
-          <label>Logradouro
+          <label class="logradouro">Logradouro
             <input formControlName="logradouro" type="text" placeholder="Rua, Avenida">
           </label>
+        </div>
+        
+        <div class="linha">
           <label>Número
             <input formControlName="numero" type="text" placeholder="000">
           </label>
           <label>Complemento
             <input formControlName="complemento" type="text" placeholder="Apartamento, Casa">
           </label>
-        </div>
-
-        <div class="linha">
           <label>Bairro
             <input formControlName="bairro" type="text" placeholder="Bairro">
           </label>

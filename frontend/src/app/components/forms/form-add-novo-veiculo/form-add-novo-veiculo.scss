@@ -1,33 +1,65 @@
+:root {
+    --bg-page: #f5f5f7;
+    --bg-card: #fbfbfc;
+
+    --primary: #6d22e8;
+    --primary-hover: #5d1bd6;
+
+    --text-primary: #25252a;
+    --text-secondary: #45464d;
+
+    --border: #a5a8b3;
+    --border-soft: #9ca0aa;
+
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+
+    --shadow-sm: none;
+    --shadow-md: none;
+
+    --radius-lg: 16px;
+    --radius-md: 10px;
+    --radius-sm: 6px;
+}
+
 .veiculo-form {
   width: 100%;
-  max-width: 1180px;
   margin: 0 auto;
-  padding: 38px 42px;
-  background: #fbfbfc;
-  border: 1px solid #9ca0aa;
-  border-radius: 20px;
+  padding: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
   color: #25252a;
   font-family: Arial, sans-serif;
 
   h2 {
-    font-size: 30px;
+    font-size: 16px;
     font-weight: 700;
-    margin-bottom: 32px;
+    margin-bottom: 12px;
+  }
+
+  p,
+  span,
+  label,
+  small {
+    font-size: 14px;
   }
 }
 
 .upload-section {
-  display: grid;
-  grid-template-columns: 1.4fr 0.45fr;
-  gap: 16px;
-  margin-bottom: 30px;
+  // display: grid;
+  // grid-template-columns: 1.4fr 0.45fr;
+  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
 }
 
 .upload-area {
-  height: 420px;
-  border: 2px solid #a5a8b3;
-  border-radius: 14px;
-  background: #eeeeF1;
+  height: 260px;
+  border: 1px solid #a5a8b3;
+  border-radius: 12px;
+  background: #eeeef1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -35,31 +67,33 @@
   cursor: pointer;
   text-align: center;
   color: #45464d;
+  padding: 16px;
 
   span {
-    font-size: 48px;
+    font-size: 32px;
     color: #9da0aa;
     line-height: 1;
   }
 
   p {
-    max-width: 320px;
-    margin-top: 20px;
-    font-size: 17px;
+    max-width: 240px;
+    margin-top: 12px;
+    line-height: 1.4;
   }
 }
 
 .fotos-grid {
-  display: grid;
+  // display: grid;
+  display: flex;
   grid-template-rows: repeat(3, 1fr);
-  gap: 16px;
+  gap: 12px;
 }
 
 .foto-box {
-  height: 128px;
-  border: 2px solid #a5a8b3;
-  border-radius: 14px;
-  background: #eeeeF1;
+  height: 78px;
+  border: 1px solid #a5a8b3;
+  border-radius: 12px;
+  background: #eeeef1;
   overflow: hidden;
   position: relative;
 
@@ -74,8 +108,8 @@
     right: 8px;
     bottom: 8px;
     border: none;
-    border-radius: 8px;
-    padding: 6px 10px;
+    border-radius: 6px;
+    padding: 4px 8px;
     background: #6d22e8;
     color: #fff;
     cursor: pointer;
@@ -86,60 +120,70 @@
 .form-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
-  margin-bottom: 30px;
+  gap: 12px;
+  margin-bottom: 24px;
+  
+  .full-width {
+    grid-column: 1 / -1;
+  }
+
+  .two-columns {
+    grid-column: span 2;
+  }
 
   label {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 600;
   }
 
   input,
   select {
-    height: 76px;
-    padding: 0 22px;
-    border: 2px solid #a5a8b3;
+    height: 46px;
+    padding: 2px 14px;
+    border: 1px solid #a5a8b3;
     border-radius: 10px;
     background: #fff;
-    font-size: 20px;
+    font-size: 14px;
     color: #30313a;
     outline: none;
   }
 
   small {
     color: #d93025;
-    font-size: 13px;
+    font-size: 12px;
   }
 }
 
 .recursos-section {
-  margin-top: 10px;
+  margin-top: 12px;
 
   h3 {
-    font-size: 28px;
-    margin-bottom: 24px;
+    font-size: 16px;
+    margin-bottom: 12px;
+    font-weight: 700;
   }
 }
 
 .recursos-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px 16px;
+  gap: 12px;
 
   button {
-    height: 84px;
-    border: 2px solid #a5a8b3;
+    min-height: 48px;
+    border: 1px solid #a5a8b3;
     border-radius: 10px;
     background: #fff;
     color: #2d2d33;
-    font-size: 20px;
+    font-size: 14px;
     text-align: left;
-    padding: 0 28px;
+    padding: 12px;
     cursor: pointer;
     transition: 0.2s;
+    line-height: 1.4;
   }
 
   button.active {
@@ -153,68 +197,72 @@
 .textarea-label {
   display: flex;
   flex-direction: column;
-  margin-top: 30px;
-  font-size: 18px;
+  margin-top: 24px;
+  gap: 8px;
+  font-size: 14px;
   font-weight: 600;
   position: relative;
 
   textarea {
-    height: 230px;
-    margin-top: 8px;
-    padding: 22px;
-    border: 2px solid #a5a8b3;
+    height: 140px;
+    padding: 14px;
+    border: 1px solid #a5a8b3;
     border-radius: 10px;
     background: #fff;
     resize: none;
-    font-size: 19px;
+    font-size: 14px;
     outline: none;
+    line-height: 1.5;
   }
 
   span {
     position: absolute;
-    right: 24px;
-    top: 48px;
+    right: 14px;
+    bottom: 14px;
     color: #9b9da8;
-    font-size: 18px;
+    font-size: 12px;
   }
 }
 
 .info-box {
-  margin-top: 32px;
-  padding: 26px 28px;
-  border: 2px solid #7b22ff;
-  border-radius: 12px;
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid #7b22ff;
+  border-radius: 10px;
   background: #ded0ff;
   color: #5d1bd6;
-  font-size: 21px;
+  font-size: 14px;
   font-weight: 600;
+  line-height: 1.5;
 }
 
 .checkbox-row {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 30px;
-  font-size: 20px;
+  margin-top: 24px;
+  font-size: 14px;
   font-weight: 600;
 
   input {
-    width: 26px;
-    height: 26px;
+    width: 18px;
+    height: 18px;
     accent-color: #6d22e8;
   }
 }
 
 .buttons {
   display: flex;
-  gap: 16px;
-  margin-top: 32px;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
 
   button {
-    height: 58px;
-    padding: 0 28px;
+    height: 44px;
+    padding: 0 18px;
     border-radius: 10px;
-    font-size: 18px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
     border: none;
   }
@@ -232,7 +280,7 @@
   .btn-secondary {
     background: #fff;
     color: #6d22e8;
-    border: 2px solid #6d22e8;
+    border: 1px solid #6d22e8;
   }
 }
 
@@ -249,6 +297,24 @@
   }
 
   .upload-area {
-    height: 280px;
+    height: 220px;
+  }
+}
+
+@media (max-width: 600px) {
+  .veiculo-form {
+    padding: 16px;
+  }
+
+  .fotos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .buttons {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
   }
 }

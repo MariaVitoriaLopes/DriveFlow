@@ -13,10 +13,9 @@
 }
 
 .sidebar {
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
-
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -31,6 +30,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    width: 100%;
 }
 
 .logo {

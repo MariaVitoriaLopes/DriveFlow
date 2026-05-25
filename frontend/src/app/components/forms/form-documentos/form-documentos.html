@@ -1,6 +1,6 @@
 <form [formGroup]="form">
 
-  <div formArrayName="documentos">
+  <div formArrayName="documentos" class="documentos">
 
     <div
       *ngFor="let doc of documentos.controls; let i = index"
@@ -16,6 +16,26 @@
         </div>
 
         <div class="content" *ngIf="cnhExpanded">
+          <div class="fotos">
+            <!-- FOTO FRENTE -->
+            <div class="upload-container">
+              <label>Foto Frente</label>
+              <img
+                *ngIf="doc.get('frente')?.value"
+                [src]="doc.get('frente')?.value"
+                class="preview-img"
+              >
+            </div>
+            <!-- FOTO VERSO -->
+            <div class="upload-container">
+              <label>Foto Verso</label>
+              <img
+                *ngIf="doc.get('verso')?.value"
+                [src]="doc.get('verso')?.value"
+                class="preview-img"
+              >
+            </div>
+          </div>
 
           <label>Nome completo</label>
           <input formControlName="nomeCompleto" type="text">
@@ -38,33 +58,6 @@
             <input type="checkbox" formControlName="categoriaB">
             Categoria B
           </label>
-
-          <!-- FOTO FRENTE -->
-          <div class="upload-container">
-
-            <label>Foto Frente</label>
-
-            <img
-              *ngIf="doc.get('frente')?.value"
-              [src]="doc.get('frente')?.value"
-              class="preview-img"
-            >
-
-          </div>
-
-          <!-- FOTO VERSO -->
-          <div class="upload-container">
-
-            <label>Foto Verso</label>
-
-            <img
-              *ngIf="doc.get('verso')?.value"
-              [src]="doc.get('verso')?.value"
-              class="preview-img"
-            >
-
-          </div>
-
         </div>
 
       </div>
