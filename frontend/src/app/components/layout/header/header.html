@@ -5,17 +5,41 @@
         <img src="/logos-svg/logo_primary_white.svg" alt="Logo">
       </a>
     </picture>
-
-    <ul>
-      <li><a [routerLink]="['/']" fragment="pqExistimos">Porque existimos</a></li>
-      <li><a [routerLink]="['/']" fragment="funcionalidades">Funcionalidades</a></li>
-      <li><a [routerLink]="['/']" fragment="vantagens">Vantagens</a></li>
-      <li><a [routerLink]="['/']" fragment="perFreq">Perguntas frequentes</a></li>
-    </ul>
-
-    <div class="ajusteBtns">
-      <a routerLink="/login">Login</a>
-      <a routerLink="/cadastro">Cadastro</a>
-    </div>
+      <button class="menu-toggle" type="button" (click)="toggleMenu()">
+        @if (!menuAberto) {
+          <lucide-icon name="menu"></lucide-icon>
+        } 
+        @else {
+          <lucide-icon name="x"></lucide-icon>
+        }
+      </button>
+      <div class="menu-mobile" [class.aberto]="menuAberto">
+        <ul>
+          <li>
+            <a [routerLink]="['/']" fragment="pqExistimos" (click)="fecharMenu()">
+              Porque existimos
+            </a>
+          </li>
+          <li>
+            <a [routerLink]="['/']" fragment="funcionalidades" (click)="fecharMenu()">
+              Funcionalidades
+            </a>
+          </li>
+          <li>
+            <a [routerLink]="['/']" fragment="vantagens" (click)="fecharMenu()">
+              Vantagens
+            </a>
+          </li>
+          <li>
+            <a [routerLink]="['/']" fragment="perFreq" (click)="fecharMenu()">
+              Perguntas frequentes
+            </a>
+          </li>
+        </ul>
+        <div class="ajusteBtns">
+          <a routerLink="/login" (click)="fecharMenu()">Login</a>
+          <a routerLink="/cadastro" (click)="fecharMenu()">Cadastro</a>
+        </div>
+      </div>
   </nav>
 </header>
