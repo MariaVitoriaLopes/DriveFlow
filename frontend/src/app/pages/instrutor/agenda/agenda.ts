@@ -19,7 +19,6 @@ interface HorarioAgenda {
 @Component({
   selector: 'app-agenda',
   imports: [HeaderInstrutor, RouterLink, CalendarComponent, HttpClientModule, CommonModule],
-  imports: [HeaderInstrutor, RouterLink, CalendarComponent, HttpClientModule, CommonModule],
   templateUrl: './agenda.html',
   styleUrl: './agenda.scss',
 })
@@ -68,8 +67,6 @@ export class Agenda {
 
   usuarioId = '';
 
-  usuarioId = '';
-
   ngOnInit(): void {
 
 
@@ -91,7 +88,6 @@ export class Agenda {
     this.http
       .get<any>(`http://localhost:8081/api/instrutores/agenda/${this.usuarioId}`)
       .subscribe({
-        next: (agenda : any) => {
         next: (agenda : any) => {
           console.log('AGENDA RECEBIDA:', agenda);
 
@@ -115,7 +111,6 @@ export class Agenda {
           this.gerarFolgas();
         },
 
-        error: (erro : any) => {
         error: (erro : any) => {
           console.error('Erro ao carregar agenda:', erro);
         }
