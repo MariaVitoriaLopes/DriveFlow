@@ -73,8 +73,14 @@ public class InstrutorConfigService {
     }
 
     public Instrutor atualizarFotoPerfil(String usuarioId, String fotoUrl) {
-        Instrutor instrutor = buscarPorUsuario(usuarioId);
-        instrutor.setBio(fotoUrl);
+        Instrutor instrutor = instrutorRepo.findByUsuarioId(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Instrutor não encontrado"));
+
+        // ⚠️ acessar via objeto Usuario
+        if (instrutor.getUsuario() != null) {
+            instrutor.getUsuario().setFotoUrl(fotoUrl);
+        }
+
         return instrutorRepo.save(instrutor);
     }
 

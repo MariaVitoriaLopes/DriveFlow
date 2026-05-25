@@ -15,6 +15,8 @@ public class Usuario {
     private String cpf;
     private String perfil; // ALUNO ou INSTRUTOR
 
+    private String fotoUrl;
+
     //Novos campos para guardar o endereço em Informações Pessoais
     private String cep;
     private String logradouro;

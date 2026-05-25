@@ -1,11 +1,19 @@
 package backend.controller;
 
-import backend.model.*;
+import backend.model.Instrutor;
+import backend.model.LocalAtendimento;
+import backend.model.Veiculo;
+import backend.model.Documento;
 import backend.service.InstrutorConfigService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -16,7 +24,10 @@ public class InstrutorConfigController {
 
     private final InstrutorConfigService configService;
 
-    // Buscar perfil completo do instrutor (Usado no "Ver Mais" do Aluno)
+    @Value("${uploads.fotos.path:uploads/fotos}")
+    private String caminhoUploads; // pega do application.properties ou usa padrão
+
+    // Buscar perfil completo do instrutor
     @GetMapping("/{usuarioId}")
     public ResponseEntity<Instrutor> obterConfiguracoes(@PathVariable String usuarioId) {
         return ResponseEntity.ok(configService.buscarPorUsuario(usuarioId));
@@ -28,10 +39,39 @@ public class InstrutorConfigController {
     }
 
     @PutMapping("/{usuarioId}/foto")
-    public ResponseEntity<Instrutor> salvarFoto(@PathVariable String usuarioId, @RequestBody String fotoUrl) {
-        return ResponseEntity.ok(configService.atualizarFotoPerfil(usuarioId, fotoUrl));
+    public ResponseEntity<Instrutor> salvarFoto(
+            @PathVariable String usuarioId,
+            @RequestParam("foto") MultipartFile foto) {
+
+        try {
+            // Cria a pasta automaticamente caso não exista
+            Path pastaFotos = Paths.get(caminhoUploads);
+            if (!Files.exists(pastaFotos)) {
+                Files.createDirectories(pastaFotos);
+            }
+
+            // Nome único do arquivo
+            String nomeArquivo = usuarioId + "_" + System.currentTimeMillis() + "_" + foto.getOriginalFilename();
+            Path caminhoArquivo = pastaFotos.resolve(nomeArquivo);
+
+            // Salva o arquivo fisicamente
+            Files.write(caminhoArquivo, foto.getBytes());
+
+            // Cria URL pública da foto
+            String fotoUrl = "http://localhost:8081/" + caminhoUploads + "/" + nomeArquivo;
+
+            // Atualiza a foto no banco
+            Instrutor instrutor = configService.atualizarFotoPerfil(usuarioId, fotoUrl);
+
+            return ResponseEntity.ok(instrutor);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
     }
-    // Endpoint para alimentar a tela de detalhes e agendamento do Aluno
+
+    // Endpoint para detalhes do instrutor para o aluno
     @GetMapping("/detalhes-aluno/{instrutorId}")
     public ResponseEntity<backend.dto.InstrutorPerfilCompletoDTO> obterDetalhesParaAgendamento(@PathVariable String instrutorId) {
         return ResponseEntity.ok(configService.obterPerfilCompletoParaAluno(instrutorId));
@@ -53,7 +93,7 @@ public class InstrutorConfigController {
         return ResponseEntity.ok(configService.removerLocal(usuarioId, localId));
     }
 
-    ////////////////////// VEICULO /////////////////////////////
+    ////////////////////// VEÍCULO /////////////////////////////
     @PutMapping("/{usuarioId}/veiculos/{veiculoId}/fotos")
     public ResponseEntity<Instrutor> atualizarFotosVeiculo(
             @PathVariable String usuarioId,
