@@ -1,5 +1,7 @@
 <form [formGroup]="form" class="form-container" (ngSubmit)="onSubmit()">
-
+  <div class="header">
+    <h2>Dados pessoais</h2>
+  </div>
   <!-- FOTO -->
 <div class="photo-upload">
   <div class="photo-preview">
@@ -47,39 +49,38 @@
         [placeholder]="perfil === 'INSTRUTOR' ? 'Informe sua CNH' : '000.000.000-00'"
         (input)="onDocumentoInput($event)">
     </label>
+      <label>Data de nascimento
+        <input type="date" formControlName="dataNascimento">
+      </label>
 
-    <label>Data de nascimento
-      <input type="date" formControlName="dataNascimento">
-    </label>
+      <label>CEP
+        <input type="text" formControlName="cep" placeholder="00000-000">
+      </label>
+    <div class="grid-infos-extras">
+      <label class="input-logradouro">Logradouro
+        <input type="text" formControlName="logradouro" placeholder="Rua, avenida">
+      </label>
 
-    <label>CEP
-      <input type="text" formControlName="cep" placeholder="00000-000">
-    </label>
+      <label>Número
+        <input type="text" formControlName="numero" placeholder="000">
+      </label>
 
-    <label>Logradouro
-      <input type="text" formControlName="logradouro" placeholder="Rua, avenida">
-    </label>
+      <label>Complemento
+        <input type="text" formControlName="complemento" placeholder="Apartamento, casa">
+      </label>
 
-    <label>Número
-      <input type="text" formControlName="numero" placeholder="000">
-    </label>
+      <label class="input-bairro">Bairro
+        <input type="text" formControlName="bairro" placeholder="Rua, avenida">
+      </label>
 
-    <label>Complemento
-      <input type="text" formControlName="complemento" placeholder="Apartamento, casa">
-    </label>
+      <label>Cidade
+        <input type="text" formControlName="cidade" placeholder="São Paulo">
+      </label>
 
-    <label>Bairro
-      <input type="text" formControlName="bairro" placeholder="Rua, avenida">
-    </label>
-
-    <label>Cidade
-      <input type="text" formControlName="cidade" placeholder="São Paulo">
-    </label>
-
-    <label>Unidade Federativa
-      <input type="text" formControlName="uf" placeholder="SP">
-    </label>
-
+      <label>Unidade Federativa
+        <input type="text" formControlName="uf" placeholder="SP">
+      </label>
+    </div>
   </div>
 
   <!-- BOTÕES -->

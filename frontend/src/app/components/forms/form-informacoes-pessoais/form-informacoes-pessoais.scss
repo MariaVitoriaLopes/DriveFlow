@@ -1,258 +1,263 @@
 :root {
     --bg-page: #f5f5f7;
-    --bg-card: #ffffff;
+    --bg-card: #fbfbfc;
 
-    --primary: #7008e7;
-    --primary-hover: #5e05c4;
+    --primary: #6d22e8;
+    --primary-hover: #5d1bd6;
 
-    --text-primary: #111111;
-    --text-secondary: #666674;
+    --text-primary: #25252a;
+    --text-secondary: #45464d;
 
-    --border: #d7d7df;
-    --border-soft: #ececf2;
+    --border: #a5a8b3;
+    --border-soft: #9ca0aa;
 
     --danger: #dc2626;
     --danger-hover: #b91c1c;
 
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
-    --shadow-md: 0 10px 30px rgba(112, 8, 231, 0.08);
+    --shadow-sm: none;
+    --shadow-md: none;
 
     --radius-lg: 16px;
-    --radius-md: 12px;
-    --radius-sm: 8px;
+    --radius-md: 10px;
+    --radius-sm: 6px;
 }
 
 .form-container {
-  max-width: 700px;
-  margin: 0 auto;
-  font-family: Arial, sans-serif;
-  color: #333;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-
-  .photo-upload {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    font-family: Arial, sans-serif;
+    color: var(--text-primary);
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 20px;
-    width: 100%;
 
-    .photo-preview {
-      flex-shrink: 0;
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      overflow: hidden;
-      background-color: #f0f0f0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid #dcdcdc;
-
-      img,
-      .foto-usuario {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-
-      .placeholder {
-        width: 100%;
-        height: 100%;
-        background-color: #ddd;
-      }
-    }
-
-    .foto-texto {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-    }
-
-    .photo-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-
-      button {
-        padding: 10px 16px;
-        font-size: 14px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        cursor: pointer;
-        color: #fff;
-        transition: background-color 0.2s ease;
-
-        &:hover {
-          background-color: #555;
-        }
-      }
-
-      .enviar {
-        background-color: #3F3F46;
-      }
-
-      .remover {
-        background-color: #71717B;
-        color: #fff;
-      }
-    }
-
-    p {
-      font-size: 13px;
-      line-height: 1.5;
-      color: #666;
-      margin: 0;
-      max-width: 500px;
-    }
-  }
-
-  .form-fields {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-
-    label {
-      display: flex;
-      flex-direction: column;
-      font-size: 14px;
-
-      input {
-        padding: 10px;
-        margin-top: 5px;
-        border: 1px solid #ccc;
-        border-radius: 12px;
-        font-size: 14px;
-      }
-
-      &.senha-label {
-        .senha-wrapper {
-          display: flex;
-          gap: 10px;
-
-          input {
-            flex: 1;
-          }
-
-          button {
-            padding: 8px 12px;
-            font-size: 14px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            background-color: #666;
-            color: white;
-            transition: background-color 0.2s ease;
-
-            &:hover {
-              background-color: #555;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-
-    button {
-      padding: 10px 20px;
-      border-radius: 5px;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-    }
-
-    button:first-child {
-      background-color: #999;
-      color: white;
-
-      &:hover {
-        background-color: #888;
-      }
-    }
-
-    .save-btn {
-      background-color: #6c00ff;
-      color: white;
-
-      &:hover {
-        background-color: #5a00e6;
-      }
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .form-container {
     .photo-upload {
-      flex-direction: column;
-      align-items: flex-start;
-
-      .photo-preview {
-        width: 100px;
-        height: 100px;
-      }
-
-      .photo-buttons {
+        display: flex;
+        align-items: center;
+        gap: 20px;
         width: 100%;
 
-        button {
-          flex: 1;
+        .photo-preview {
+            flex-shrink: 0;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: #eeeef1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+
+            img,
+            .foto-usuario {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+            .placeholder {
+                width: 100%;
+                height: 100%;
+                background-color: #d9dbe1;
+            }
         }
-      }
+
+        .foto-texto {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .photo-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+
+            button {
+                height: 44px;
+                padding: 0 18px;
+                border-radius: var(--radius-md);
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+
+            .enviar {
+                background: var(--primary);
+                color: #fff;
+                border: none;
+
+                &:hover {
+                    background: var(--primary-hover);
+                }
+            }
+
+            .remover {
+                background: #fff;
+                color: var(--primary);
+                border: 1px solid var(--primary);
+            }
+        }
+
+        p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            margin: 0;
+            max-width: 500px;
+        }
     }
 
     .form-fields {
-      grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+
+        .grid-infos-extras {
+            display: grid;
+            grid-template-columns: (1fr 1fr 1fr 1fr);
+            // grid-template-columns: repeat(auto-fit, min(140px, 1fr));
+            grid-column: span 2;
+            gap: 12px;
+        }
+
+        .input-logradouro, .input-bairro {
+            grid-column: span 2;
+        }
+
+        label {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+
+            input {
+                width: 100%;
+                height: 46px;
+                padding: 2px 14px;
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                background: #fff;
+                color: #30313a;
+                font-size: 14px;
+                outline: none;
+                transition: 0.2s;
+
+                &::placeholder {
+                    color: #9da0aa;
+                }
+
+                &:focus {
+                    border-color: var(--primary);
+                    box-shadow: 0 0 0 4px rgba(109, 34, 232, 0.12);
+                }
+            }
+
+            &.senha-label {
+                .senha-wrapper {
+                    display: flex;
+                    gap: 10px;
+
+                    input {
+                        flex: 1;
+                    }
+
+                    button {
+                        padding: 0 16px;
+                        font-size: 14px;
+                        font-weight: 600;
+                        border-radius: var(--radius-md);
+                        border: none;
+                        cursor: pointer;
+                        background: var(--primary);
+                        color: #fff;
+                        transition: 0.2s;
+
+                        &:hover {
+                            background: var(--primary-hover);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     .form-actions {
-      flex-direction: column;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
 
-      button {
-        width: 100%;
-      }
+        button {
+            height: 44px;
+            padding: 0 18px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:first-child {
+            background: #fff;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .save-btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+
+            &:hover {
+                background: var(--primary-hover);
+            }
+        }
     }
-  }
 }
 
-label {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-}
+@media (max-width: 768px) {
+    .form-container {
+        padding: 16px;
 
-label input {
-    width: 100%;
-    height: 46px;
-    padding: 0 14px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: #fff;
-    color: var(--text-primary);
-    font-size: 14px;
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-}
+        .photo-upload {
+            flex-direction: column;
+            align-items: flex-start;
 
-label input::placeholder {
-    color: #9ca3af;
-}
+            .photo-preview {
+                width: 100px;
+                height: 100px;
+            }
 
-label input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(112, 8, 231, 0.12);
+            .photo-buttons {
+                width: 100%;
+
+                button {
+                    flex: 1;
+                }
+            }
+        }
+
+        .form-fields {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column;
+
+            button {
+                width: 100%;
+            }
+        }
+    }
 }

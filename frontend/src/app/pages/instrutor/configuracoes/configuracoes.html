@@ -61,59 +61,60 @@
       <app-form-informacoes-pessoais></app-form-informacoes-pessoais>
     </div>
 
-    <div *ngIf="abaAtiva === 'endereco'">
+    <div *ngIf="abaAtiva === 'endereco'" class="card">
       <div class="header">
         <h2>Locais de atendimento</h2>
-
         <!-- Botão chama método do componente filho -->
         <button
           type="button"
-          class="btn-add"
           (click)="formLocais.adicionarEnderecoTemporario()"
-        >
+          >
           Adicionar novo endereço
         </button>
+        <!-- class="btn-add" -->
       </div>
 
       <!-- Formulário de locais de atendimento -->
       <app-form-locais-atendimento #formLocais [usuarioId]="usuario?.id"></app-form-locais-atendimento>
     </div>
 
-    <div *ngIf="abaAtiva === 'veiculo'">
+    <div *ngIf="abaAtiva === 'veiculo'" class="card">
       <section class="veiculos-section">
-        <h1>Veículo</h1>
+          <div class="header">
+          <h1>Veículo</h1>
 
-        <button
-          *ngIf="!mostrandoFormNovoVeiculo"
-          type="button"
-          (click)="abrirFormNovoVeiculo()"
-        >
-          Adicionar novo veículo
-        </button>
+          <button
+            *ngIf="!mostrandoFormNovoVeiculo"
+            type="button"
+            (click)="abrirFormNovoVeiculo()"
+            class="add-novo-veiculo"
+          >
+            Adicionar novo veículo
+          </button>
+      </div>
+          <div *ngIf="!mostrandoFormNovoVeiculo">
+            <p *ngIf="veiculos.length === 0">
+              Nenhum veículo cadastrado ainda.
+            </p>
 
-        <div *ngIf="!mostrandoFormNovoVeiculo">
-          <p *ngIf="veiculos.length === 0">
-            Nenhum veículo cadastrado ainda.
-          </p>
+            <app-form-veiculos
+              *ngFor="let veiculo of veiculos; trackBy: trackByVeiculoId"
+              [veiculo]="veiculo"
+              (veiculoAtualizado)="atualizarVeiculo($event)"
+              (veiculoDeletado)="deletarVeiculo($event)"
+            ></app-form-veiculos>
+          </div>
 
-          <app-form-veiculos
-            *ngFor="let veiculo of veiculos; trackBy: trackByVeiculoId"
-            [veiculo]="veiculo"
-            (veiculoAtualizado)="atualizarVeiculo($event)"
-            (veiculoDeletado)="deletarVeiculo($event)"
-          ></app-form-veiculos>
-        </div>
-
-        <div *ngIf="mostrandoFormNovoVeiculo">
-          <app-form-add-novo-veiculo
-            (veiculoSalvo)="salvarNovoVeiculo($event)"
-            (cancelar)="cancelarNovoVeiculo()"
-          ></app-form-add-novo-veiculo>
-        </div>
-      </section>
+          <div *ngIf="mostrandoFormNovoVeiculo">
+            <app-form-add-novo-veiculo
+              (veiculoSalvo)="salvarNovoVeiculo($event)"
+              (cancelar)="cancelarNovoVeiculo()"
+            ></app-form-add-novo-veiculo>
+          </div>
+        </section>
     </div>
 
-    <div *ngIf="abaAtiva === 'documentos'">
+    <div *ngIf="abaAtiva === 'documentos'" class="card">
       <div class="header">
         <h1>Documentos</h1>
 
@@ -144,8 +145,10 @@
       ></app-form-documentos>
     </div>
 
-    <div *ngIf="abaAtiva === 'configuracoes'">
-      <h1>Configurações</h1>
+    <div *ngIf="abaAtiva === 'configuracoes'" class="card">
+      <div class="header">
+        <h1>Configurações</h1>
+      </div>
       <app-config-sistema></app-config-sistema>
     </div>
 

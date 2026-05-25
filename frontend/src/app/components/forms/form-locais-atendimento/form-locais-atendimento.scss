@@ -1,42 +1,43 @@
 :root {
     --bg-page: #f5f5f7;
-    --bg-card: #ffffff;
+    --bg-card: #fbfbfc;
 
-    --primary: #7008e7;
-    --primary-hover: #5e05c4;
+    --primary: #6d22e8;
+    --primary-hover: #5d1bd6;
 
-    --text-primary: #111111;
-    --text-secondary: #666674;
+    --text-primary: #25252a;
+    --text-secondary: #45464d;
 
-    --border: #d7d7df;
-    --border-soft: #ececf2;
+    --border: #a5a8b3;
+    --border-soft: #9ca0aa;
 
     --danger: #dc2626;
     --danger-hover: #b91c1c;
 
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
-    --shadow-md: 0 10px 30px rgba(112, 8, 231, 0.08);
+    --shadow-sm: none;
+    --shadow-md: none;
 
     --radius-lg: 16px;
-    --radius-md: 12px;
-    --radius-sm: 8px;
+    --radius-md: 10px;
+    --radius-sm: 6px;
 }
 
 .locais-container {
     max-width: 950px;
     margin: 0 auto;
-    padding: 24px;
-    background: var(--bg-page);
+    // padding: 24px;
+    // background: var(--bg-page);
     display: flex;
     flex-direction: column;
     gap: 12px;
     overflow-y: auto;
     font-family: Arial, sans-serif;
+    color: var(--text-primary);
 
     .enderecos {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
     }
 
     .endereco-card {
@@ -55,36 +56,33 @@
             align-items: center;
             gap: 12px;
             padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-soft);
+            border-bottom: 1px solid var(--border);
 
             h3 {
                 margin: 0;
-                font-size: 18px;
+                font-size: 16px;
                 font-weight: 700;
                 color: var(--text-primary);
             }
 
             button {
-                height: 40px;
-                padding: 0 16px;
-                border: none;
-                border-radius: 10px;
+                height: 32px;
+                padding: 0 18px;
+                border-radius: var(--radius-md);
                 background: var(--primary);
                 color: #fff;
-                font-size: 14px;
+                font-size: 13px;
                 font-weight: 600;
                 cursor: pointer;
-                transition:
-                    background-color 0.2s ease,
-                    transform 0.2s ease;
+                border: none;
+                transition: 0.2s;
 
                 &:hover:not(:disabled) {
                     background: var(--primary-hover);
-                    transform: translateY(-1px);
                 }
 
                 &:disabled {
-                    opacity: 0.5;
+                    background: #b7a3df;
                     cursor: not-allowed;
                 }
             }
@@ -95,19 +93,16 @@
             gap: 12px;
         }
 
-        
-        /* CEP + LOGRADOURO */
         .linha:first-of-type {
             grid-template-columns: 100px 2fr;
-          }
+        }
 
-        /* RESTANTE DOS CAMPOS */
         .linha:last-of-type {
-          grid-template-columns: 110px 1.3fr 1fr 1fr 70px;
+            grid-template-columns: 110px 1.3fr 1fr 1fr 70px;
         }
 
         .logradouro {
-          width: 100%;
+            width: 100%;
         }
 
         label {
@@ -121,24 +116,22 @@
             input {
                 width: 100%;
                 height: 46px;
-                padding: 0 14px;
+                padding: 2px 14px;
                 border: 1px solid var(--border);
                 border-radius: var(--radius-md);
                 background: #fff;
-                color: var(--text-primary);
+                color: #30313a;
                 font-size: 14px;
-                transition:
-                    border-color 0.2s ease,
-                    box-shadow 0.2s ease;
+                outline: none;
+                transition: 0.2s;
 
                 &::placeholder {
-                    color: #9ca3af;
+                    color: #9da0aa;
                 }
 
                 &:focus {
-                    outline: none;
                     border-color: var(--primary);
-                    box-shadow: 0 0 0 4px rgba(112, 8, 231, 0.12);
+                    box-shadow: 0 0 0 4px rgba(109, 34, 232, 0.12);
                 }
             }
         }
@@ -150,7 +143,7 @@
             gap: 12px;
             margin-top: 4px;
             padding-top: 12px;
-            border-top: 1px solid var(--border-soft);
+            border-top: 1px solid var(--border);
 
             label {
                 display: flex;
@@ -158,12 +151,12 @@
                 align-items: center;
                 gap: 8px;
                 font-size: 14px;
-                font-weight: 500;
-                color: var(--text-secondary);
+                font-weight: 600;
+                color: var(--text-primary);
 
                 input[type="checkbox"] {
-                    width: 16px;
-                    height: 16px;
+                    width: 18px;
+                    height: 18px;
                     accent-color: var(--primary);
                     cursor: pointer;
                 }
@@ -173,15 +166,15 @@
                 border: none;
                 background: transparent;
                 padding: 0;
-                color: #e11d2e;
+                color: #d93025;
                 font-size: 14px;
                 font-weight: 600;
                 cursor: pointer;
+                transition: 0.2s;
                 text-decoration: underline;
-                transition: opacity 0.2s ease;
 
                 &:hover {
-                    opacity: 0.75;
+                    opacity: 0.85;
                 }
             }
         }
@@ -195,29 +188,25 @@
 
         button {
             min-width: 180px;
-            height: 48px;
-            border: none;
+            height: 44px;
+            padding: 0 12px;
             border-radius: var(--radius-md);
             font-size: 14px;
-            font-weight: 700;
+            font-weight: 600;
             cursor: pointer;
-            transition:
-                background-color 0.2s ease,
-                transform 0.2s ease;
-
-            &:hover {
-                transform: translateY(-1px);
-            }
+            transition: 0.2s;
         }
 
         .btn-descartar {
-            background: #e5e7eb;
-            color: #374151;
+            background: #fff;
+            color: var(--primary);
+            border: 1px solid var(--primary);
         }
 
         .btn-salvar {
             background: var(--primary);
             color: #fff;
+            border: none;
 
             &:hover {
                 background: var(--primary-hover);
@@ -233,7 +222,6 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-        // display: flex;
     }
 }
 
