@@ -556,3 +556,590 @@
 input[type='checkbox'] {
   accent-color: var(--primary-hover);
 }
+
+@media (max-width: 1280px) {
+
+  .agenda-page {
+    width: 100%;
+    padding: 24px;
+  }
+
+  .top {
+    gap: 10px;
+  }
+
+  .bottom {
+    gap: 10px;
+  }
+
+  .calendar-card,
+  .today-card {
+    height: auto;
+  }
+
+  .today-card {
+    padding: 22px;
+  }
+
+}
+
+@media (max-width: 1100px) {
+
+  .agenda-page {
+    padding: 18px;
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 14px;
+    }
+  }
+
+  .top,
+  .bottom {
+    flex-direction: column;
+  }
+
+  .card {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .calendar-header {
+
+    strong {
+      font-size: 20px;
+    }
+
+    button {
+      font-size: 32px;
+    }
+  }
+
+  .week-days span {
+    font-size: 14px;
+  }
+
+  .calendar-days {
+
+    span {
+      width: 34px;
+      height: 34px;
+      font-size: 16px;
+    }
+
+    small {
+      width: 6px;
+      height: 6px;
+    }
+  }
+
+  .today-card {
+    padding: 20px;
+  }
+
+  .schedule-list {
+    height: auto;
+    max-height: 340px;
+  }
+
+  .schedule-item {
+    grid-template-columns: 50px 38px 1fr 20px;
+
+    span,
+    p {
+      font-size: 14px;
+    }
+
+    button {
+      font-size: 20px;
+    }
+  }
+
+  .student-card,
+  .summary-card,
+  .hours-card,
+  .breaks-card {
+    padding: 20px;
+  }
+
+  .student-header {
+
+    h3 {
+      font-size: 22px;
+    }
+  }
+
+  .student-card p {
+    font-size: 14px;
+  }
+
+  .hours-table {
+    width: 100%;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .agenda-page {
+    padding: 14px;
+
+    h2 {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+  }
+
+  .content {
+    gap: 14px;
+  }
+
+  .card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .calendar-card {
+    overflow-x: auto;
+  }
+
+  .week-days,
+  .calendar-days {
+    min-width: 520px;
+  }
+
+  .calendar-header {
+    margin-bottom: 18px;
+
+    strong {
+      font-size: 18px;
+    }
+
+    button {
+      font-size: 28px;
+    }
+  }
+
+  .week-days {
+    margin-bottom: 14px;
+
+    span {
+      font-size: 13px;
+    }
+  }
+
+  .calendar-days {
+    row-gap: 14px;
+
+    span {
+      width: 30px;
+      height: 30px;
+      font-size: 14px;
+    }
+  }
+
+  .today-card {
+    padding: 16px;
+  }
+
+  .today-header {
+
+    h3 {
+      font-size: 16px;
+    }
+
+    .count {
+      width: 28px;
+      height: 28px;
+      font-size: 13px;
+    }
+  }
+
+  .schedule-list {
+    max-height: 300px;
+  }
+
+  .schedule-item {
+    min-height: 46px;
+    grid-template-columns: 44px 32px 1fr 18px;
+
+    span,
+    p {
+      font-size: 13px;
+    }
+
+    button {
+      font-size: 18px;
+    }
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+
+    &.big {
+      width: 54px;
+      height: 54px;
+    }
+  }
+
+  .student-card,
+  .summary-card,
+  .hours-card,
+  .breaks-card {
+    padding: 16px;
+  }
+
+  .student-icons {
+    top: 16px;
+    right: 16px;
+    gap: 10px;
+    font-size: 18px;
+  }
+
+  .student-header {
+    gap: 10px;
+    margin-bottom: 14px;
+
+    h3 {
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    small {
+      font-size: 10px;
+      padding: 3px 8px;
+    }
+  }
+
+  .student-card p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 8px;
+
+    button {
+      width: 100%;
+      height: 38px;
+      font-size: 13px;
+    }
+  }
+
+  .availability {
+    height: auto;
+    gap: 10px;
+    align-items: flex-start;
+    flex-direction: column;
+    font-size: 13px;
+  }
+
+  .switch {
+    width: 44px;
+    height: 24px;
+
+    span::before {
+      width: 18px;
+      height: 18px;
+      top: 2px;
+    }
+
+    input:checked + span::before {
+      transform: translateX(18px);
+    }
+  }
+
+  .summary-card h3,
+  .hours-card h3,
+  .breaks-card h3 {
+    font-size: 14px;
+  }
+
+  .dots-week {
+
+    span {
+      font-size: 11px;
+    }
+
+    small {
+      width: 6px;
+      height: 6px;
+    }
+  }
+
+  .inputs {
+    grid-template-columns: 1fr;
+    gap: 8px;
+
+    label {
+      font-size: 11px;
+    }
+
+    input {
+      height: 34px;
+      font-size: 12px;
+    }
+  }
+
+  .edit {
+    width: 100%;
+    height: 38px;
+    margin-top: 14px;
+    font-size: 13px;
+  }
+
+  .table-head,
+  .table-row {
+    font-size: 12px;
+  }
+
+  .break-item {
+    height: 50px;
+
+    strong {
+      font-size: 22px;
+    }
+
+    span {
+      font-size: 11px;
+    }
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .agenda-page {
+    padding: 10px;
+
+    h2 {
+      font-size: 15px;
+    }
+  }
+
+  .content {
+    gap: 10px;
+  }
+
+  .card {
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .calendar-header {
+
+    strong {
+      font-size: 16px;
+    }
+
+    button {
+      font-size: 24px;
+    }
+  }
+
+  .week-days,
+  .calendar-days {
+    min-width: 460px;
+  }
+
+  .week-days {
+
+    span {
+      font-size: 11px;
+    }
+  }
+
+  .calendar-days {
+
+    span {
+      width: 26px;
+      height: 26px;
+      font-size: 12px;
+    }
+  }
+
+  .today-card {
+    padding: 12px;
+  }
+
+  .today-header {
+
+    h3 {
+      font-size: 14px;
+    }
+
+    .count {
+      width: 24px;
+      height: 24px;
+      font-size: 11px;
+    }
+  }
+
+  .schedule-item {
+    min-height: 42px;
+    grid-template-columns: 38px 28px 1fr 16px;
+
+    span,
+    p {
+      font-size: 12px;
+    }
+
+    button {
+      font-size: 16px;
+    }
+  }
+
+  .avatar {
+    width: 26px;
+    height: 26px;
+
+    &.big {
+      width: 46px;
+      height: 46px;
+    }
+  }
+
+  .student-card,
+  .summary-card,
+  .hours-card,
+  .breaks-card {
+    padding: 12px;
+  }
+
+  .student-icons {
+    top: 12px;
+    right: 12px;
+    font-size: 16px;
+  }
+
+  .student-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    h3 {
+      font-size: 16px;
+    }
+  }
+
+  .student-card p {
+    font-size: 12px;
+  }
+
+  .actions {
+
+    button {
+      height: 36px;
+      font-size: 12px;
+    }
+  }
+
+  .availability {
+    font-size: 12px;
+  }
+
+  .summary-card h3,
+  .hours-card h3,
+  .breaks-card h3 {
+    font-size: 13px;
+  }
+
+  .dots-week {
+
+    span {
+      font-size: 10px;
+    }
+  }
+
+  .inputs {
+
+    input {
+      height: 32px;
+      padding: 0 10px;
+      font-size: 11px;
+    }
+  }
+
+  .edit {
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .table-head,
+  .table-row {
+    font-size: 11px;
+  }
+
+  .break-item {
+    height: 44px;
+
+    strong {
+      font-size: 18px;
+    }
+
+    span {
+      font-size: 10px;
+    }
+  }
+
+}
+
+@media (max-width: 360px) {
+
+  .agenda-page {
+    padding: 8px;
+  }
+
+  .card {
+    padding: 10px;
+  }
+
+  .week-days,
+  .calendar-days {
+    min-width: 420px;
+  }
+
+  .calendar-header {
+
+    strong {
+      font-size: 14px;
+    }
+  }
+
+  .schedule-item {
+
+    span,
+    p {
+      font-size: 11px;
+    }
+  }
+
+  .student-header {
+
+    h3 {
+      font-size: 14px;
+    }
+  }
+
+  .student-card p,
+  .availability,
+  .table-head,
+  .table-row {
+    font-size: 11px;
+  }
+
+  .actions {
+
+    button {
+      height: 34px;
+      font-size: 11px;
+    }
+  }
+
+  .edit {
+    height: 34px;
+    font-size: 11px;
+  }
+
+}

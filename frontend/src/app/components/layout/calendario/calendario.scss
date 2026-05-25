@@ -118,7 +118,7 @@
     }
 }
 
-:host(.calendario-agenda) { 
+:host(.calendario-agenda) {
     .card {
         width: 500px;
     }
@@ -127,7 +127,285 @@
         font-size: 16px;
     }
 
-    .calendar-header strong, button {
+    .calendar-header strong,
+    button {
         font-size: large;
     }
+}
+
+@media (max-width: 992px) {
+
+    .card {
+        padding: 18px;
+    }
+
+    .calendar-header {
+        margin-bottom: 10px;
+
+        strong {
+            font-size: 0.95rem;
+        }
+
+        button {
+            width: 32px;
+            height: 32px;
+            font-size: 1.15rem;
+        }
+    }
+
+    .week-days {
+        margin-bottom: 12px;
+
+        span {
+            font-size: 0.76rem;
+        }
+    }
+
+    .calendar-days {
+        gap: 8px 4px;
+
+        span {
+            width: 34px;
+            height: 34px;
+            font-size: 0.78rem;
+        }
+    }
+
+    :host(.calendario-agenda) {
+
+        .card {
+            width: 100%;
+            max-width: 460px;
+        }
+
+        span {
+            font-size: 15px;
+        }
+
+        .calendar-header strong,
+        button {
+            font-size: 1rem;
+        }
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .card {
+        padding: 16px;
+        border-radius: 14px;
+    }
+
+    .calendar-header {
+        margin-bottom: 12px;
+
+        strong {
+            font-size: 0.9rem;
+        }
+
+        button {
+            width: 30px;
+            height: 30px;
+            font-size: 1rem;
+        }
+    }
+
+    .week-days {
+        margin-bottom: 10px;
+
+        span {
+            font-size: 0.72rem;
+        }
+    }
+
+    .calendar-days {
+        gap: 6px 2px;
+
+        span {
+            width: 32px;
+            height: 32px;
+            font-size: 0.74rem;
+        }
+    }
+
+    :host(.calendario-agenda) {
+
+        .card {
+            max-width: 100%;
+        }
+
+        span {
+            font-size: 14px;
+        }
+
+        .calendar-header strong,
+        button {
+            font-size: 0.95rem;
+        }
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    .calendar-card {
+        overflow-x: auto;
+    }
+
+    .card {
+        padding: 14px;
+        border-radius: 12px;
+        min-width: 320px;
+    }
+
+    .calendar-header {
+
+        strong {
+            font-size: 0.84rem;
+        }
+
+        button {
+            width: 28px;
+            height: 28px;
+            font-size: 0.92rem;
+        }
+    }
+
+    .week-days {
+
+        span {
+            font-size: 0.66rem;
+        }
+    }
+
+    .calendar-days {
+        gap: 6px 0;
+
+        span {
+            width: 28px;
+            height: 28px;
+            font-size: 0.68rem;
+        }
+    }
+
+    :host(.calendario-agenda) {
+
+        .card {
+            min-width: 100%;
+            padding: 12px;
+        }
+
+        span {
+            font-size: 13px;
+        }
+
+        .calendar-header strong,
+        button {
+            font-size: 0.9rem;
+        }
+    }
+
+}
+
+@media (max-width: 420px) {
+
+    .card {
+        padding: 12px;
+        border-radius: 10px;
+        min-width: 100%;
+    }
+
+    .calendar-header {
+        margin-bottom: 10px;
+
+        strong {
+            font-size: 0.78rem;
+        }
+
+        button {
+            width: 24px;
+            height: 24px;
+            font-size: 0.82rem;
+        }
+    }
+
+    .week-days {
+
+        span {
+            font-size: 0.6rem;
+        }
+    }
+
+    .calendar-days {
+        gap: 4px 0;
+
+        span {
+            width: 24px;
+            height: 24px;
+            font-size: 0.62rem;
+        }
+    }
+
+    :host(.calendario-agenda) {
+
+        span {
+            font-size: 12px;
+        }
+
+        .calendar-header strong,
+        button {
+            font-size: 0.82rem;
+        }
+    }
+
+}
+
+@media (max-width: 360px) {
+
+    .card {
+        padding: 10px;
+    }
+
+    .calendar-header {
+
+        strong {
+            font-size: 0.72rem;
+        }
+
+        button {
+            width: 22px;
+            height: 22px;
+            font-size: 0.74rem;
+        }
+    }
+
+    .week-days {
+
+        span {
+            font-size: 0.54rem;
+        }
+    }
+
+    .calendar-days {
+
+        span {
+            width: 21px;
+            height: 21px;
+            font-size: 0.56rem;
+        }
+    }
+
+    :host(.calendario-agenda) {
+
+        span {
+            font-size: 11px;
+        }
+
+        .calendar-header strong,
+        button {
+            font-size: 0.76rem;
+        }
+    }
+
 }

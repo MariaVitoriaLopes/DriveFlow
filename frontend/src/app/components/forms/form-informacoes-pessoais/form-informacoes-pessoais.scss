@@ -261,3 +261,268 @@
         }
     }
 }
+
+@media (max-width: 1024px) {
+
+    .form-container {
+        max-width: 100%;
+        padding: 20px;
+        gap: 18px;
+    }
+
+    .form-container .photo-upload {
+        gap: 18px;
+
+        .photo-preview {
+            width: 110px;
+            height: 110px;
+        }
+
+        p {
+            font-size: 13px;
+        }
+    }
+
+    .form-container .form-fields {
+        gap: 14px;
+
+        .grid-infos-extras {
+            gap: 10px;
+        }
+
+        label {
+            font-size: 13px;
+
+            input {
+                height: 44px;
+                font-size: 13px;
+            }
+        }
+    }
+
+    .form-container .form-actions {
+        button {
+            height: 42px;
+            font-size: 13px;
+        }
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .form-container {
+        padding: 16px;
+        border-radius: 14px;
+        gap: 16px;
+    }
+
+    .form-container .photo-upload {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+
+        .photo-preview {
+            width: 96px;
+            height: 96px;
+        }
+
+        .foto-texto {
+            width: 100%;
+            gap: 8px;
+        }
+
+        .photo-buttons {
+            width: 100%;
+            flex-direction: column;
+
+            button {
+                width: 100%;
+                height: 42px;
+                font-size: 13px;
+            }
+        }
+
+        p {
+            max-width: 100%;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+    }
+
+    .form-container .form-fields {
+        grid-template-columns: 1fr;
+        gap: 12px;
+
+        .grid-infos-extras {
+            grid-template-columns: 1fr 1fr;
+            grid-column: span 1;
+        }
+
+        .input-logradouro,
+        .input-bairro {
+            grid-column: span 1;
+        }
+
+        label {
+            gap: 6px;
+            font-size: 13px;
+
+            input {
+                height: 42px;
+                padding: 0 12px;
+                border-radius: 8px;
+                font-size: 13px;
+            }
+
+            &.senha-label {
+
+                .senha-wrapper {
+                    flex-direction: column;
+                    gap: 8px;
+
+                    button {
+                        width: 100%;
+                        height: 42px;
+                        font-size: 13px;
+                    }
+                }
+            }
+        }
+    }
+
+    .form-container .form-actions {
+        flex-direction: column;
+        gap: 10px;
+
+        button {
+            width: 100%;
+            height: 42px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .form-container {
+        padding: 14px;
+        border-radius: 12px;
+        gap: 14px;
+    }
+
+    .form-container .photo-upload {
+
+        .photo-preview {
+            width: 84px;
+            height: 84px;
+        }
+
+        .photo-buttons {
+
+            button {
+                height: 40px;
+                font-size: 12px;
+                border-radius: 8px;
+            }
+        }
+
+        p {
+            font-size: 12px;
+        }
+    }
+
+    .form-container .form-fields {
+        gap: 10px;
+
+        .grid-infos-extras {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        label {
+            font-size: 12px;
+
+            input {
+                height: 40px;
+                font-size: 12px;
+                padding: 0 10px;
+            }
+
+            &.senha-label {
+
+                .senha-wrapper {
+
+                    button {
+                        height: 40px;
+                        font-size: 12px;
+                        border-radius: 8px;
+                    }
+                }
+            }
+        }
+    }
+
+    .form-container .form-actions {
+
+        button {
+            height: 40px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+    }
+
+}
+
+@media (max-width: 360px) {
+
+    .form-container {
+        padding: 12px;
+    }
+
+    .form-container .photo-upload {
+
+        .photo-preview {
+            width: 72px;
+            height: 72px;
+        }
+
+        p {
+            font-size: 11px;
+        }
+    }
+
+    .form-container .form-fields {
+
+        label {
+            font-size: 11px;
+
+            input {
+                height: 38px;
+                font-size: 11px;
+            }
+
+            &.senha-label {
+
+                .senha-wrapper {
+
+                    button {
+                        height: 38px;
+                        font-size: 11px;
+                    }
+                }
+            }
+        }
+    }
+
+    .form-container .form-actions {
+
+        button {
+            height: 38px;
+            font-size: 11px;
+        }
+    }
+
+}

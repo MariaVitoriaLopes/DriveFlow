@@ -151,17 +151,345 @@ select {
     }
   }
 }
+@media (max-width: 1024px) {
 
-@media (max-width: 768px) {
-  .preferencias-form {
-    padding: 16px;
+  .veiculo-card {
+    padding: 20px;
+
+    .header {
+      margin-bottom: 18px;
+
+      h3 {
+        font-size: 15px;
+      }
+    }
+
+    .fotos-grid {
+      gap: 10px;
+    }
+
+    .foto-box {
+      width: 110px;
+      height: 84px;
+    }
+
+    .form-veiculo {
+      gap: 14px;
+    }
+
+    .row {
+      gap: 10px;
+
+      label {
+        font-size: 13px;
+      }
+
+      input {
+        height: 44px;
+        font-size: 13px;
+      }
+    }
+
+    .acoes {
+      gap: 10px;
+
+      button {
+        height: 42px;
+        font-size: 13px;
+      }
+    }
+
+    >button {
+      height: 42px;
+      font-size: 13px;
+    }
   }
 
-  .botoes {
+  .form-actions {
+
+    button {
+      height: 38px;
+      font-size: 12px;
+    }
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .veiculo-card {
+    padding: 16px;
+    border-radius: 14px;
+
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+
+      h3 {
+        font-size: 14px;
+        line-height: 1.5;
+      }
+    }
+
+    .imagens {
+
+      p {
+        font-size: 13px;
+      }
+    }
+
+    .fotos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .foto-box {
+      width: 100%;
+      height: 140px;
+      border-radius: 10px;
+
+      span {
+        font-size: 12px;
+      }
+
+      .btn-remover-foto {
+        padding: 4px 6px;
+        font-size: 11px;
+      }
+    }
+
+    .form-veiculo {
+      gap: 12px;
+    }
+
+    .linha,
+    .row {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .row {
+
+      div {
+        gap: 6px;
+      }
+
+      label {
+        font-size: 12px;
+      }
+
+      input {
+        height: 42px;
+        padding: 0 12px;
+        border-radius: 8px;
+        font-size: 12px;
+      }
+    }
+
+    .checkbox {
+
+      label {
+        font-size: 12px;
+        gap: 10px;
+      }
+
+      input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    .acoes {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+
+      button {
+        width: 100%;
+        height: 40px;
+        border-radius: 8px;
+        font-size: 12px;
+      }
+    }
+
+    >button {
+      width: 100%;
+      height: 40px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+  }
+
+  .form-actions {
     flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
 
     button {
       width: 100%;
+      height: 40px;
+      border-radius: 8px;
+      font-size: 12px;
     }
   }
+
+  .delete {
+    font-size: 12px;
+  }
+
+}
+
+@media (max-width: 520px) {
+
+  .veiculo-card {
+    padding: 14px;
+    border-radius: 12px;
+
+    .header {
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+
+      h3 {
+        font-size: 13px;
+      }
+    }
+
+    .imagens {
+      margin-bottom: 18px;
+
+      p {
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+    }
+
+    .fotos-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .foto-box {
+      height: 180px;
+
+      span {
+        font-size: 11px;
+      }
+
+      .btn-remover-foto {
+        right: 6px;
+        bottom: 6px;
+        font-size: 10px;
+      }
+    }
+
+    .form-veiculo {
+      gap: 10px;
+    }
+
+    .row {
+
+      label {
+        font-size: 11px;
+      }
+
+      input {
+        height: 40px;
+        padding: 0 10px;
+        font-size: 11px;
+      }
+    }
+
+    .checkbox {
+
+      label {
+        font-size: 11px;
+      }
+
+      input[type="checkbox"] {
+        width: 15px;
+        height: 15px;
+      }
+    }
+
+    .acoes {
+
+      button {
+        height: 38px;
+        font-size: 11px;
+      }
+    }
+
+    >button {
+      height: 38px;
+      font-size: 11px;
+    }
+  }
+
+  .form-actions {
+
+    button {
+      height: 38px;
+      font-size: 11px;
+      padding: 0 14px;
+    }
+  }
+
+  .delete {
+    font-size: 11px;
+  }
+
+}
+
+@media (max-width: 380px) {
+
+  .veiculo-card {
+    padding: 12px;
+
+    .header {
+
+      h3 {
+        font-size: 12px;
+      }
+    }
+
+    .foto-box {
+      height: 150px;
+      border-radius: 8px;
+    }
+
+    .row {
+
+      input {
+        height: 38px;
+        font-size: 10px;
+      }
+    }
+
+    .acoes {
+
+      button {
+        height: 36px;
+        font-size: 10px;
+      }
+    }
+
+    >button {
+      height: 36px;
+      font-size: 10px;
+    }
+  }
+
+  .form-actions {
+
+    button {
+      height: 36px;
+      font-size: 10px;
+    }
+  }
+
+  .delete {
+    font-size: 10px;
+  }
+
 }

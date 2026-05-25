@@ -215,49 +215,291 @@
     }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+
     .locais-container {
-        .endereco-card {
-            .linha:last-of-type {
-                grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .locais-container .endereco-card {
+        padding: 18px;
+        border-radius: 14px;
+
+        .card-header {
+            padding-bottom: 10px;
+
+            h3 {
+                font-size: 15px;
+            }
+
+            button {
+                height: 34px;
+                padding: 0 16px;
+                font-size: 12px;
+            }
+        }
+
+        .linha {
+            gap: 10px;
+        }
+
+        label {
+            font-size: 13px;
+
+            input {
+                height: 44px;
+                font-size: 13px;
+                padding: 0 12px;
+            }
+        }
+
+        .acoes {
+            padding-top: 10px;
+
+            label,
+            .delete {
+                font-size: 13px;
             }
         }
     }
+
+    .locais-container .footer {
+
+        button {
+            min-width: 160px;
+            height: 42px;
+            font-size: 13px;
+        }
+    }
+
 }
 
-@media (max-width: 600px) {
+@media (max-width: 900px) {
+
     .locais-container {
-        padding: 16px;
 
         .endereco-card {
-            padding: 16px;
 
-            .card-header {
-                flex-direction: column;
-                align-items: stretch;
+            .linha {
+                flex-wrap: wrap;
+            }
 
-                button {
-                    width: 100%;
+            .linha:first-of-type {
+
+                label:first-child {
+                    flex: 0 0 120px;
+                }
+
+                .logradouro {
+                    flex: 1;
+                    min-width: 220px;
                 }
             }
 
-            .linha:first-of-type,
             .linha:last-of-type {
-                grid-template-columns: 1fr;
-            }
 
-            .acoes {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        }
-
-        .footer {
-            flex-direction: column;
-
-            button {
-                width: 100%;
+                label {
+                    flex: 1 1 calc(50% - 6px);
+                    min-width: 140px;
+                }
             }
         }
     }
+
+}
+
+@media (max-width: 768px) {
+
+    .locais-container {
+        gap: 8px;
+    }
+
+    .locais-container .endereco-card {
+        padding: 16px;
+        gap: 10px;
+        border-radius: 12px;
+
+        .card-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+
+            h3 {
+                font-size: 14px;
+            }
+
+            button {
+                width: 100%;
+                height: 40px;
+                border-radius: 8px;
+            }
+        }
+
+        .linha {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .linha:first-of-type,
+        .linha:last-of-type {
+
+            label,
+            .logradouro {
+                width: 100%;
+                min-width: 100%;
+                flex: 1 1 100%;
+            }
+        }
+
+        label {
+            gap: 6px;
+            font-size: 12px;
+
+            input {
+                height: 42px;
+                border-radius: 8px;
+                font-size: 12px;
+            }
+        }
+
+        .acoes {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 0;
+
+            label {
+                font-size: 12px;
+            }
+
+            .delete {
+                width: 100%;
+                text-align: left;
+                font-size: 12px;
+            }
+        }
+    }
+
+    .locais-container .footer {
+        flex-direction: column;
+        gap: 10px;
+
+        button {
+            width: 100%;
+            min-width: 100%;
+            height: 42px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .locais-container {
+        gap: 6px;
+    }
+
+    .locais-container .endereco-card {
+        padding: 14px;
+        border-radius: 10px;
+
+        .card-header {
+
+            h3 {
+                font-size: 13px;
+                line-height: 1.4;
+            }
+
+            button {
+                height: 38px;
+                font-size: 11px;
+            }
+        }
+
+        label {
+            font-size: 11px;
+
+            input {
+                height: 40px;
+                padding: 0 10px;
+                font-size: 11px;
+                border-radius: 7px;
+            }
+        }
+
+        .acoes {
+            padding-top: 8px;
+
+            label {
+                gap: 6px;
+                font-size: 11px;
+
+                input[type="checkbox"] {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+
+            .delete {
+                font-size: 11px;
+            }
+        }
+    }
+
+    .locais-container .footer {
+
+        button {
+            height: 40px;
+            font-size: 11px;
+            border-radius: 7px;
+        }
+    }
+
+}
+
+@media (max-width: 360px) {
+
+    .locais-container .endereco-card {
+        padding: 12px;
+
+        .card-header {
+
+            h3 {
+                font-size: 12px;
+            }
+
+            button {
+                height: 36px;
+                padding: 0 10px;
+                font-size: 10px;
+            }
+        }
+
+        label {
+
+            input {
+                height: 38px;
+                font-size: 10px;
+            }
+        }
+
+        .acoes {
+
+            label,
+            .delete {
+                font-size: 10px;
+            }
+        }
+    }
+
+    .locais-container .footer {
+
+        button {
+            height: 38px;
+            font-size: 10px;
+        }
+    }
+
 }

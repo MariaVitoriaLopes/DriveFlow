@@ -1,25 +1,25 @@
 :root {
-    --bg-page: #f5f5f7;
-    --bg-card: #fbfbfc;
+  --bg-page: #f5f5f7;
+  --bg-card: #fbfbfc;
 
-    --primary: #6d22e8;
-    --primary-hover: #5d1bd6;
+  --primary: #6d22e8;
+  --primary-hover: #5d1bd6;
 
-    --text-primary: #25252a;
-    --text-secondary: #45464d;
+  --text-primary: #25252a;
+  --text-secondary: #45464d;
 
-    --border: #a5a8b3;
-    --border-soft: #9ca0aa;
+  --border: #a5a8b3;
+  --border-soft: #9ca0aa;
 
-    --danger: #dc2626;
-    --danger-hover: #b91c1c;
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
 
-    --shadow-sm: none;
-    --shadow-md: none;
+  --shadow-sm: none;
+  --shadow-md: none;
 
-    --radius-lg: 16px;
-    --radius-md: 10px;
-    --radius-sm: 6px;
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
 }
 
 .veiculo-card {
@@ -231,7 +231,7 @@
     }
   }
 
-  > button {
+  >button {
     height: 44px;
     padding: 0 18px;
     border-radius: 10px;
@@ -242,7 +242,7 @@
     margin-top: 12px;
   }
 
-  > button:not(.salvar) {
+  >button:not(.salvar) {
     background: #fff;
     color: #6d22e8;
     border: 1px solid #6d22e8;
@@ -284,7 +284,7 @@
       }
     }
 
-    > button {
+    >button {
       width: 100%;
     }
 
@@ -317,22 +317,22 @@
     transition: 0.2s;
 
     &:hover:not(:disabled) {
-        background: var(--primary-hover);
+      background: var(--primary-hover);
     }
 
     &:disabled {
-        background: #b7a3df;
-        cursor: not-allowed;
+      background: #b7a3df;
+      cursor: not-allowed;
     }
 
     .save-btn {
-        background: var(--primary);
-        color: #fff;
-        border: none;
+      background: var(--primary);
+      color: #fff;
+      border: none;
 
-        &:hover {
-            background: var(--primary-hover);
-        }
+      &:hover {
+        background: var(--primary-hover);
+      }
     }
 
     .cancel {
@@ -344,25 +344,26 @@
 }
 
 .delete {
-    border: none;
-    background: transparent;
-    padding: 0;
-    color: #d93025;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s;
-    text-decoration: underline;;
-    
-    &:hover {
-        opacity: 0.85;
-    }
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: #d93025;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  text-decoration: underline;
+  ;
+
+  &:hover {
+    opacity: 0.85;
+  }
 }
 
 .form-actions {
   .cancel {
-      background: #fff;
-      color: var(--primary);
-      border: 1px solid var(--primary);
-    }
+    background: #fff;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+  }
 }
