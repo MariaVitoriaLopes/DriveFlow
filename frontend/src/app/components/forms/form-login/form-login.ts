@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -15,6 +15,9 @@ export class FormLogin {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+
+  mensagemErro = '';
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -28,8 +31,11 @@ export class FormLogin {
   }
 
   onLogin(): void {
+    this.mensagemErro = '';
+
     if (this.form.invalid) {
-      alert('Por favor, preencha os campos corretamente.');
+      this.mensagemErro = 'Preencha os campos corretamente.';
+      this.cdr.detectChanges();
       return;
     }
 
@@ -43,7 +49,7 @@ export class FormLogin {
         localStorage.setItem('userId', usuarioLogado.id);
         localStorage.setItem('userPerfil', usuarioLogado.perfil);
 
-        alert(`Bem-vindo de volta, ${usuarioLogado.nome}!`);
+        // alert(`Bem-vindo de volta, ${usuarioLogado.nome}!`);
 
         if (usuarioLogado.perfil === 'INSTRUTOR') {
           this.router.navigate(
@@ -56,7 +62,9 @@ export class FormLogin {
       },
       error: (erro) => {
         console.error('Erro na autenticação:', erro);
-        alert('E-mail ou senha incorretos! Verifique os dados.');
+        // alert('E-mail ou senha incorretos! Verifique os dados.');
+        this.mensagemErro = 'E-mail ou senha incorretos. Verifique os dados.';
+        this.cdr.detectChanges();
       }
     });
   }

@@ -5,17 +5,14 @@
 
   <label>Senha</label>
   <div class="input-icon">
-    <input
-      [type]="mostrarSenha ? 'text' : 'password'"
-      formControlName="senha"
-      placeholder="Escolha uma senha segura"
-    >
+    <input [type]="mostrarSenha ? 'text' : 'password'" formControlName="senha" placeholder="Escolha uma senha segura">
 
-    <span class="icon" (click)="toggleSenha()">
+    <button type="button" class="icon" (click)="toggleSenha()">
       {{ mostrarSenha ? '🙈' : '👁️' }}
-    </span>
+    </button>
   </div>
 
+  <span class="erro" *ngIf="mensagemErro">{{ mensagemErro }}</span>
   <button type="submit" class="btn-criar" [disabled]="form.invalid">
     Entrar na minha conta
   </button>
