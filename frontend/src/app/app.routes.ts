@@ -22,12 +22,14 @@ import { PerfilInstrutor } from './pages/aluno/perfil-instrutor/perfil-instrutor
 import { ConfiguracoesA } from './pages/aluno/configuracoes/configuracoes';
 import { AgendarAula } from './pages/aluno/agendar-aula/agendar-aula';
 import { AgendaAluno } from './pages/aluno/agenda-aluno/agenda-aluno';
+import { TelasImplementacao } from './components/layout/telas-implementacao/telas-implementacao';
 
 export const routes: Routes = [
   { path: '', component: Home },
   { path: 'login', component: Login },
   { path: 'cadastro', component: Cadastro },
   { path: 'ver-instrutores', component: VerInstrutores },
+  { path: 'implementacao', component: TelasImplementacao},
   
   { path: 'instrutor/agenda', component: Agenda },
   { path: 'instrutor/alunos', component: Alunos },

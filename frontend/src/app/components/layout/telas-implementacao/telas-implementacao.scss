@@ -1,0 +1,122 @@
+.implementacao-container {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(
+    135deg,
+    #f8f3ff 0%,
+    #ede0ff 50%,
+    #e0d0ff 100%
+  );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 550px;
+
+  background: rgba(255, 255, 255, 0.95);
+
+  border-radius: 28px;
+  padding: 50px 35px;
+
+  text-align: center;
+
+  box-shadow:
+    0 15px 40px rgba(106, 13, 173, 0.15),
+    0 5px 15px rgba(106, 13, 173, 0.08);
+
+  border: 1px solid rgba(138, 43, 226, 0.15);
+
+    gap: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.card h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #5b21b6;
+  margin-bottom: 16px;
+}
+
+.card p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #6b7280;
+}
+
+.card a{
+    font-size: 1rem;
+  line-height: 1.7;
+  color: #5b21b6;
+  cursor: pointer;
+}
+
+.icone-area {
+  width: 100px;
+  height: 100px;
+
+  margin: 0 auto;
+
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    #7c3aed,
+    #9333ea,
+    #c084fc
+  );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 10px 25px rgba(124, 58, 237, 0.35);
+}
+
+.icone-ferramenta {
+  width: 48px;
+  height: 48px;
+  color: white;
+
+  animation: girarFerramenta 3s linear infinite;
+}
+
+@keyframes girarFerramenta {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .card {
+    padding: 40px 25px;
+  }
+
+  .card h1 {
+    font-size: 1.6rem;
+  }
+
+  .card p {
+    font-size: 0.95rem;
+  }
+
+  .icone-area {
+    width: 85px;
+    height: 85px;
+  }
+
+  .icone-ferramenta {
+    width: 40px;
+    height: 40px;
+  }
+}
