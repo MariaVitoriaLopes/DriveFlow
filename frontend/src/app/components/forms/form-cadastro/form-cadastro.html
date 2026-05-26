@@ -1,3 +1,15 @@
+<div class="escolha-perfil" >
+    <input
+      type="checkbox"
+      id="checkboxPerfil"
+      [checked]="isInstrutor"
+      (change)="onTipoChange($event)"
+    >
+    <label for="checkboxPerfil" style="margin: 0; cursor: pointer; font-weight: normal;">
+      Quero me cadastrar como  {{ isInstrutor ? 'aluno' : 'instrutor' }}
+      <span>></span>
+    </label>
+  </div>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
   <label>Nome:</label>
@@ -25,11 +37,11 @@
   </div>
 
   <ul class="requisitos">
-    <li [class.ok]="temTamanho()">Minimo 8 caracteres</li>
-    <li [class.ok]="temMaiuscula()">1 letra maiuscula</li>
-    <li [class.ok]="temMinuscula()">1 letra minuscula</li>
-    <li [class.ok]="temNumero()">numeros</li>
-    <li [class.ok]="temEspecial()">Caracteres especiais</li>
+    <li [class.ok]="temTamanho()">Mínimo de 8 caracteres</li>
+    <li [class.ok]="temMaiuscula()">1 letra maiúscula</li>
+    <li [class.ok]="temMinuscula()">1 letra minúscula</li>
+    <li [class.ok]="temNumero()">1 número</li>
+    <li [class.ok]="temEspecial()">1 caractere especial</li>
   </ul>
 
   <label>Repita a senha:</label>
@@ -43,18 +55,6 @@
     <span class="icon" (click)="toggleRepetirSenha()">
       {{ mostrarRepetirSenha ? '🙈' : '👁️' }}
     </span>
-  </div>
-
-  <div class="escolha-perfil" >
-    <input
-      type="checkbox"
-      id="checkboxPerfil"
-      [checked]="isInstrutor"
-      (change)="onTipoChange($event)"
-    >
-    <label for="checkboxPerfil" style="margin: 0; cursor: pointer; font-weight: normal;">
-      Quero me cadastrar como  {{ isInstrutor ? 'aluno' : 'instrutor' }}
-    </label>
   </div>
 
   <div class="termos">
