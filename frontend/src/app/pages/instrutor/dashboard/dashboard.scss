@@ -1,995 +1,878 @@
 :host {
-    --bg-page: #f5f5f7;
-    --bg-card: #ffffff;
+  --bg-page: #f5f5f7;
+  --bg-card: #ffffff;
 
-    --primary: #7008e7;
-    --primary-hover: #5e05c4;
+  --primary: #7008e7;
+  --primary-hover: #5e05c4;
 
-    --text-primary: #111111;
-    --text-secondary: #666674;
+  --text-primary: #111111;
+  --text-secondary: #666674;
 
-    --border: #d7d7df;
-    --border-soft: #ececf2;
+  --border: #d7d7df;
+  --border-soft: #ececf2;
 
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
+  --shadow-sm: 0 4px 18px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 10px 28px rgba(15, 23, 42, 0.08);
 
-    --radius-lg: 16px;
-    --radius-md: 12px;
+  --radius-xl: 22px;
+  --radius-lg: 18px;
+  --radius-md: 14px;
 
-    background: var(--bg-page);
+  display: block;
+
+  min-height: 100vh;
+
+  background: var(--bg-page);
 }
+
+/* RESET */
 
 *,
 *::before,
 *::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+
+  box-sizing: border-box;
+}
+
+.layout {
+    display:flex;
 }
 
 button,
 input {
-    font: inherit;
+  font: inherit;
 }
 
 button {
-    border: none;
-    background: transparent;
-    cursor: pointer;
+  border: none;
+  background: transparent;
+
+  cursor: pointer;
 }
 
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
-// app-header-instrutor {
-//   width: 300px;
-//   // height: 100%;
-// }
+/* DASHBOARD */
 
 .dashboard {
-    flex: 1;
-    padding: 28px;
-    overflow-x: hidden;
+  width: 100%;
+
+  padding: 28px;
+
+  overflow-x: hidden;
 }
+
+/* TÍTULOS */
 
 .section-title {
-    margin-bottom: 18px;
-    color: var(--text-primary);
-    font-size: 18px;
-    font-weight: 700;
+  margin-bottom: 18px;
+
+  color: var(--text-primary);
+
+  font-size: 18px;
+  font-weight: 700;
 }
+
+/* BANNER */
 
 .profile-banner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
 
-    min-height: 60px;
+  margin-bottom: 24px;
+  padding: 18px 20px;
 
-    margin-bottom: 24px;
-    padding: 0 16px;
+  border: 1px solid #cfb3ff;
+  border-radius: var(--radius-lg);
 
-    border: 1px solid #b98cff;
-    border-radius: var(--radius-md);
+  background: linear-gradient(
+    135deg,
+    #f4eeff 0%,
+    #ece3ff 100%
+  );
 
-    background: #ece3ff;
+  box-shadow: var(--shadow-sm);
 
-    p {
-        color: var(--primary);
-        font-size: 0.92rem;
-        font-weight: 500;
+  p {
+    color: var(--primary);
+
+    font-size: 0.92rem;
+    font-weight: 600;
+
+    line-height: 1.5;
+  }
+
+  button {
+    flex-shrink: 0;
+
+    height: 42px;
+    padding: 0 18px;
+
+    border-radius: 12px;
+
+    background: var(--primary);
+    color: #fff;
+
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
     }
-
-    button {
-        height: 40px;
-        padding: 0 18px;
-
-        border-radius: 10px;
-
-        background: var(--primary);
-        color: #fff;
-
-        font-size: 0.9rem;
-        font-weight: 600;
-
-        transition: 0.2s ease;
-
-        &:hover {
-            background: var(--primary-hover);
-        }
-    }
+  }
 }
+
+/* CARD BASE */
 
 .card {
-    padding: 20px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--bg-card);
-    box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+
+  background: var(--bg-card);
+
+  box-shadow: var(--shadow-sm);
+
+  padding: 22px;
+
+  min-width: 0;
 }
 
+/* GRID ESTATÍSTICAS */
 
 .stats-grid {
-    display: flex;
-    flex-direction: row;
-    gap: 12px;
-    margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(320px, 420px);
+  gap: 18px;
+
+  margin-bottom: 28px;
+
+  align-items: stretch;
 }
+
+/* CHART CARD */
 
 .chart-card {
-    height: auto;
-    min-height: 320px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 
-    h3 {
-        margin-bottom: 20px;
+  overflow: hidden;
 
-        font-size: 1rem;
-        font-weight: 600;
-    }
+  h3 {
+    color: var(--text-primary);
+
+    font-size: 1rem;
+    font-weight: 700;
+  }
 }
 
-.stats-cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.info-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: 10px;
-
-    min-height: 154px;
-
-    .circle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        width: 48px;
-        height: 48px;
-
-        border-radius: 50%;
-
-        background: #ededf2;
-
-        font-size: 1rem;
-        font-weight: 700;
-    }
-
-    h3 {
-        font-size: 0.96rem;
-        font-weight: 700;
-    }
-
-    p {
-        color: var(--text-secondary);
-        font-size: 0.82rem;
-        line-height: 1.35;
-    }
-}
-
+/* CABEÇALHO DOS DIAS */
 
 .days-top {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  margin-bottom: 28px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
 
   div {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    align-items: center;
+    gap: 4px;
+
+    text-align: center;
   }
 
-  span,
+  span {
+    color: var(--text-primary);
+
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
   small {
-    font-size: 12px;
-    color: #333;
+    color: var(--text-secondary);
+
+    font-size: 0.72rem;
   }
 
   strong {
-    margin-top: 8px;
-    font-size: 13px;
+    margin-top: 4px;
+
+    color: var(--primary);
+
+    font-size: 0.92rem;
+    font-weight: 700;
   }
+}
+
+/* ÁREA DO GRÁFICO */
+
+.chart-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
 }
 
 .chart-area {
-  height: 125px;
-  margin-left: 38px;
-  padding: 0 24px;
+  position: relative;
+
+  min-width: 620px;
+  height: 220px;
+
+  padding:
+    20px
+    12px
+    34px
+    46px;
+
   display: flex;
   align-items: flex-end;
-  gap: 20px;
-  position: relative;
-  border-bottom: 1px solid #cfcfd4;
-  background: repeating-linear-gradient(
-    to top,
-    transparent 0,
-    transparent 40px,
-    #d6d6dc 41px
-  );
+  justify-content: space-between;
+  gap: 14px;
+
+  border-radius: 18px;
+
+  background:
+    repeating-linear-gradient(
+      to top,
+      transparent 0,
+      transparent 43px,
+      #ececf2 44px
+    );
 }
+
+/* LABELS */
 
 .line-label {
   position: absolute;
-  left: -22px;
-  font-size: 10px;
-  color: #666;
+  left: 14px;
+
+  color: #7a7a86;
+
+  font-size: 0.72rem;
+  font-weight: 600;
 }
 
-.l15 { top: -3px; }
-.l10 { top: 39px; }
-.l5 { top: 80px; }
-.l0 { bottom: -5px; }
+.l15 {
+  top: 12px;
+}
+
+.l10 {
+  top: 56px;
+}
+
+.l5 {
+  top: 100px;
+}
+
+.l0 {
+  bottom: 28px;
+}
+
+/* BARRAS */
 
 .bar {
-  width: 42px;
-  background: #bca8f7;
-  border-radius: 4px 4px 0 0;
+  flex: 1;
+
+  min-width: 44px;
+  max-width: 60px;
+
+  border-radius: 14px 14px 6px 6px;
+
+  background: linear-gradient(
+    180deg,
+    #d6c0ff 0%,
+    #b48dff 100%
+  );
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+
+    box-shadow: 0 10px 18px rgba(112, 8, 231, 0.18);
+  }
 
   &.active {
-    background: #8245f5;
+    background: linear-gradient(
+      180deg,
+      #9d63ff 0%,
+      #7008e7 100%
+    );
   }
 }
 
+/* CARDS LATERAIS */
+
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
 .info-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  min-height: 170px;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+
+    box-shadow: var(--shadow-md);
+  }
+
+  .circle {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-
-    min-height: 148px;
-
-    .circle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        width: 48px;
-        height: 48px;
-
-        border-radius: 50%;
-
-        background: #ededf2;
-
-        font-size: 1rem;
-        font-weight: 700;
-    }
-
-    h3 {
-        font-size: 0.98rem;
-        font-weight: 700;
-    }
-
-    p {
-        color: var(--text-secondary);
-        font-size: 0.84rem;
-        line-height: 1.3;
-    }
-}
-
-.agenda-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.15fr 1fr;
-    gap: 12px;
-}
-
-.calendar-card, .today-card, .student-card {
-    min-height: 300px;
-}
-
-// .calendar-header {
-//     display: flex;
-//     align-items: center;
-//     justify-content: space-between;
-//     margin-bottom: 6px;
-
-//     strong {
-//         font-size: 1rem;
-//     }
-
-//     button {
-//         width: 34px;
-//         height: 34px;
-
-//         border-radius: 50%;
-
-//         font-size: 1.3rem;
-
-//         &:hover {
-//             background: #f1f1f6;
-//         }
-//     }
-// }
-
-// .week-days,
-// .calendar-days {
-//     display: grid;
-//     grid-template-columns: repeat(7, 1fr);
-//     text-align: center;
-// }
-
-// .week-days {
-//     margin-bottom: 14px;
-
-//     span {
-//         color: var(--text-secondary);
-//         font-size: 0.8rem;
-//         font-weight: 600;
-//     }
-// }
-
-// .calendar-days {
-//     gap: 10px 0;
-
-//     span {
-//         display: flex;
-//         align-items: center;
-//         justify-content: center;
-
-//         width: 36px;
-//         height: 36px;
-
-//         margin: 0 auto;
-
-//         border-radius: 50%;
-
-//         font-size: 0.82rem;
-
-//         transition: 0.2s ease;
-
-//         &:hover {
-//             background: #f2ebff;
-//         }
-//     }
-
-//     .selected {
-//         background: var(--primary);
-//         color: #fff;
-//         font-weight: 700;
-//     }
-// }
-
-.today-card {
-    display: flex;
-    flex-direction: column;
-
-    h3 {
-        margin-bottom: 18px;
-        font-size: 1rem;
-    }
-
-    .view-all {
-        margin-top: auto;
-        margin-left: auto;
-
-        color: var(--primary);
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
-}
-
-.lesson {
-    display: grid;
-    grid-template-columns: 56px 38px 1fr 20px;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
 
-    padding: 12px 0;
-
-    border-bottom: 1px solid var(--border-soft);
-
-    .time,
-    .name {
-        font-size: 0.92rem;
-    }
-
-    .menu {
-        color: var(--text-secondary);
-        font-size: 1.2rem;
-    }
-}
-
-.avatar {
-    width: 34px;
-    height: 34px;
+    width: 52px;
+    height: 52px;
 
     border-radius: 50%;
 
-    background: #d8d8df;
+    background: #f2ebff;
+    color: var(--primary);
 
-    &.big {
-        width: 64px;
-        height: 64px;
-    }
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  h3 {
+    color: var(--text-primary);
+
+    font-size: 0.96rem;
+    font-weight: 700;
+  }
+
+  p {
+    color: var(--text-secondary);
+
+    font-size: 0.84rem;
+    line-height: 1.5;
+  }
 }
 
-.right-area {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+/* AGENDA */
+
+.agenda-grid {
+  display: grid;
+  grid-template-columns:
+    minmax(320px, 1fr)
+    minmax(320px, 1.1fr)
+    minmax(280px, 0.9fr);
+
+  gap: 18px;
+
+  align-items: start;
 }
 
-.availability {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 58px;
+/* CALENDÁRIO */
 
-    span {
-        font-size: 14px;
-        font-weight: 500;
-    }
+app-calendario-agenda {
+  display: block;
+
+  min-width: 0;
+
+  border-radius: var(--radius-xl);
+
+  overflow: hidden;
+
+  background: var(--bg-card);
+
+  border: 1px solid var(--border);
+
+  box-shadow: var(--shadow-sm);
 }
 
-.switch {
-    position: relative;
-    width: 48px;
-    height: 26px;
+/* ESTILIZAÇÃO INTERNA */
 
-    input {
-        display: none;
-    }
-
-    span {
-        position: absolute;
-        inset: 0;
-
-        border-radius: 999px;
-
-        background: #d7d7de;
-
-        &::before {
-            content: '';
-
-            position: absolute;
-            top: 3px;
-            left: 3px;
-
-            width: 20px;
-            height: 20px;
-
-            border-radius: 50%;
-
-            background: #fff;
-
-            transition: 0.2s ease;
-        }
-    }
-
-    input:checked + span {
-        background: var(--primary);
-
-        &::before {
-            transform: translateX(22px);
-        }
-    }
+.calendar-box,
+.calendar-wrapper,
+.calendar-container {
+  padding: 18px;
 }
 
-.student-card {
-    position: relative;
-    padding: 45px 25px;
+/* TODAY CARD */
 
-    .student-icons {
-        position: absolute;
-        top: 18px;
-        right: 18px;
+.today-card {
+  display: flex;
+  flex-direction: column;
 
-        display: flex;
-        gap: 10px;
+  min-height: 100%;
 
-        color: var(--primary);
-        font-size: 1.1rem;
-    }
+  h3 {
+    margin-bottom: 18px;
+
+    color: var(--text-primary);
+
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .view-all {
+    margin-top: auto;
+    margin-left: auto;
+
+    color: var(--primary);
+
+    font-size: 0.86rem;
+    font-weight: 700;
+  }
 }
+
+/* LISTA */
 
 .students {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* AULA */
+
+.lesson {
+  display: grid;
+  grid-template-columns: 60px 40px minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px 0;
+
+  border-bottom: 1px solid var(--border-soft);
+
+  .time {
+    color: var(--primary);
+
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+
+  .name {
+    overflow: hidden;
+
+    color: var(--text-primary);
+
+    font-size: 0.92rem;
+    font-weight: 600;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .menu {
+    color: var(--text-secondary);
+
+    font-size: 1.1rem;
+  }
+}
+
+/* AVATAR */
+
+.avatar {
+  width: 36px;
+  height: 36px;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+
+  background: #d8d8df;
+
+  &.big {
+    width: 68px;
+    height: 68px;
+  }
+}
+
+/* ÁREA DIREITA */
+
+.right-area {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* DISPONIBILIDADE */
+
+.availability {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  min-height: 74px;
+
+  span {
+    color: var(--text-primary);
+
+    font-size: 0.92rem;
+    font-weight: 600;
+
+    line-height: 1.5;
+  }
+}
+
+/* SWITCH */
+
+.switch {
+  position: relative;
+
+  width: 52px;
+  height: 28px;
+
+  flex-shrink: 0;
+
+  input {
+    display: none;
+  }
+
+  span {
+    position: absolute;
+    inset: 0;
+
+    border-radius: 999px;
+
+    background: #d7d7de;
+
+    transition: background 0.2s ease;
+
+    &::before {
+      content: '';
+
+      position: absolute;
+      top: 4px;
+      left: 4px;
+
+      width: 20px;
+      height: 20px;
+
+      border-radius: 50%;
+
+      background: #fff;
+
+      transition: transform 0.2s ease;
+    }
+  }
+
+  input:checked + span {
+    background: var(--primary);
+
+    &::before {
+      transform: translateX(24px);
+    }
+  }
+}
+
+/* STUDENT CARD */
+
+.student-card {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  min-height: 320px;
+}
+
+.student-icons {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+
+  display: flex;
+  gap: 10px;
+
+  color: var(--primary);
+
+  font-size: 1rem;
 }
 
 .student-header {
-    display: flex;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  margin-bottom: 22px;
+
+  h3 {
+    margin-bottom: 6px;
+
+    color: var(--text-primary);
+
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  small {
+    display: inline-flex;
     align-items: center;
-    gap: 14px;
 
-    margin-bottom: 18px;
+    padding: 4px 10px;
 
-    h3 {
-        margin-bottom: 4px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
 
-        font-size: 1.1rem;
-        font-weight: 700;
-    }
+    color: var(--text-secondary);
 
-    small {
-        padding: 4px 10px;
-
-        border: 1px solid var(--border);
-        border-radius: 999px;
-
-        color: var(--text-secondary);
-        font-size: 0.7rem;
-    }
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
 }
 
 .student-info {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 
-    p {
-        font-size: 0.9rem;
-        line-height: 1.35;
+  p {
+    color: var(--text-secondary);
+
+    font-size: 0.9rem;
+    line-height: 1.5;
+
+    strong {
+      color: var(--text-primary);
     }
+  }
 }
+
+/* BOTÕES */
 
 .buttons {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 
-    margin-top: 20px;
+  margin-top: auto;
+  padding-top: 22px;
 
-    button {
-        flex: 1;
-        height: 42px;
-        border-radius: 10px;
+  button {
+    flex: 1;
 
-        font-size: 0.9rem;
-        font-weight: 600;
+    height: 44px;
+
+    border-radius: 12px;
+
+    font-size: 0.88rem;
+    font-weight: 700;
+
+    transition:
+      transform 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .cancel {
+    border: 1px solid var(--border);
+
+    background: #f4f4f7;
+    color: var(--text-primary);
+
+    &:hover {
+      background: #ebebf1;
     }
+  }
 
-    .cancel {
-        border: 1px solid var(--border);
+  .start {
+    background: var(--primary);
+    color: #fff;
 
-        background: #f0f0f4;
+    &:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
     }
-
-    .start {
-        background: var(--primary);
-        color: #fff;
-    }
+  }
 }
 
-@media (max-width: 1200px) {
-    .dashboard {
-        padding: 22px;
-    }
+/* EMPTY */
 
-    .stats-grid {
-        flex-direction: column;
-    }
+.empty {
+  color: var(--text-secondary);
 
-    .agenda-grid {
-        grid-template-columns: 1fr;
-    }
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
 
-    .stats-cards {
-        grid-template-columns: repeat(2, 1fr);
-    }
+/* RESPONSIVO */
 
-    .chart-card,
-    .calendar-card,
-    .today-card,
-    .student-card {
-        min-height: auto;
-    }
+@media (max-width: 1300px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 
-    .chart-area {
-        margin-left: 24px;
-        padding: 0 16px;
-        gap: 14px;
-    }
+  .agenda-grid {
+    grid-template-columns: 1fr;
+  }
 
-    .bar {
-        width: 30px;
-    }
+  .stats-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 992px) {
-    .dashboard {
-        padding: 18px;
+  .dashboard {
+    padding: 20px;
+  }
+
+  .profile-banner {
+    flex-direction: column;
+    align-items: flex-start;
+
+    button {
+      width: 100%;
     }
+  }
 
-    .profile-banner {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 14px;
-        padding: 18px;
-
-        button {
-            width: 100%;
-            height: 44px;
-        }
-    }
-
-    .chart-card {
-        overflow-x: auto;
-    }
-
-    .days-top,
-    .chart-area {
-        min-width: 620px;
-    }
-
-    .chart-area {
-        height: 115px;
-        margin-left: 20px;
-    }
-
-    .lesson {
-        grid-template-columns: 50px 34px 1fr 16px;
-
-        .time,
-        .name {
-            font-size: 0.86rem;
-        }
-    }
+  .chart-area {
+    min-width: 560px;
+  }
 }
 
 @media (max-width: 768px) {
-    .dashboard {
-        padding: 14px;
+  .dashboard {
+    padding: 14px;
+  }
+
+  .card {
+    padding: 16px;
+
+    border-radius: 16px;
+  }
+
+  .stats-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson {
+    grid-template-columns: 52px 36px minmax(0, 1fr);
+
+    .menu {
+      display: none;
     }
+  }
 
-    .section-title {
-        font-size: 0.95rem;
-    }
+  .student-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-    .card {
-        padding: 14px;
-        border-radius: 14px;
-    }
-
-    .stats-cards {
-        grid-template-columns: 1fr;
-    }
-
-    .profile-banner {
-        padding: 16px;
-
-        p {
-            font-size: 0.82rem;
-            line-height: 1.5;
-        }
-
-        button {
-            font-size: 0.84rem;
-        }
-    }
-
-    .info-card {
-        min-height: auto;
-        padding: 16px;
-
-        .circle {
-            width: 42px;
-            height: 42px;
-            font-size: 0.9rem;
-        }
-
-        h3 {
-            font-size: 0.9rem;
-        }
-
-        p {
-            font-size: 0.78rem;
-            line-height: 1.45;
-        }
-    }
-
-    .today-card h3,
-    .chart-card h3 {
-        font-size: 0.92rem;
-    }
-
-    .student-card {
-        padding: 50px 16px 18px;
-    }
-
-    .student-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-
-        h3 {
-            font-size: 1rem;
-        }
-    }
-
-    .student-info {
-        gap: 10px;
-
-        p {
-            font-size: 0.84rem;
-            line-height: 1.5;
-        }
-    }
-
-    .buttons {
-        flex-direction: column;
-
-        button {
-            width: 100%;
-        }
-    }
-
-    .availability {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
+  .buttons {
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 576px) {
-    .dashboard {
-        padding: 10px;
+  .dashboard {
+    padding: 10px;
+  }
+
+  .section-title {
+    font-size: 1rem;
+  }
+
+  .profile-banner {
+    padding: 14px;
+
+    p {
+      font-size: 0.8rem;
     }
+  }
 
-    .card {
-        padding: 12px;
-        border-radius: 12px;
-    }
+  .chart-card {
+    overflow-x: auto;
+  }
 
-    .profile-banner {
-        gap: 12px;
-        padding: 14px;
+  .days-top,
+  .chart-area {
+    min-width: 520px;
+  }
 
-        p {
-            font-size: 0.76rem;
-        }
+  .chart-area {
+    height: 180px;
 
-        button {
-            height: 40px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-        }
-    }
+    padding-left: 40px;
+  }
 
-    .stats-grid,
-    .agenda-grid,
-    .right-area {
-        gap: 10px;
-    }
+  .bar {
+    min-width: 28px;
+  }
 
-    .info-card {
-        gap: 8px;
+  .student-card {
+    min-height: auto;
+  }
 
-        .circle {
-            width: 38px;
-            height: 38px;
-            font-size: 0.82rem;
-        }
-
-        h3 {
-            font-size: 0.84rem;
-        }
-
-        p {
-            font-size: 0.74rem;
-        }
-    }
-
-    .chart-card {
-        padding-right: 0;
-        overflow-x: auto;
-    }
-
-    .days-top {
-        min-width: 520px;
-        margin-bottom: 18px;
-
-        span,
-        small,
-        strong {
-            font-size: 10px;
-        }
-    }
-
-    .chart-area {
-        min-width: 520px;
-        height: 95px;
-        margin-left: 14px;
-        gap: 8px;
-        padding: 0 10px;
-    }
-
-    .bar {
-        width: 20px;
-        border-radius: 3px 3px 0 0;
-    }
-
-    .line-label {
-        left: -16px;
-        font-size: 9px;
-    }
-
-    .lesson {
-        grid-template-columns: 1fr;
-        gap: 6px;
-
-        .menu {
-            display: none;
-        }
-
-        .time {
-            font-size: 0.76rem;
-            font-weight: 700;
-        }
-
-        .name {
-            font-size: 0.8rem;
-        }
-    }
-
-    .avatar {
-        width: 30px;
-        height: 30px;
-
-        &.big {
-            width: 52px;
-            height: 52px;
-        }
-    }
-
-    .student-card {
-        padding: 46px 14px 16px;
-
-        .student-icons {
-            top: 12px;
-            right: 12px;
-            gap: 8px;
-            font-size: 0.95rem;
-        }
-    }
-
-    .student-header {
-        margin-bottom: 14px;
-
-        small {
-            font-size: 0.64rem;
-            padding: 3px 8px;
-        }
-    }
-
-    .student-info {
-        p {
-            font-size: 0.76rem;
-        }
-    }
-
-    .buttons {
-        margin-top: 14px;
-        gap: 8px;
-
-        button {
-            height: 38px;
-            font-size: 0.8rem;
-        }
-    }
-
-    .availability {
-        min-height: auto;
-
-        span {
-            font-size: 0.8rem;
-        }
-    }
-
-    .switch {
-        width: 42px;
-        height: 22px;
-
-        span::before {
-            width: 16px;
-            height: 16px;
-        }
-
-        input:checked + span::before {
-            transform: translateX(20px);
-        }
-    }
+  .availability {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 @media (max-width: 420px) {
-    .dashboard {
-        padding: 8px;
-        width: 100%;
-        overflow-x: hidden;
-        height: 100vh;
-    }
+  .dashboard {
+    padding: 8px;
+  }
 
-    .card {
-        padding: 10px;
-        border-radius: 10px;
-    }
+  .card {
+    padding: 14px;
 
-    .profile-banner {
-        padding: 12px;
-        margin-top: 52px;
+    border-radius: 14px;
+  }
 
-        p {
-            font-size: 0.72rem;
-        }
+  .profile-banner {
+    margin-top: 58px;
+  }
 
-        button {
-            height: 36px;
-            font-size: 0.74rem;
-        }
-    }
+  .days-top,
+  .chart-area {
+    min-width: 470px;
+  }
 
-    .section-title {
-        font-size: 0.88rem;
-        margin-bottom: 14px;
-    }
+  .chart-area {
+    height: 160px;
+  }
 
-    .info-card {
-        padding: 12px;
+  .bar {
+    min-width: 22px;
+  }
 
-        .circle {
-            width: 34px;
-            height: 34px;
-        }
+  .line-label {
+    left: 10px;
 
-        h3 {
-            font-size: 0.8rem;
-        }
+    font-size: 0.66rem;
+  }
 
-        p {
-            font-size: 0.7rem;
-        }
-    }
+  .lesson {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
 
-    .today-card h3,
-    .chart-card h3 {
-        font-size: 0.84rem;
-    }
+  .avatar.big {
+    width: 56px;
+    height: 56px;
+  }
 
-    .student-card {
-        padding: 42px 12px 14px;
-    }
+  .buttons button {
+    height: 40px;
 
-    .student-header {
-        h3 {
-            font-size: 0.9rem;
-        }
-    }
-
-    .student-info {
-        p {
-            font-size: 0.72rem;
-        }
-    }
-
-    .buttons {
-        button {
-            height: 36px;
-            font-size: 0.74rem;
-        }
-    }
-
-    // .days-top,
-    // .chart-area {
-    //     min-width: 460px;
-    // }
-
-    .days-top {
-        display: flex;
-        justify-content: center;
-    }
-
-    .chart-area {
-        height: 88px;
-    }
-
-    // .bar {
-    //     width: 16px;
-    // }
+    font-size: 0.8rem;
+  }
 }
