@@ -20,6 +20,8 @@ import path from 'path';
 import { HomeAluno } from './pages/aluno/home-aluno/home-aluno';
 import { PerfilInstrutor } from './pages/aluno/perfil-instrutor/perfil-instrutor';
 import { ConfiguracoesA } from './pages/aluno/configuracoes/configuracoes';
+import { AgendarAula } from './pages/aluno/agendar-aula/agendar-aula';
+import { AgendaAluno } from './pages/aluno/agenda-aluno/agenda-aluno';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -38,7 +40,9 @@ export const routes: Routes = [
 
   { path: 'aluno/home-aluno', component: HomeAluno },
   { path: 'aluno/perfil-instrutor', component: PerfilInstrutor },
+  { path: 'aluno/agendamento', component: AgendarAula },
   { path: 'aluno/configuracoes', component: ConfiguracoesA} ,
+  {path: 'aluno/agenda', component: AgendaAluno},
 
   // Rota de teste para o backend
   { path: 'testebackend', component:  AppComponent},

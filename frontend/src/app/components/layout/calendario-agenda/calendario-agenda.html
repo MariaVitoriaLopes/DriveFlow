@@ -1,0 +1,33 @@
+<section class="calendar-box">
+  <p class="year">{{ anoAtual }}</p>
+
+  <div class="calendar-header">
+    <button type="button" (click)="mudarMes(-1)">‹</button>
+    <strong>{{ mesAtual }}</strong>
+    <button type="button" (click)="mudarMes(1)">›</button>
+  </div>
+
+  <div class="week-days">
+    <span>D</span>
+    <span>S</span>
+    <span>T</span>
+    <span>Q</span>
+    <span>Q</span>
+    <span>S</span>
+    <span>S</span>
+  </div>
+
+  <div class="calendar-days">
+    <button
+      *ngFor="let dia of diasCalendario"
+      type="button"
+      [disabled]="dia.foraDoMes"
+      [class.today]="ehHoje(dia.data)"
+      [class.selected]="estaSelecionado(dia.data)"
+      (click)="selecionarDia(dia)"
+    >
+      <span>{{ dia.dia || '' }}</span>
+      <small *ngIf="dia.data && temAulaNoDia(dia.data)"></small>
+    </button>
+  </div>
+</section>

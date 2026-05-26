@@ -152,22 +152,14 @@ export class CadastroAgenda implements OnInit {
     this.disponibilidades.removeAt(index);
   }
 
-  carregarAgenda(): void {
-    const usuarioId =
-      localStorage.getItem('usuarioId') ||
-      localStorage.getItem('userId');
+carregarAgenda(): void {
+  const usuarioId = localStorage.getItem('usuarioId') || localStorage.getItem('userId');
+  if (!usuarioId) return;
 
-    if (!usuarioId) {
-      console.warn('Nenhum usuarioId encontrado no localStorage.');
-      return;
-    }
-
-    this.http.get<any>(
-      `http://localhost:8081/api/instrutores/agenda/${usuarioId}`
-    ).subscribe({
+  this.http.get<any>(`http://localhost:8081/api/agenda-config/usuario/${usuarioId}`)
+    .subscribe({
       next: (agenda) => {
         if (!agenda) return;
-
         this.agendaForm.patchValue({
           duracaoAula: agenda.duracaoAula ?? 50,
           valorAula: agenda.valorAula ?? 1,
@@ -176,76 +168,62 @@ export class CadastroAgenda implements OnInit {
         });
 
         this.disponibilidades.clear();
-
-        if (agenda.disponibilidades?.length) {
-          agenda.disponibilidades.forEach((dia: any) => {
-            const form = this.criarDiaForm(dia.diaSemana);
-
-            form.patchValue({
-              diaSemana: dia.diaSemana,
-              bloqueado: dia.bloqueado ?? false,
-              horaInicio: dia.horaInicio ?? '08:00',
-              horaFim: dia.horaFim ?? '18:00'
-            });
-
-            this.disponibilidades.push(form);
-
-            if (dia.bloqueado) {
-              form.get('horaInicio')?.disable();
-              form.get('horaFim')?.disable();
-            }
+        agenda.disponibilidades?.forEach((dia: any) => {
+          const form = this.criarDiaForm(dia.diaSemana);
+          form.patchValue({
+            diaSemana: dia.diaSemana,
+            bloqueado: dia.bloqueado ?? false,
+            horaInicio: dia.horaInicio ?? '08:00',
+            horaFim: dia.horaFim ?? '18:00'
           });
-        }
+          this.disponibilidades.push(form);
+          if (dia.bloqueado) {
+            form.get('horaInicio')?.disable();
+            form.get('horaFim')?.disable();
+          }
+        });
       },
-
-      error: (erro) => {
-        console.log('Agenda ainda não cadastrada ou não encontrada.', erro);
-      }
+      error: (erro) => console.log('Agenda ainda não cadastrada ou não encontrada.', erro)
     });
+}
+
+salvarAlteracoes(): void {
+  if (this.agendaForm.invalid) {
+    this.agendaForm.markAllAsTouched();
+    return;
   }
 
-  salvarAlteracoes(): void {
-    if (this.agendaForm.invalid) {
-      this.agendaForm.markAllAsTouched();
-      return;
-    }
+  this.salvando = true;
+  const usuarioId = localStorage.getItem('usuarioId') || localStorage.getItem('userId');
+  if (!usuarioId) {
+    this.salvando = false;
+    alert('Usuário não encontrado. Faça login novamente.');
+    return;
+  }
 
-    this.salvando = true;
+  const payload = {
+    usuarioId,
+    duracaoAula: Number(this.agendaForm.value.duracaoAula),
+    valorAula: Number(this.agendaForm.value.valorAula),
+    intervaloAula: Number(this.agendaForm.value.intervaloAula),
+    toleranciaEspera: Number(this.agendaForm.value.toleranciaEspera),
+    disponibilidades: this.disponibilidades.getRawValue()
+  };
 
-    const usuarioId =
-      localStorage.getItem('usuarioId') ||
-      localStorage.getItem('userId');
-
-    if (!usuarioId) {
-      this.salvando = false;
-      alert('Usuário não encontrado. Faça login novamente.');
-      return;
-    }
-
-    const payload = {
-      duracaoAula: Number(this.agendaForm.value.duracaoAula),
-      valorAula: Number(this.agendaForm.value.valorAula),
-      intervaloAula: Number(this.agendaForm.value.intervaloAula),
-      toleranciaEspera: Number(this.agendaForm.value.toleranciaEspera),
-      disponibilidades: this.disponibilidades.getRawValue()
-    };
-
-    this.http.put(
-      `http://localhost:8081/api/instrutores/agenda/${usuarioId}`,
-      payload
-    ).subscribe({
+  this.http.post(`http://localhost:8081/api/agenda-config/salvar`, payload)
+    .subscribe({
       next: () => {
         this.salvando = false;
+        alert('Agenda salva com sucesso!');
         this.router.navigate(['/instrutor/agenda']);
       },
-
       error: (erro) => {
         this.salvando = false;
         console.error('Erro ao salvar agenda:', erro);
         alert('Erro ao salvar agenda.');
       }
     });
-  }
+}
 
   descartarAlteracoes(): void {
     this.router.navigate(['/instrutor/agenda']);

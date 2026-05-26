@@ -1,11 +1,13 @@
 package backend.service;
 
+import backend.dto.AulaAgendaDTO;
 import backend.dto.DisponibilidadeDiaResponseDTO;
 import backend.dto.HorarioSlotDTO;
 import backend.model.*;
 import backend.repository.AulaRepository;
 import backend.repository.ConfigAgendaRepository;
 import backend.repository.InstrutorRepository;
+import backend.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,7 @@ public class AulaService {
     private final AulaRepository aulaRepo;
     private final ConfigAgendaRepository agendaRepo;
     private final InstrutorRepository instrutorRepo;
+    private final UsuarioRepository usuarioRepo;
 
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
@@ -92,24 +95,37 @@ public class AulaService {
 
     // 🔥 Efetua o agendamento validando automaticamente colidência de horários e inserindo preços e carros
     public Aula agendarAula(Aula novaAula) {
-        ConfigAgenda agenda = agendaRepo.findByUsuarioId(novaAula.getInstrutorId())
+
+        Instrutor instrutor = instrutorRepo.findById(novaAula.getInstrutorId())
+                .orElseGet(() -> instrutorRepo.findByUsuarioId(novaAula.getInstrutorId())
+                        .orElseThrow(() -> new RuntimeException("Perfil do instrutor não encontrado.")));
+
+        String usuarioIdInstrutor = instrutor.getUsuario().getId();
+
+        ConfigAgenda agenda = agendaRepo.findByUsuarioId(usuarioIdInstrutor)
                 .orElseThrow(() -> new RuntimeException("Configuração de agenda do instrutor não encontrada."));
 
-        Instrutor instrutor = instrutorRepo.findByUsuarioId(novaAula.getInstrutorId())
-                .orElseThrow(() -> new RuntimeException("Perfil do instrutor não encontrado."));
-
         LocalTime inicio = LocalTime.parse(novaAula.getHorarioInicio());
-        int totalMinutos = (agenda.getDuracaoAula() * novaAula.getQuantidadeAulas());
+
+        int totalMinutos = agenda.getDuracaoAula() * novaAula.getQuantidadeAulas();
+
         if (novaAula.getQuantidadeAulas() == 2) {
             totalMinutos += agenda.getIntervaloAula();
         }
+
         LocalTime fim = inicio.plusMinutes(totalMinutos);
 
-        List<Aula> conflitos = aulaRepo.findByInstrutorIdAndDataAndStatus(novaAula.getInstrutorId(), novaAula.getData(), "AGENDADA");
+        List<Aula> conflitos = aulaRepo.findByInstrutorIdAndDataAndStatus(
+                instrutor.getId(),
+                novaAula.getData(),
+                "AGENDADA"
+        );
+
         if (verificarColisao(inicio, fim, conflitos)) {
             throw new IllegalArgumentException("Conflito detectado: O horário selecionado já está preenchido por outro aluno.");
         }
 
+        novaAula.setInstrutorId(instrutor.getId());
         novaAula.setHorarioFim(fim.format(timeFormatter));
         novaAula.setDuracaoAula(agenda.getDuracaoAula());
         novaAula.setIntervaloAula(agenda.getIntervaloAula());
@@ -119,9 +135,32 @@ public class AulaService {
         novaAula.setTotal(agenda.getValorAula() * novaAula.getQuantidadeAulas());
         novaAula.setStatus("AGENDADA");
 
+        if (instrutor.getLocaisAtendimento() != null && !instrutor.getLocaisAtendimento().isEmpty()) {
+            LocalAtendimento local = instrutor.getLocaisAtendimento().stream()
+                    .filter(LocalAtendimento::isFavorito)
+                    .findFirst()
+                    .orElse(instrutor.getLocaisAtendimento().get(0));
+
+            novaAula.setLocalEncontro(
+                    java.util.stream.Stream.of(
+                                    local.getLogradouro(),
+                                    local.getNumero(),
+                                    local.getBairro(),
+                                    local.getCidade(),
+                                    local.getUf()
+                            )
+                            .filter(v -> v != null && !v.isBlank())
+                            .reduce((a, b) -> a + ", " + b)
+                            .orElse("Local não informado")
+            );
+        }
+
         if (instrutor.getVeiculos() != null && !instrutor.getVeiculos().isEmpty()) {
             Veiculo principal = instrutor.getVeiculos().stream()
-                    .filter(Veiculo::isPrincipal).findFirst().orElse(instrutor.getVeiculos().get(0));
+                    .filter(Veiculo::isPrincipal)
+                    .findFirst()
+                    .orElse(instrutor.getVeiculos().get(0));
+
             novaAula.setVeiculoId(principal.getId());
         }
 
@@ -149,5 +188,52 @@ public class AulaService {
             case "SATURDAY": return "SABADO";
             default: return "DOMINGO";
         }
+    }
+
+    public List<AulaAgendaDTO> listarAulasDoAluno(String alunoId) {
+        return aulaRepo.findByAlunoId(alunoId)
+                .stream()
+                .map(this::montarAulaAgendaDTO)
+                .toList();
+    }
+
+    public List<AulaAgendaDTO> listarAulasDoInstrutor(String instrutorId) {
+        Instrutor instrutor = instrutorRepo.findById(instrutorId)
+                .orElseGet(() -> instrutorRepo.findByUsuarioId(instrutorId)
+                        .orElseThrow(() -> new RuntimeException("Instrutor não encontrado")));
+
+        return aulaRepo.findByInstrutorId(instrutor.getId())
+                .stream()
+                .map(this::montarAulaAgendaDTO)
+                .toList();
+    }
+
+    private AulaAgendaDTO montarAulaAgendaDTO(Aula aula) {
+        AulaAgendaDTO dto = new AulaAgendaDTO();
+
+        dto.setId(aula.getId());
+        dto.setInstrutorId(aula.getInstrutorId());
+        dto.setAlunoId(aula.getAlunoId());
+        dto.setData(aula.getData());
+        dto.setHorarioInicio(aula.getHorarioInicio());
+        dto.setHorarioFim(aula.getHorarioFim());
+        dto.setQuantidadeAulas(aula.getQuantidadeAulas());
+        dto.setLocalEncontro(aula.getLocalEncontro());
+        dto.setVeiculoId(aula.getVeiculoId());
+        dto.setStatus(aula.getStatus());
+
+        instrutorRepo.findById(aula.getInstrutorId()).ifPresent(instrutor -> {
+            if (instrutor.getUsuario() != null) {
+                dto.setInstrutorNome(instrutor.getUsuario().getNome());
+                dto.setInstrutorFotoUrl(instrutor.getUsuario().getFotoUrl());
+            }
+        });
+
+        usuarioRepo.findById(aula.getAlunoId()).ifPresent(aluno -> {
+            dto.setAlunoNome(aluno.getNome());
+            dto.setAlunoFotoUrl(aluno.getFotoUrl());
+        });
+
+        return dto;
     }
 }

@@ -1,0 +1,101 @@
+.calendar-box {
+  width: 100%;
+}
+
+.year {
+  color: #555;
+  font-size: 16px;
+  margin-bottom: 22px;
+}
+
+.calendar-header {
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  margin-bottom: 28px;
+
+  strong {
+    text-align: center;
+    font-size: 22px;
+    text-transform: capitalize;
+  }
+
+  button {
+    border: none;
+    background: transparent;
+    font-size: 38px;
+    cursor: pointer;
+    color: #1f1f25;
+  }
+}
+
+.week-days,
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+}
+
+.week-days {
+  margin-bottom: 18px;
+  color: #666;
+  font-weight: 600;
+}
+
+.calendar-days {
+  row-gap: 18px;
+}
+
+.calendar-days button {
+  width: 44px;
+  height: 54px;
+  margin: auto;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  font-size: 18px;
+  border-radius: 22px;
+  color: #111;
+}
+
+.calendar-days button:disabled {
+  color: transparent;
+  cursor: default;
+}
+
+.calendar-days button span {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-days button.today span {
+  border: 2px solid #7614f7;
+}
+
+.calendar-days button.selected span {
+  background: #7614f7;
+  color: #fff;
+  border: none;
+}
+
+.calendar-days button small {
+  width: 7px;
+  height: 7px;
+  background: #7614f7;
+  border-radius: 50%;
+  display: block;
+  margin: 4px auto 0;
+}
+
+.calendar-days button:hover:not(:disabled) span {
+  background: #f0e7ff;
+}
+
+.calendar-days button.selected:hover span {
+  background: #7614f7;
+}

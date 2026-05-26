@@ -1,0 +1,51 @@
+<section class="agenda-page">
+  <h1>Agenda</h1>
+
+  <div class="agenda-grid">
+    <div class="calendar-card">
+      <app-calendario-agenda
+        [aulas]="aulas"
+        [dataSelecionada]="dataSelecionada"
+        (dataSelecionadaChange)="selecionarData($event)">
+      </app-calendario-agenda>
+    </div>
+
+    <aside class="day-card">
+      <div class="day-header">
+        <h2>{{ tituloAgenda }}</h2>
+        <span>{{ aulasDoDia.length }}</span>
+      </div>
+
+      <p class="message" *ngIf="mensagem">{{ mensagem }}</p>
+
+      <p class="empty" *ngIf="!mensagem && aulasDoDia.length === 0">
+        Nenhuma aula agendada para este dia.
+      </p>
+
+      <div class="aula-list">
+        <div class="aula-item" *ngFor="let aula of aulasDoDia">
+          <div class="hora">
+            {{ aula.horarioInicio }}
+            <small>{{ aula.horarioFim }}</small>
+          </div>
+
+          <img class="foto" [src]="getFotoPessoa(aula)" alt="Foto" />
+
+          <div class="info">
+            <strong>{{ getNomePessoa(aula) }}</strong>
+            <small>{{ aula.localEncontro || 'Local não informado' }}</small>
+          </div>
+
+          <button class="menu-btn" type="button" (click)="abrirMenu(aula.id)">
+            ⋮
+          </button>
+
+          <div class="menu-opcoes" *ngIf="menuAbertoId === aula.id">
+            <button type="button" (click)="cancelarAula(aula)">Cancelar aula</button>
+            <button type="button" (click)="denunciar(aula)">Denunciar Instrutor</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>

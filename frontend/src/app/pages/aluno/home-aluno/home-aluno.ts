@@ -123,20 +123,18 @@ export class HomeAluno implements OnInit {
     });
   }
 
-  verPerfil(instrutorId: string): void {
-    console.log('ID clicado no Ver mais:', instrutorId);
+verPerfil(instrutorId: string) {
+  if (!instrutorId) return;
 
-    if (!instrutorId) {
-      console.error('Instrutor sem ID');
-      return;
-    }
+  // Salva no localStorage para persistir mesmo se a página recarregar
+  localStorage.setItem('instrutorIdSelecionado', instrutorId);
 
-    sessionStorage.setItem('instrutorIdSelecionado', instrutorId);
+  // Navega para o perfil, state é opcional
+  this.router.navigateByUrl('/aluno/perfil-instrutor', { state: { instrutorId } });
 
-    this.router.navigateByUrl('/aluno/perfil-instrutor', {
-      state: { instrutorId }
-    });
-  }
+  console.log('Clicou em Ver mais, ID salvo:', instrutorId);
+}
+
   formatarLocal(local: any): string {
     if (!local) return '';
 

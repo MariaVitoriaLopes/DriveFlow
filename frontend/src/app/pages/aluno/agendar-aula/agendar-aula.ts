@@ -1,74 +1,57 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges, Input, inject } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
-interface DiaCalendario {
-  dia: number | null;
-  data?: Date;
-  foraDoMes?: boolean;
-}
-
-interface HorarioDisponivel {
-  inicio: string;
-  fimUmaAula: string;
-  fimDuasAulas: string;
-  podeUmaAula: boolean;
-  podeDuasAulas: boolean;
-}
+import { CalendarioAgendamento } from '../../../components/layout/calendario-agendamento/calendario-agendamento';
 
 @Component({
   selector: 'app-agendar-aula',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FormsModule],
+  imports: [CommonModule, HttpClientModule, FormsModule, CalendarioAgendamento],
   templateUrl: './agendar-aula.html',
   styleUrl: './agendar-aula.scss',
 })
-export class AgendarAula implements OnInit {
+export class AgendarAula implements OnInit, OnChanges {
   private http = inject(HttpClient);
-  private router = inject(Router);
+  public router = inject(Router);
+
+  @Input() instrutorIdInput = '';
 
   apiUrl = 'http://localhost:8081/api';
 
   instrutorId = '';
-  alunoId = localStorage.getItem('usuarioId') || '';
+  alunoId = localStorage.getItem('usuarioId') || localStorage.getItem('userId') || '';
 
-  instrutor: any;
-  agenda: any;
-  aulasDoDia: any[] = [];
+  instrutor: any = null;
+  agenda: any = null;
 
-  hoje = new Date();
-  anoAtual = this.hoje.getFullYear();
-  mesAtualNumero = this.hoje.getMonth();
-  diaAtual = this.hoje.getDate();
+  veiculoId = '';
+  localEncontro = 'Local não informado';
+  veiculoTexto = 'Carregando veículo...';
 
-  mesAtual = '';
-  diasCalendario: DiaCalendario[] = [];
-  dataSelecionada: Date | null = null;
-  dataSelecionadaFormatada = '';
-
-  duracaoAula = 60;
+  duracaoAula = 0;
   intervaloAula = 0;
   toleranciaEspera = 0;
   valorAula = 0;
-  taxa = 0.12;
+  taxa = 0;
 
-  localEncontro = 'Local não informado';
-  veiculoTexto = 'Veículo não informado';
+  dataSelecionada: Date | null = null;
+  dataSelecionadaFormatada = '';
 
-  horariosDisponiveis: HorarioDisponivel[] = [];
+  horariosDisponiveis: any[] = [];
   horarioInicio = '';
   horarioFim = '';
   quantidadeAulas = 1;
 
-  carregando = false;
   mensagem = '';
 
   ngOnInit(): void {
     this.instrutorId =
+      this.instrutorIdInput ||
       history.state?.instrutorId ||
       sessionStorage.getItem('instrutorIdSelecionado') ||
+      localStorage.getItem('instrutorIdSelecionado') ||
       '';
 
     if (!this.instrutorId) {
@@ -76,393 +59,263 @@ export class AgendarAula implements OnInit {
       return;
     }
 
-    this.gerarCalendario();
-    this.carregarDadosInstrutor();
+    this.carregarInstrutor();
   }
 
-  carregarDadosInstrutor(): void {
-    this.carregando = true;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['instrutorIdInput']?.currentValue) {
+      this.instrutorId = changes['instrutorIdInput'].currentValue;
+      this.carregarInstrutor();
+    }
+  }
 
+  get disponibilidadesAgenda(): any[] {
+    return this.agenda?.disponibilidades || [];
+  }
+
+  carregarInstrutor(): void {
     this.http
-      .get<any>(`${this.apiUrl}/instrutores/configuracoes/${this.instrutorId}`)
+      .get<any>(`${this.apiUrl}/instrutores/configuracoes/detalhes-aluno/${this.instrutorId}`)
       .subscribe({
         next: (res) => {
+          console.log('INSTRUTOR RECEBIDO:', res);
+
           this.instrutor = res;
 
-          this.montarLocalEncontro();
-          this.montarVeiculo();
-
-          this.carregarAgenda();
-        },
-        error: () => {
-          this.carregando = false;
-          this.mensagem = 'Erro ao carregar dados do instrutor.';
-        },
-      });
-  }
-
-  carregarAgenda(): void {
-    this.http
-      .get<any>(`${this.apiUrl}/instrutores/agenda/${this.instrutorId}`)
-      .subscribe({
-        next: (res) => {
-          this.agenda = res;
-
-          this.duracaoAula = Number(res?.duracaoAula || 60);
-          this.intervaloAula = Number(res?.intervaloAula || 0);
-          this.toleranciaEspera = Number(res?.toleranciaEspera || 0);
+          this.veiculoId = res?.veiculoId || '';
           this.valorAula = Number(res?.valorAula || 0);
+          this.duracaoAula = Number(res?.duracaoAula || 0);
+          this.intervaloAula = Number(res?.intervaloAula || 0);
+          this.toleranciaEspera = Number(res?.toleranciaAtraso || 0);
+          this.localEncontro = res?.localEncontro || 'Local não informado';
 
-          this.carregando = false;
+          this.veiculoTexto = [
+            res?.marca,
+            res?.modelo,
+            res?.cor,
+            res?.ano,
+            res?.cambio,
+            res?.categoriaVeiculo
+          ].filter(Boolean).join(' ') || 'Veículo não informado';
+
+          this.carregarAgendaInstrutor();
         },
-        error: () => {
-          this.carregando = false;
-          this.mensagem = 'Esse instrutor ainda não possui agenda cadastrada.';
+        error: (err) => {
+          console.error('Erro ao carregar instrutor:', err);
+          this.mensagem = 'Erro ao carregar dados do instrutor.';
+        }
+      });
+  }
+
+  carregarAgendaInstrutor(): void {
+    const usuarioIdAgenda = this.instrutor?.usuarioId;
+
+    if (!usuarioIdAgenda) {
+      this.mensagem = 'usuarioId do instrutor não veio do backend.';
+      return;
+    }
+
+    this.http
+      .get<any>(`${this.apiUrl}/agenda-config/usuario/${usuarioIdAgenda}`)
+      .subscribe({
+        next: (agenda) => {
+          console.log('AGENDA RECEBIDA:', agenda);
+
+          if (!agenda) {
+            this.agenda = null;
+            this.mensagem = 'Agenda do instrutor não encontrada.';
+            return;
+          }
+
+          this.agenda = agenda;
+
+          this.duracaoAula = Number(agenda.duracaoAula ?? this.duracaoAula);
+          this.valorAula = Number(agenda.valorAula ?? this.valorAula);
+          this.intervaloAula = Number(agenda.intervaloAula ?? this.intervaloAula);
+          this.toleranciaEspera = Number(agenda.toleranciaEspera ?? this.toleranciaEspera);
+
+          this.mensagem = '';
         },
+        error: (err) => {
+          console.error('Erro ao carregar agenda:', err);
+          this.agenda = null;
+          this.mensagem = 'Agenda do instrutor não encontrada.';
+        }
       });
   }
 
-  montarLocalEncontro(): void {
-    const locais = this.instrutor?.locaisAtendimento || [];
-    const favorito = locais.find((local: any) => local.favorito) || locais[0];
-
-    if (!favorito) return;
-
-    const partes = [
-      favorito.logradouro || favorito.rua,
-      favorito.bairro,
-      favorito.cidade,
-      favorito.uf || favorito.estado,
-    ].filter(Boolean);
-
-    this.localEncontro = partes.join(' - ');
-  }
-
-  montarVeiculo(): void {
-    const veiculos = this.instrutor?.veiculos || [];
-    const veiculo = veiculos.find((v: any) => v.principal) || veiculos[0];
-
-    if (!veiculo) return;
-
-    this.veiculoTexto = `${veiculo.marca || ''} ${veiculo.modelo || ''} ${veiculo.cor || ''} ${veiculo.ano || ''}`.trim();
-  }
-
-  gerarCalendario(): void {
-    const primeiroDia = new Date(this.anoAtual, this.mesAtualNumero, 1);
-    const ultimoDia = new Date(this.anoAtual, this.mesAtualNumero + 1, 0);
-
-    this.mesAtual = primeiroDia.toLocaleDateString('pt-BR', {
-      month: 'long',
-    });
-
-    this.mesAtual = this.mesAtual.charAt(0).toUpperCase() + this.mesAtual.slice(1);
-
-    const diaSemanaInicio = primeiroDia.getDay();
-    const totalDiasMes = ultimoDia.getDate();
-
-    const dias: DiaCalendario[] = [];
-
-    const ultimoDiaMesAnterior = new Date(
-      this.anoAtual,
-      this.mesAtualNumero,
-      0
-    ).getDate();
-
-    for (let i = diaSemanaInicio - 1; i >= 0; i--) {
-      dias.push({
-        dia: ultimoDiaMesAnterior - i,
-        foraDoMes: true,
-      });
-    }
-
-    for (let dia = 1; dia <= totalDiasMes; dia++) {
-      dias.push({
-        dia,
-        data: new Date(this.anoAtual, this.mesAtualNumero, dia),
-        foraDoMes: false,
-      });
-    }
-
-    const proximoDia = 1;
-    while (dias.length % 7 !== 0) {
-      dias.push({
-        dia: proximoDia + dias.filter((d) => d.foraDoMes).length,
-        foraDoMes: true,
-      });
-    }
-
-    this.diasCalendario = dias;
-  }
-
-  mudarMes(direcao: number): void {
-    this.mesAtualNumero += direcao;
-
-    if (this.mesAtualNumero < 0) {
-      this.mesAtualNumero = 11;
-      this.anoAtual--;
-    }
-
-    if (this.mesAtualNumero > 11) {
-      this.mesAtualNumero = 0;
-      this.anoAtual++;
-    }
-
-    this.gerarCalendario();
-  }
-
-  selecionarDia(item: DiaCalendario): void {
-    if (!item.data || item.foraDoMes) return;
-
-    this.dataSelecionada = item.data;
-    this.dataSelecionadaFormatada = this.formatarDataApi(item.data);
+  aoSelecionarData(data: Date): void {
+    this.dataSelecionada = data;
+    this.dataSelecionadaFormatada = this.formatarDataApi(data);
 
     this.horarioInicio = '';
     this.horarioFim = '';
-    this.horariosDisponiveis = [];
+    this.quantidadeAulas = 1;
 
-    this.buscarAulasDoDia();
+    this.buscarHorariosDisponiveis();
   }
 
-  buscarAulasDoDia(): void {
-    if (!this.dataSelecionadaFormatada) return;
+buscarHorariosDisponiveis(): void {
+  if (!this.dataSelecionadaFormatada) return;
 
-    this.http
-      .get<any[]>(
-        `${this.apiUrl}/aulas/instrutor/${this.instrutorId}/dia?data=${this.dataSelecionadaFormatada}`
-      )
-      .subscribe({
-        next: (res) => {
-          this.aulasDoDia = res || [];
-          this.gerarHorariosDisponiveis();
-        },
-        error: () => {
-          this.aulasDoDia = [];
-          this.gerarHorariosDisponiveis();
-        },
-      });
-  }
+  const instrutorId = this.instrutor?.instrutorId || this.instrutorId;
 
-  gerarHorariosDisponiveis(): void {
-    this.horariosDisponiveis = [];
-    this.mensagem = '';
+  this.http
+    .get<any>(
+      `${this.apiUrl}/aulas/disponiveis?instrutorId=${instrutorId}&data=${this.dataSelecionadaFormatada}`
+    )
+    .subscribe({
+      next: (res) => {
+        console.log('HORÁRIOS DISPONÍVEIS:', res);
 
-    const disponibilidade = this.buscarDisponibilidadeDoDia();
+        this.horariosDisponiveis = (res?.horarios || []).filter((h: any) => h.podeUmaAula);
 
-    if (!disponibilidade) {
-      this.mensagem = 'O instrutor não atende nesse dia.';
-      return;
-    }
+        this.horarioInicio = '';
+        this.horarioFim = '';
+        this.quantidadeAulas = 1;
 
-    if (disponibilidade.bloqueio) {
-      this.mensagem = 'Esse dia está bloqueado na agenda do instrutor.';
-      return;
-    }
+        if (!this.horariosDisponiveis.length) {
+          this.mensagem = 'Não há horários disponíveis para essa data.';
+          return;
+        }
 
-    const inicioMin = this.horaParaMinutos(
-      disponibilidade.horaInicio || disponibilidade.inicio
-    );
-
-    const fimMin = this.horaParaMinutos(
-      disponibilidade.horaFim || disponibilidade.fim
-    );
-
-    const passo = this.duracaoAula + this.intervaloAula;
-
-    for (let atual = inicioMin; atual + this.duracaoAula <= fimMin; atual += passo) {
-      const fimUma = atual + this.duracaoAula;
-      const fimDuas = atual + this.duracaoAula * 2;
-
-      const podeUma = this.intervaloLivre(atual, fimUma);
-      const podeDuas =
-        fimDuas <= fimMin &&
-        this.intervaloLivre(atual, fimDuas);
-
-      if (podeUma || podeDuas) {
-        this.horariosDisponiveis.push({
-          inicio: this.minutosParaHora(atual),
-          fimUmaAula: this.minutosParaHora(fimUma),
-          fimDuasAulas: this.minutosParaHora(fimDuas),
-          podeUmaAula: podeUma,
-          podeDuasAulas: podeDuas,
-        });
+        this.mensagem = '';
+      },
+      error: (err) => {
+        console.error('Erro ao buscar horários disponíveis:', err);
+        this.horariosDisponiveis = [];
+        this.mensagem = 'Erro ao buscar horários disponíveis.';
       }
+    });
+}
+
+  gerarSlotsDoDia(horaInicio: string, horaFim: string): any[] {
+    if (!horaInicio || !horaFim || !this.duracaoAula) return [];
+
+    const inicioMin = this.horaParaMinutos(horaInicio);
+    const fimMin = this.horaParaMinutos(horaFim);
+
+    const slots: any[] = [];
+    let atual = inicioMin;
+
+    while (atual + this.duracaoAula <= fimMin) {
+      const fimUmaAula = atual + this.duracaoAula;
+      const fimDuasAulas = atual + this.duracaoAula + this.intervaloAula + this.duracaoAula;
+
+      slots.push({
+        inicio: this.minutosParaHora(atual),
+        fimUmaAula: this.minutosParaHora(fimUmaAula),
+        fimDuasAulas: this.minutosParaHora(fimDuasAulas),
+        podeUmaAula: fimUmaAula <= fimMin,
+        podeDuasAulas: fimDuasAulas <= fimMin
+      });
+
+      atual = fimUmaAula + this.intervaloAula;
     }
 
-    if (this.horariosDisponiveis.length === 0) {
-      this.mensagem = 'Não há horários disponíveis para esse dia.';
-    }
-  }
-
-  buscarDisponibilidadeDoDia(): any {
-    if (!this.dataSelecionada) return null;
-
-    const diaSemana = this.dataSelecionada.getDay();
-
-    const nomesPossiveis = [
-      'domingo',
-      'segunda',
-      'terca',
-      'quarta',
-      'quinta',
-      'sexta',
-      'sabado',
-    ];
-
-    const nomeDia = nomesPossiveis[diaSemana];
-
-    const horarios = this.agenda?.horarios || this.agenda?.dias || [];
-
-    return horarios.find((h: any) => {
-      const dia = String(h.dia || h.diaSemana || '').toLowerCase();
-      return dia === nomeDia || Number(h.diaSemana) === diaSemana;
-    });
-  }
-
-  intervaloLivre(inicio: number, fim: number): boolean {
-    return !this.aulasDoDia.some((aula) => {
-      const inicioAula = this.horaParaMinutos(
-        aula.horarioInicio || aula.inicio || aula.horario
-      );
-
-      const fimAula = this.horaParaMinutos(
-        aula.horarioFim || aula.fim
-      );
-
-      const fimComIntervalo = fimAula + this.intervaloAula;
-
-      return inicio < fimComIntervalo && fim > inicioAula;
-    });
+    return slots;
   }
 
   aoAlterarHorario(): void {
-    const horario = this.horariosDisponiveis.find(
-      (h) => h.inicio === this.horarioInicio
-    );
+    const horario = this.horariosDisponiveis.find(h => h.inicio === this.horarioInicio);
 
     if (!horario) {
       this.horarioFim = '';
       return;
     }
 
-    if (this.quantidadeAulas === 2 && !horario.podeDuasAulas) {
+    if (Number(this.quantidadeAulas) === 2 && !horario.podeDuasAulas) {
       this.quantidadeAulas = 1;
     }
 
-    this.horarioFim =
-      this.quantidadeAulas === 2
-        ? horario.fimDuasAulas
-        : horario.fimUmaAula;
+    this.horarioFim = Number(this.quantidadeAulas) === 2
+      ? horario.fimDuasAulas
+      : horario.fimUmaAula;
   }
 
-  aoAlterarQuantidade(): void {
-    this.aoAlterarHorario();
-  }
-
-  podeSelecionarDuasAulas(): boolean {
-    const horario = this.horariosDisponiveis.find(
-      (h) => h.inicio === this.horarioInicio
-    );
-
+  podeDuasAulasSelecionado(): boolean {
+    const horario = this.horariosDisponiveis.find(h => h.inicio === this.horarioInicio);
     return !!horario?.podeDuasAulas;
   }
 
   agendarAula(): void {
-    if (!this.dataSelecionadaFormatada) {
-      this.mensagem = 'Selecione uma data.';
+    if (!this.alunoId) {
+      alert('Aluno não identificado. Faça login novamente.');
       return;
     }
 
-    if (!this.horarioInicio) {
-      this.mensagem = 'Selecione um horário.';
-      return;
-    }
-
-    if (this.quantidadeAulas === 2 && !this.podeSelecionarDuasAulas()) {
-      this.mensagem = 'Não existe disponibilidade para duas aulas seguidas nesse horário.';
+    if (!this.dataSelecionadaFormatada || !this.horarioInicio || !this.horarioFim) {
+      alert('Selecione uma data e um horário.');
       return;
     }
 
     const payload = {
-      instrutorId: this.instrutorId,
+      instrutorId: this.instrutor?.instrutorId || this.instrutorId,
       alunoId: this.alunoId,
       data: this.dataSelecionadaFormatada,
       horarioInicio: this.horarioInicio,
       horarioFim: this.horarioFim,
-      quantidadeAulas: this.quantidadeAulas,
-      duracaoAula: this.duracaoAula,
-      intervaloAula: this.intervaloAula,
-      valorAula: this.valorAula,
-      taxa: this.taxa,
-      total: this.total,
-      status: 'AGENDADA',
+      quantidadeAulas: Number(this.quantidadeAulas),
+      duracaoAula: Number(this.duracaoAula),
+      intervaloAula: Number(this.intervaloAula),
+      toleranciaAtraso: Number(this.toleranciaEspera),
+      valorAula: Number(this.valorAula),
+      taxa: Number(this.taxa || 0),
+      total: Number(this.valorAula) * Number(this.quantidadeAulas) + Number(this.taxa || 0),
       localEncontro: this.localEncontro,
+      veiculoId: this.veiculoId,
+      status: 'AGENDADA'
     };
+
+    console.log('PAYLOAD AGENDAMENTO:', payload);
 
     this.http.post(`${this.apiUrl}/aulas/agendar`, payload).subscribe({
       next: () => {
         alert('Aula agendada com sucesso!');
-        this.router.navigate(['/aluno']);
+        this.router.navigate(['/aluno/agenda']);
       },
-      error: () => {
-        this.mensagem = 'Erro ao agendar aula. Tente novamente.';
-      },
+      error: (err) => {
+        console.error('Erro ao agendar aula:', err);
+
+        const msg =
+          typeof err.error === 'string'
+            ? err.error
+            : err.error?.message || 'Não foi possível agendar a aula.';
+
+        alert(msg);
+        this.mensagem = msg;
+
+        this.buscarHorariosDisponiveis();
+      }
     });
   }
 
-  cancelar(): void {
-    this.router.navigate(['/perfil-instrutor'], {
-      state: { instrutorId: this.instrutorId },
-    });
+  nomeDiaSemana(data: Date): string {
+    return ['DOMINGO', 'SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO'][data.getDay()];
   }
 
-  voltar(): void {
-    this.router.navigate(['/aluno']);
+  normalizarDia(valor: string): string {
+    return String(valor || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase();
+  }
+
+  horaParaMinutos(hora: string): number {
+    const [h, m] = hora.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  minutosParaHora(total: number): string {
+    const h = Math.floor(total / 60);
+    const m = total % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
   }
 
   formatarDataApi(data: Date): string {
     const ano = data.getFullYear();
     const mes = String(data.getMonth() + 1).padStart(2, '0');
     const dia = String(data.getDate()).padStart(2, '0');
-
     return `${ano}-${mes}-${dia}`;
-  }
-
-  horaParaMinutos(hora: string): number {
-    if (!hora) return 0;
-
-    const [h, m] = hora.split(':').map(Number);
-    return h * 60 + m;
-  }
-
-  minutosParaHora(minutos: number): string {
-    const h = Math.floor(minutos / 60);
-    const m = minutos % 60;
-
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-  }
-
-  diaSelecionado(item: DiaCalendario): boolean {
-    if (!item.data || !this.dataSelecionada) return false;
-
-    return (
-      item.data.getDate() === this.dataSelecionada.getDate() &&
-      item.data.getMonth() === this.dataSelecionada.getMonth() &&
-      item.data.getFullYear() === this.dataSelecionada.getFullYear()
-    );
-  }
-
-  get subtotal(): number {
-    return this.valorAula * this.quantidadeAulas;
-  }
-
-  get total(): number {
-    return this.subtotal + this.taxa;
-  }
-
-  formatarMoeda(valor: number): string {
-    return valor.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    });
   }
 }

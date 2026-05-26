@@ -11,4 +11,8 @@ public interface AulaRepository extends MongoRepository<Aula, String> {
 
     // Usado pelo novo validador de conflito de horários do aluno
     List<Aula> findByInstrutorIdAndDataAndStatus(String instrutorId, LocalDate data, String status);
+
+    List<Aula> findByAlunoId(String alunoId);
+
+    List<Aula> findByInstrutorId(String instrutorId);
 }

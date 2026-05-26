@@ -25,14 +25,38 @@ public class InstrutorConfigService {
     // 🔥 Método crucial que alimenta os detalhes do Instrutor e do Veículo na tela do Aluno
     public InstrutorPerfilCompletoDTO obterPerfilCompletoParaAluno(String instrutorId) {
         Instrutor inst = instrutorRepo.findById(instrutorId)
-                .orElseThrow(() -> new RuntimeException("Instrutor não encontrado"));
+                .orElseGet(() -> instrutorRepo.findByUsuarioId(instrutorId)
+                        .orElseThrow(() -> new RuntimeException("Instrutor não encontrado")));
 
         InstrutorPerfilCompletoDTO dto = new InstrutorPerfilCompletoDTO();
+
         dto.setInstrutorId(inst.getId());
         dto.setBio(inst.getBio());
 
         if (inst.getUsuario() != null) {
             dto.setNome(inst.getUsuario().getNome());
+            dto.setUsuarioId(inst.getUsuario().getId());
+            dto.setFotoPerfilUrl(inst.getUsuario().getFotoUrl());
+        }
+
+        if (inst.getLocaisAtendimento() != null && !inst.getLocaisAtendimento().isEmpty()) {
+            LocalAtendimento local = inst.getLocaisAtendimento().stream()
+                    .filter(LocalAtendimento::isFavorito)
+                    .findFirst()
+                    .orElse(inst.getLocaisAtendimento().get(0));
+
+            dto.setLocalEncontro(
+                    List.of(
+                                    local.getLogradouro(),
+                                    local.getNumero(),
+                                    local.getBairro(),
+                                    local.getCidade(),
+                                    local.getUf()
+                            ).stream()
+                            .filter(v -> v != null && !v.isBlank())
+                            .reduce((a, b) -> a + ", " + b)
+                            .orElse("Local não informado")
+            );
         }
 
         // Filtra para pegar apenas o veículo principal do instrutor
@@ -73,8 +97,14 @@ public class InstrutorConfigService {
     }
 
     public Instrutor atualizarFotoPerfil(String usuarioId, String fotoUrl) {
-        Instrutor instrutor = buscarPorUsuario(usuarioId);
-        instrutor.setBio(fotoUrl);
+        Instrutor instrutor = instrutorRepo.findByUsuarioId(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Instrutor não encontrado"));
+
+        // ⚠️ acessar via objeto Usuario
+        if (instrutor.getUsuario() != null) {
+            instrutor.getUsuario().setFotoUrl(fotoUrl);
+        }
+
         return instrutorRepo.save(instrutor);
     }
 

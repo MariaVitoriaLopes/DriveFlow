@@ -1,0 +1,37 @@
+<div class="calendar-area">
+  <div class="top-link">
+    <button type="button" class="back-btn">‹</button>
+    <span>Home</span>
+  </div>
+
+  <h1>Agendar</h1>
+  <p class="year">{{ anoAtual }}</p>
+
+  <div class="calendar-header">
+    <button type="button" (click)="mudarMes(-1)">‹</button>
+    <strong>{{ mesAtual }}</strong>
+    <button type="button" (click)="mudarMes(1)">›</button>
+  </div>
+
+  <div class="week-days">
+    <span>D</span>
+    <span>S</span>
+    <span>T</span>
+    <span>Q</span>
+    <span>Q</span>
+    <span>S</span>
+    <span>S</span>
+  </div>
+
+  <div class="calendar-days">
+    <button
+      *ngFor="let dia of diasCalendario"
+      [class.selected]="dataSelecionada && dia.data?.getTime() === dataSelecionada.getTime()"
+      [class.blocked]="dia.bloqueado"
+      [disabled]="dia.foraDoMes || dia.bloqueado"
+      (click)="selecionarDia(dia)"
+    >
+      {{ dia.dia || '-' }}
+    </button>
+  </div>
+</div>

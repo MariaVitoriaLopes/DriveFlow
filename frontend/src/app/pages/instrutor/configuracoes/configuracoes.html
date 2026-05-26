@@ -5,8 +5,8 @@
     <div class="profile">
       <div class="avatar">
         <img
-          *ngIf="fotoUsuario; else semFoto"
-          [src]="fotoUsuario"
+          *ngIf="usuario?.fotoUrl || usuario?.usuario?.fotoUrl; else semFoto"
+          [src]="usuario?.fotoUrl || usuario?.usuario?.fotoUrl"
           alt="Foto do usuário"
         />
 
