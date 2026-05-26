@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-filtro',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -13,25 +14,30 @@ import { FormsModule } from '@angular/forms';
 })
 export class Filtro {
 
-  dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-  diasSelecionados: any = {};
+  dias = [
+    'Segunda',
+    'Terça',
+    'Quarta',
+    'Quinta',
+    'Sexta',
+    'Sábado',
+    'Domingo',
+  ];
+
+  diasSelecionados: Record<string, boolean> = {};
+
   categoriaSelecionada = 'Categoria B';
   cambioSelecionado = 'Manual';
 
-  limparFiltros() {
-    this.dias.forEach(d => this.diasSelecionados[d] = false);
-    this.categoriaSelecionada = 'Categoria B';
-    this.cambioSelecionado = 'Manual';
-  }
-
   menuAberto = false;
 
-  toggleMenu() {
-    this.menuAberto = !this.menuAberto;
-  }
+  limparFiltros() {
+    this.dias.forEach(
+      dia => this.diasSelecionados[dia] = false
+    );
 
-  fecharMenu() {
-    this.menuAberto = false;
+    this.categoriaSelecionada = 'Categoria B';
+    this.cambioSelecionado = 'Manual';
   }
 
 }

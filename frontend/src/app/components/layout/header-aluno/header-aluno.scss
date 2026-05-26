@@ -12,6 +12,12 @@
     min-width: 260px;
 }
 
+:host(app-header-aluno) {
+    @media (max-width: 1020px) {
+        position: absolute;
+    }
+}
+
 .sidebar {
     position: sticky;
     top: 0;

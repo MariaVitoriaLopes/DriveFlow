@@ -1,77 +1,93 @@
-<button class="abrir-filtros" type="button" (click)="toggleMenu()">
+<!-- <button class="abrir-filtros" type="button" (click)="toggleMenu()">
   Filtros
 </button>
 
-<div class="overlay" *ngIf="menuAberto" (click)="fecharMenu()"></div>
-
-<div class="filtros" [class.aberto]="menuAberto">
+<div class="overlay" *ngIf="menuAberto" (click)="fecharMenu()"></div> -->
+<aside class="filtros">
   <div class="topo-filtros">
     <h2>Filtros</h2>
 
-    <button type="button" class="fechar-filtros" (click)="fecharMenu()">
+    <button type="button" class="fechar-filtros">
       ✕
     </button>
   </div>
 
-  <!-- Localização -->
-  <label for="localizacao">Localização</label>
+  <div class="grupo">
+    <label for="localizacao">Localização</label>
 
-  <div class="input-group">
-    <input id="localizacao" type="text" placeholder="Digite a cidade">
+    <div class="input-group">
+      <input id="localizacao" type="text" placeholder="Digite a cidade">
 
-    <button type="button" class="icon-lupa">
-      &#128269;
-    </button>
-  </div>
-
-  <!-- Valor da aula -->
-  <label>Valor da aula</label>
-
-  <div class="valor-aula">
-    <input type="number" placeholder="Mínimo" min="0">
-
-    <span>-</span>
-
-    <input type="number" placeholder="Máximo" min="0" value="500">
-  </div>
-
-  <!-- Avaliação -->
-  <label>Avaliação</label>
-
-  <div class="avaliacao">
-    <span>⭐ ⭐ ⭐ ⭐ ⭐</span>
-    <span>0 estrelas</span>
-  </div>
-
-  <!-- Disponibilidade -->
-  <label>Disponibilidade</label>
-
-  <div class="disponibilidade">
-    <div *ngFor="let dia of dias">
-      <input type="checkbox" [id]="dia" [(ngModel)]="diasSelecionados[dia]">
-
-      <label [for]="dia">{{dia}}</label>
+      <button type="button" class="icon-lupa">
+        &#128269;
+      </button>
     </div>
   </div>
 
-  <!-- Categoria -->
-  <label for="categoria">Categoria</label>
+  <div class="grupo">
+    <label>Valor da aula</label>
 
-  <select id="categoria" [(ngModel)]="categoriaSelecionada">
-    <option>Categoria A</option>
-    <option>Categoria B</option>
-    <option>Categoria C</option>
-  </select>
+    <div class="valor-aula">
+      <input type="number" placeholder="Mínimo" min="0">
 
-  <!-- Câmbio -->
-  <label for="cambio">Câmbio</label>
+      <span>até</span>
 
-  <select id="cambio" [(ngModel)]="cambioSelecionado">
-    <option>Manual</option>
-    <option>Automático</option>
-  </select>
+      <input type="number" placeholder="Máximo" min="0">
+    </div>
+  </div>
 
-  <button type="button" (click)="limparFiltros()">
-    Limpar filtros
-  </button>
-</div>
+  <div class="grupo">
+    <label>Avaliação mínima</label>
+
+    <div class="avaliacao">
+      <button type="button">★</button>
+      <button type="button">★</button>
+      <button type="button">★</button>
+      <button type="button">★</button>
+      <button type="button">★</button>
+      <button type="button">★</button>
+      <span>5 estrelas</span>
+    </div>
+  </div>
+
+  <div class="grupo">
+    <label>Disponibilidade</label>
+
+    <div class="disponibilidade">
+      <label class="dia" *ngFor="let dia of dias">
+        <input type="checkbox" [(ngModel)]="diasSelecionados[dia]">
+
+        <span>{{ dia }}</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="grupo">
+    <label for="categoria">Categoria</label>
+
+    <select id="categoria" [(ngModel)]="categoriaSelecionada">
+      <option>Categoria A</option>
+      <option>Categoria B</option>
+      <option>Categoria C</option>
+    </select>
+  </div>
+
+  <div class="grupo">
+    <label for="cambio">Câmbio</label>
+
+    <select id="cambio" [(ngModel)]="cambioSelecionado">
+      <option>Manual</option>
+      <option>Automático</option>
+    </select>
+  </div>
+
+  <div class="acoes">
+    <button type="button" class="btn-limpar" (click)="limparFiltros()">
+      Limpar filtros
+    </button>
+
+    <button type="button" class="btn-aplicar">
+      Aplicar filtros
+    </button>
+  </div>
+</aside>

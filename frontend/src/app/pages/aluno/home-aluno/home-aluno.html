@@ -3,7 +3,8 @@
 <div class="container">
   <header>
     <h1>Olá, {{ usuario?.usuario?.nome || usuario?.nome }}!</h1>
-    <p>Bem-vindo à sua jornada rumo à CNH. Encontre instrutores, agende aulas e acompanhe sua evolução de forma simples e segura.</p>
+    <p>Bem-vindo à sua jornada rumo à CNH. Encontre instrutores, agende aulas e acompanhe sua evolução de forma simples
+      e segura.</p>
     <button class="localizacao">{{ localizacao }}</button>
   </header>
 
@@ -12,43 +13,41 @@
     <button (click)="toggleModalFiltro()">Filtros</button>
   </div>
 
-<div class="resultados-info">
-  <span>Resultados:</span>
-  <span>{{ instrutores.length }} instrutores encontrados</span>
-</div>
+  <div class="resultados-info">
+    <span>Resultados:</span>
+    <span>{{ instrutores.length }} instrutores encontrados</span>
+  </div>
 
-<div class="cards">
+  <div class="cards">
 
+    <div class="card" *ngFor="let i of instrutores">
+      <img [src]="i.carro || '/images/carro-placeholder.png'" alt="Carro do instrutor" />
+
+      <div class="info">
+        <div class="perfil">
+          <img *ngIf="i.foto" [src]="i.foto" alt="Foto do instrutor" />
+          <span>{{ i.nome }}</span>
+        </div>
+
+        <span class="categoria">{{ i.categoria }}</span>
+        <span class="local">{{ i.local }}</span>
+
+        <span class="preco" *ngIf="i.preco !== null && i.preco !== undefined">
+          R$ {{ i.preco }} aula
+        </span>
+
+        <span class="preco" *ngIf="i.preco === null || i.preco === undefined">
+          Valor ainda não cadastrado
+        </span>
+
+        <button class="ver-mais" (click)="verPerfil(i.id)">Ver mais</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="overlay-filtro" *ngIf="exibeModalFiltro" (click)="toggleModalFiltro()"></div>
   <div *ngIf="exibeModalFiltro" class="modal-filtro">
     <app-filtro></app-filtro>
+    <button class="fechar-modal" (click)="toggleModalFiltro()">✕</button>
   </div>
-
-  <div class="card" *ngFor="let i of instrutores">
-    <img
-      [src]="i.carro || '/images/carro-placeholder.png'"
-      alt="Carro do instrutor"
-    />
-
-    <div class="info">
-      <div class="perfil">
-        <img *ngIf="i.foto" [src]="i.foto" alt="Foto do instrutor" />
-        <span>{{ i.nome }}</span>
-      </div>
-
-      <span class="categoria">{{ i.categoria }}</span>
-      <span class="local">{{ i.local }}</span>
-
-      <span class="preco" *ngIf="i.preco !== null && i.preco !== undefined">
-        R$ {{ i.preco }} aula
-      </span>
-
-      <span class="preco" *ngIf="i.preco === null || i.preco === undefined">
-        Valor ainda não cadastrado
-      </span>
-
-      <button class="ver-mais" (click)="verPerfil(i.id)">Ver mais</button>
-    </div>
-  </div>
-
-</div>
 </div>

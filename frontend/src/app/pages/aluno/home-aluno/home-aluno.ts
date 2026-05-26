@@ -41,7 +41,7 @@ export class HomeAluno implements OnInit {
     private router: Router,
     private http: HttpClient,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const user = localStorage.getItem('usuario');
@@ -65,10 +65,10 @@ export class HomeAluno implements OnInit {
         const lista = Array.isArray(res)
           ? res
           : res?.content ||
-            res?.data ||
-            res?.instrutores ||
-            res?.usuarios ||
-            [];
+          res?.data ||
+          res?.instrutores ||
+          res?.usuarios ||
+          [];
 
         console.log('Lista usada no map:', lista);
 
@@ -123,20 +123,20 @@ export class HomeAluno implements OnInit {
     });
   }
 
-verPerfil(instrutorId: string): void {
-  console.log('ID clicado no Ver mais:', instrutorId);
+  verPerfil(instrutorId: string): void {
+    console.log('ID clicado no Ver mais:', instrutorId);
 
-  if (!instrutorId) {
-    console.error('Instrutor sem ID');
-    return;
+    if (!instrutorId) {
+      console.error('Instrutor sem ID');
+      return;
+    }
+
+    sessionStorage.setItem('instrutorIdSelecionado', instrutorId);
+
+    this.router.navigateByUrl('/aluno/perfil-instrutor', {
+      state: { instrutorId }
+    });
   }
-
-  sessionStorage.setItem('instrutorIdSelecionado', instrutorId);
-
-  this.router.navigateByUrl('/aluno/perfil-instrutor', {
-    state: { instrutorId }
-  });
-}
   formatarLocal(local: any): string {
     if (!local) return '';
 
@@ -221,5 +221,9 @@ verPerfil(instrutorId: string): void {
 
   toggleModalFiltro(): void {
     this.exibeModalFiltro = !this.exibeModalFiltro;
+
+    document.body.style.overflow = this.exibeModalFiltro
+      ? 'hidden'
+      : 'auto';
   }
 }

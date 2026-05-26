@@ -22,11 +22,21 @@
   --radius-sm: 6px;
 }
 
+html,
+body {
+  min-height: 100%;
+  overflow-x: hidden;
+  background: var(--bg-page);
+}
+
 .container {
   max-width: 1400px;
+  width: 100%;
   margin: 0 auto;
-  padding: 20px;
-  width: 85%;
+  padding: 24px;
+  height: 100vh;
+  max-height: 100%;
+  overflow-y: auto;
 
   header {
     display: flex;
@@ -41,14 +51,18 @@
     p {
       font-size: 14px;
       color: #555;
+      line-height: 1.5;
     }
 
     .localizacao {
       align-self: flex-end;
+
       background: #f0f0f0;
       border: none;
       border-radius: 20px;
+
       padding: 5px 15px;
+
       font-size: 12px;
       cursor: pointer;
     }
@@ -56,22 +70,28 @@
 
   .search-bar {
     display: flex;
-    margin: 20px 0;
     gap: 10px;
+
+    margin: 20px 0;
 
     input {
       flex: 1;
-      padding: 8px 12px;
-      border-radius: 6px;
+
+      padding: 10px 14px;
+
+      border-radius: 8px;
       border: 1px solid #ccc;
     }
 
     button {
-      padding: 8px 12px;
-      border-radius: 6px;
+      padding: 10px 16px;
+
       border: none;
-      background-color: #7c3aed;
-      color: white;
+      border-radius: 8px;
+
+      background: #7c3aed;
+      color: #fff;
+
       cursor: pointer;
     }
   }
@@ -79,225 +99,233 @@
   .resultados-info {
     display: flex;
     justify-content: space-between;
+
     margin-bottom: 20px;
+
     font-size: 14px;
     color: #555;
   }
-
-  .cards {
-    display: flex;
-    align-items: flex-start;
-    gap: 24px;
-  }
-
-  .modal-filtro {
-    position: absolute;
-    // top: 0;
-    right: 0;
-    width: 360px;
-    height: 100vh;
-    background: #fff;
-    border-left: 1px solid #e0e0e0;
-    overflow-y: auto;
-    z-index: 999;
-    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
-    padding: 12px;
-  }
-
-  .cards:not(:has(.modal-filtro)) {
-    justify-content: flex-start;
-  }
-
-  .cards>.card,
-  .cards>ng-container {
-    flex: 1;
-  }
-
-  .card {
-    background: #fff;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-    width: 275px;
-    flex-shrink: 0;
-
-    img {
-      width: 100%;
-      height: 130px;
-      object-fit: cover;
-    }
-
-    .info {
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-
-      .perfil {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-
-        img {
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
-        }
-
-        span {
-          font-weight: 600;
-        }
-      }
-
-      .categoria,
-      .local,
-      .preco,
-      .avaliacao {
-        font-size: 12px;
-        color: #555;
-      }
-
-      .ver-mais {
-        background-color: #7c3aed;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 5px;
-        cursor: pointer;
-        margin-top: 5px;
-      }
-    }
-  }
 }
+
+/* LAYOUT PRINCIPAL */
 
 .cards {
-  .cards-grid {
-    flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+/* GRID DOS CARDS */
+
+.cards-grid {
+  flex: 1;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* CARD */
+
+.card {
+  width: 275px;
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 15px;
+
+  background: #fff;
+
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 130px;
+
+    object-fit: cover;
+  }
+
+  .info {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    flex-direction: column;
+    gap: 5px;
+
+    padding: 10px;
+
+    .perfil {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      img {
+        width: 30px;
+        height: 30px;
+
+        border-radius: 50%;
+      }
+
+      span {
+        font-weight: 600;
+      }
+    }
+
+    .categoria,
+    .local,
+    .preco,
+    .avaliacao {
+      font-size: 12px;
+      color: #555;
+    }
+
+    .ver-mais {
+      margin-top: 5px;
+
+      padding: 8px;
+
+      border: none;
+      border-radius: 6px;
+
+      background: #7c3aed;
+      color: #fff;
+
+      cursor: pointer;
+    }
   }
 }
 
-@media (max-width: 1200px) {
-  .container {
-    width: 100%;
-    padding: 20px 16px;
+/* FILTRO */
 
-    .cards {
-      gap: 16px;
-    }
+.modal-filtro {
+  position: sticky;
+  top: 24px;
+  width: 360px;
+  flex-shrink: 0;
+  margin-left: auto;
+  align-self: flex-start;
+  background: #fff;
+  margin-right: -32px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
 
-    .card {
-      width: calc(50% - 8px);
-    }
+  padding: 16px;
 
-    .modal-filtro {
-      width: 320px;
-    }
-  }
+  z-index: 10;
 }
 
-@media (max-width: 1024px) {
+/* BOTÃO FECHAR */
+
+.fechar-modal {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+
+  width: 38px;
+  height: 38px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #f3f4f6;
+
+  font-size: 16px;
+
+  cursor: pointer;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
   .container {
-    width: 100%;
     padding: 16px;
-
-    header {
-      h1 {
-        font-size: 22px;
-      }
-
-      p {
-        font-size: 13px;
-      }
-    }
-
-    .cards {
-      gap: 14px;
-    }
-
-    .card {
-      width: calc(50% - 7px);
-    }
-
-    .modal-filtro {
-      width: 300px;
-      padding: 10px;
-    }
-  }
-
-  app-header-aluno {
-    width: 100%;
+    padding-top: 74px;
   }
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 14px;
+    padding: 16px;
+    padding-top: 84px;
 
     header {
-      gap: 6px;
-
       h1 {
         font-size: 20px;
       }
 
       p {
         font-size: 12px;
-        line-height: 1.5;
       }
 
       .localizacao {
         align-self: flex-start;
-        font-size: 11px;
       }
     }
+  }
 
-    .search-bar {
-      flex-direction: column;
-      gap: 8px;
+  .search-bar {
+    flex-direction: column;
+    gap: 10px;
 
-      input,
-      button {
-        width: 100%;
-      }
-    }
-
-    .resultados-info {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
-      font-size: 12px;
-    }
-
-    .cards {
-      gap: 12px;
-    }
-
-    .card {
+    input,
+    button {
       width: 100%;
+      height: 44px;
     }
+  }
 
-    .modal-filtro {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: 100%;
-      height: 100dvh;
-      border-left: none;
-      box-shadow: none;
-      padding: 14px;
-    }
+  .resultados-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+
+    font-size: 12px;
+  }
+
+  .cards {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .cards-grid {
+    width: 100%;
+    gap: 14px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .modal-filtro {
+    position: fixed;
+
+    top: 0;
+    right: 0;
+
+    width: 100%;
+    max-width: 360px;
+    height: 100dvh;
+
+    margin: 0;
+    padding: 16px;
+
+    overflow-y: auto;
+
+    border-radius: 0;
+    border-left: 1px solid #e5e7eb;
+
+    background: #fff;
+
+    z-index: 9999;
   }
 }
 
 @media (max-width: 480px) {
   .container {
     padding: 12px;
+    padding-top: 64px;
 
     header {
       h1 {
@@ -308,58 +336,64 @@
         font-size: 11px;
       }
     }
+  }
 
-    .search-bar {
-      margin: 16px 0;
+  .search-bar {
+    margin: 16px 0;
 
-      input,
-      button {
-        height: 42px;
+    input,
+    button {
+      height: 42px;
+      font-size: 12px;
+    }
+  }
+
+  .resultados-info {
+    font-size: 11px;
+  }
+
+  .cards-grid {
+    gap: 12px;
+  }
+
+  .card {
+    padding: 12px;
+
+    img {
+      height: 120px;
+    }
+
+    .info {
+      padding: 8px;
+
+      .perfil {
+        img {
+          width: 26px;
+          height: 26px;
+        }
+
+        span {
+          font-size: 13px;
+        }
+      }
+
+      .categoria,
+      .local,
+      .preco,
+      .avaliacao {
+        font-size: 11px;
+      }
+
+      .ver-mais {
+        width: 100%;
+        height: 38px;
         font-size: 12px;
       }
     }
+  }
 
-    .resultados-info {
-      font-size: 11px;
-    }
-
-    .card {
-      padding: 12px;
-
-      img {
-        height: 115px;
-      }
-
-      .info {
-        padding: 8px;
-
-        .perfil {
-          img {
-            width: 26px;
-            height: 26px;
-          }
-
-          span {
-            font-size: 13px;
-          }
-        }
-
-        .categoria,
-        .local,
-        .preco,
-        .avaliacao {
-          font-size: 11px;
-        }
-
-        .ver-mais {
-          height: 36px;
-          font-size: 12px;
-        }
-      }
-    }
-
-    .modal-filtro {
-      padding: 12px;
-    }
+  .modal-filtro {
+    max-width: 100%;
+    padding: 14px 12px;
   }
 }

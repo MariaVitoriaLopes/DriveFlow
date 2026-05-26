@@ -1,203 +1,370 @@
-:root {
-  --bg-page: #f5f5f7;
-  --bg-card: #fbfbfc;
+:host {
+  --bg: #ffffff;
+  --bg-soft: #f5f5f7;
 
   --primary: #6d22e8;
-  --primary-hover: #5d1bd6;
+  --primary-hover: #5b1bd0;
 
-  --text-primary: #25252a;
-  --text-secondary: #45464d;
+  --text: #1f2937;
+  --text-soft: #6b7280;
 
-  --border: #a5a8b3;
-  --border-soft: #9ca0aa;
+  --border: #e5e7eb;
 
-  --danger: #dc2626;
-  --danger-hover: #b91c1c;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
 
-  --shadow-sm: none;
-  --shadow-md: none;
-
-  --radius-lg: 16px;
-  --radius-md: 10px;
-  --radius-sm: 6px;
+  --shadow:
+    0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-.filtros {
-  width: 100%;
-  max-width: 360px;
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+/* BOTÃO MOBILE */
 
-  h2 {
-    font-size: 16px;
-    font-weight: 700;
-    color: #25252a;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #a5a8b3;
-  }
-
-  >label {
-    font-size: 11px;
-    font-weight: 700;
-    color: #25252a;
-    margin-bottom: -6px;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-  }
-}
-
-.input-group {
-  display: flex;
-  gap: 8px;
-
-  input {
-    flex: 1;
-  }
-
-  button {
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 8px;
-    background: #6d22e8;
-    color: #fff;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.2s;
-    flex-shrink: 0;
-
-    &:hover {
-      background: #5d1bd6;
-    }
-  }
-
-  button.icon-lupa {
-    all: unset;
-    width: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-}
-
-.valor-aula {
-  display: flex;
+.abrir-filtros {
+  display: none;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
 
-  span {
-    font-size: 11px;
-    font-weight: 600;
-    color: #45464d;
-    white-space: nowrap;
-  }
-
-  input {
-    flex: 1;
-  }
-}
-
-.avaliacao {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 10px;
-  border: 1px solid #a5a8b3;
-  border-radius: 10px;
-  background: #fff;
-
-  span:first-child {
-    font-size: 14px;
-    line-height: 1;
-  }
-
-  span:last-child {
-    font-size: 11px;
-    font-weight: 600;
-    color: #45464d;
-  }
-}
-
-.disponibilidade {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  div {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  label {
-    font-size: 12px;
-    font-weight: 500;
-    color: #25252a;
-    cursor: pointer;
-  }
-
-  input[type="checkbox"] {
-    width: 15px;
-    height: 15px;
-    accent-color: #6d22e8;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-}
-
-input,
-select {
-  width: 100%;
-  height: 40px;
+  height: 44px;
   padding: 0 12px;
-  border: 1px solid #a5a8b3;
-  border-radius: 8px;
-  background: #fff;
-  color: #30313a;
-  font-size: 12px;
-  outline: none;
-  transition: 0.2s;
 
-  &::placeholder {
-    color: #9da0aa;
-    font-size: 11px;
-  }
-
-  &:focus {
-    border-color: #6d22e8;
-    box-shadow: 0 0 0 3px rgba(109, 34, 232, 0.1);
-  }
-}
-
-select {
-  cursor: pointer;
-}
-
-button[type="button"]:last-child {
-  width: 100%;
-  height: 38px;
-  margin-top: 2px;
-  border-radius: 8px;
-  border: 1px solid #6d22e8;
-  background: #fff;
-  color: #6d22e8;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
+
   cursor: pointer;
   transition: 0.2s;
 
   &:hover {
-    background: #f6f1ff;
+    background: var(--primary-hover);
+  }
+}
+
+/* CARD */
+
+.filtros {
+  width: 100%;
+  max-width: 340px;
+
+  padding: 22px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+
+  background: var(--bg);
+
+  // border: 1px solid var(--border);
+  // border-radius: var(--radius-lg);
+
+  // box-shadow: var(--shadow);
+}
+
+/* TOPO */
+
+.topo-filtros {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding-bottom: 16px;
+
+  border-bottom: 1px solid var(--border);
+
+  h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+  }
+}
+
+.fechar-filtros {
+  display: none;
+
+  width: 36px;
+  height: 36px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #f3f4f6;
+  color: var(--text);
+
+  font-size: 16px;
+
+  cursor: pointer;
+}
+
+/* GRUPOS */
+
+.grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+/* INPUTS */
+
+input,
+select {
+  width: 100%;
+  height: 44px;
+
+  padding: 0 14px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+
+  background: #fff;
+  color: var(--text);
+
+  font-size: 14px;
+
+  outline: none;
+  transition: 0.2s;
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+
+  &:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(109, 34, 232, 0.12);
+  }
+}
+
+select {
+  cursor: pointer;
+}
+
+/* LOCALIZAÇÃO */
+
+.input-group {
+  display: flex;
+  gap: 10px;
+}
+
+.icon-lupa {
+  width: 44px;
+  height: 44px;
+
+  border: none;
+  border-radius: var(--radius-md);
+
+  background: var(--primary);
+  color: #fff;
+
+  font-size: 16px;
+
+  flex-shrink: 0;
+
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    background: var(--primary-hover);
+  }
+}
+
+/* VALOR */
+
+.valor-aula {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  span {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-soft);
+
+    white-space: nowrap;
+  }
+}
+
+/* AVALIAÇÃO */
+
+.avaliacao {
+  display: flex;
+  // grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+
+  button {
+    // height: 42px;
+
+    // border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    border: 0;
+
+    background: #fff;
+    color: var(--text);
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.2s;
+
+    &:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: #f8f4ff;
+    }
+  }
+}
+
+/* DISPONIBILIDADE */
+
+.disponibilidade {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.dia {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+
+  background: #fff;
+
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    border-color: var(--primary);
+    background: #faf7ff;
+  }
+
+  span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  input[type='checkbox'] {
+    width: 16px;
+    height: 16px;
+
+    accent-color: var(--primary);
+
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+}
+
+/* BOTÕES */
+
+.acoes {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.btn-limpar,
+.btn-aplicar {
+  flex: 1;
+  height: 46px;
+
+  border-radius: var(--radius-md);
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-limpar {
+  border: 1px solid var(--border);
+
+  background: #fff;
+  color: var(--text);
+
+  &:hover {
+    background: #f9fafb;
+  }
+}
+
+.btn-aplicar {
+  border: none;
+
+  background: var(--primary);
+  color: #fff;
+
+  &:hover {
+    background: var(--primary-hover);
+  }
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 900px) {
+  .filtros {
+    max-width: 300px;
+  }
+
+  .disponibilidade {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
+  .abrir-filtros {
+    display: flex;
+  }
+
+  .fechar-filtros {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .filtros {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 100;
+
+    width: 100%;
+    max-width: 340px;
+    height: 100vh;
+
+    border-radius: 0;
+
+    overflow-y: auto;
+
+    // transform: translateX(100%);
+    transition: transform 0.25s ease;
+  }
+
+  .filtros.aberto {
+    transform: translateX(0);
+    padding-top: 68px;
+  }
+
+}
+
+@media (max-width: 480px) {
   .filtros {
     max-width: 100%;
-    padding: 14px;
+    padding: 20px 16px;
   }
 
   .valor-aula {
@@ -205,7 +372,15 @@ button[type="button"]:last-child {
     align-items: stretch;
 
     span {
-      align-self: flex-start;
+      display: none;
     }
+  }
+
+  .avaliacao {
+    grid-template-columns: 1fr;
+  }
+
+  .acoes {
+    flex-direction: column;
   }
 }
