@@ -141,6 +141,24 @@ versoes = [
     'Sensor de ré'
   ];
 
+  modalAberto = false;
+  modalTitulo = '';
+  modalMensagem = '';
+  modalErro = false;
+
+  abrirModal(titulo: string,mensagem: string,erro = false): void {
+
+    this.modalTitulo = titulo;
+    this.modalMensagem = mensagem;
+    this.modalErro = erro;
+
+    this.modalAberto = true;
+  }
+
+  fecharModal(): void {
+    this.modalAberto = false;
+  }
+
   ngOnInit(): void {
     this.veiculoForm = this.fb.group({
       marca: ['', Validators.required],
@@ -167,7 +185,8 @@ versoes = [
     if (!arquivos.length) return;
 
     if (this.fotosArquivos.length + arquivos.length > 4) {
-      alert('Você pode selecionar no máximo 4 fotos.');
+      // alert('Você pode selecionar no máximo 4 fotos.');
+      this.abrirModal('Erro','Você pode selecionar no máximo 4 fotos.');
       input.value = '';
       return;
     }
@@ -176,7 +195,8 @@ versoes = [
       const tipoValido = ['image/png', 'image/jpeg', 'image/jpg'].includes(file.type);
 
       if (!tipoValido) {
-        alert('Formato inválido. Use PNG, JPEG ou JPG.');
+        // alert('Formato inválido. Use PNG, JPEG ou JPG.');
+        this.abrirModal('Erro', 'Formato inválido. Use PNG, JPEG ou JPG.');
         return;
       }
 

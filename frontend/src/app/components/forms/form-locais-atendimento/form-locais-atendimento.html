@@ -17,7 +17,7 @@
             <input formControlName="logradouro" type="text" placeholder="Rua, Avenida">
           </label>
         </div>
-        
+
         <div class="linha">
           <label>Número
             <input formControlName="numero" type="text" placeholder="000">
@@ -39,7 +39,7 @@
         <div class="acoes">
           <label>
             <input type="checkbox" [checked]="endereco.get('favorito')?.value" [disabled]="!modoEdicao[i]"
-                   (change)="marcarFavorito(i)">
+              (change)="marcarFavorito(i)">
             Definir como favorito
           </label>
           <button type="button" class="delete" (click)="deletarEndereco(i)">Deletar endereço</button>
@@ -53,3 +53,18 @@
     </div>
   </div>
 </form>
+
+<div class="modal-overlay" *ngIf="modalAberto" (click)="fecharModal()">
+
+  <div class="modal" [class.erro]="modalErro" (click)="$event.stopPropagation()">
+
+    <h2>{{ modalTitulo }}</h2>
+
+    <p>{{ modalMensagem }}</p>
+
+    <button type="button" (click)="fecharModal()">
+      Fechar
+    </button>
+
+  </div>
+</div>

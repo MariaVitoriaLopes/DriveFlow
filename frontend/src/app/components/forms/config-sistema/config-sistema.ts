@@ -28,6 +28,24 @@ export class ConfigSistema implements OnInit{
     });
   }
 
+  modalAberto = false;
+  modalTitulo = '';
+  modalMensagem = '';
+  modalErro = false;
+
+  abrirModal(titulo: string,mensagem: string,erro = false): void {
+
+    this.modalTitulo = titulo;
+    this.modalMensagem = mensagem;
+    this.modalErro = erro;
+
+    this.modalAberto = true;
+  }
+
+  fecharModal(): void {
+    this.modalAberto = false;
+  }
+
   ngOnInit() {
     this.carregarPreferencias();
   }
@@ -44,8 +62,10 @@ export class ConfigSistema implements OnInit{
     const prefs = this.formPreferencias.value;
     // PUT fictício: troque pelo caminho real do backend
     this.http.put(`/api/usuarios/${this.usuarioId}/preferencias`, prefs).subscribe({
-      next: () => alert('Preferências salvas!'),
-      error: () => alert('Erro ao salvar preferências')
+      // next: () => alert('Preferências salvas!'),
+      // error: () => alert('Erro ao salvar preferências')
+      next: () => this.abrirModal("Sucesso", 'Preferências salvas!'),
+      error: () => this.abrirModal("Erro", 'Erro ao salvar preferências')
     });
   }
 

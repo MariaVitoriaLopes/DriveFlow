@@ -1,86 +1,208 @@
-<section class="agendar-page">
-  <div class="agendar-card">
-    <!-- CALENDÁRIO -->
-    <app-calendario-agendamento
-      [disponibilidades]="disponibilidadesAgenda"
-      [dataSelecionada]="dataSelecionada"
-      (dataSelecionadaChange)="aoSelecionarData($event)">
-    </app-calendario-agendamento>
+<div class="layout">
 
-    <!-- FORMULÁRIO DE AGENDAMENTO -->
-    <div class="form-area">
-      <h3>Informações</h3>
-      <div class="info-grid">
-        <label>
-          Duração das aulas
-          <input type="text" [value]="duracaoAula + ' minutos'" readonly />
-        </label>
-        <label>
-          Tolerância a atrasos
-          <input type="text" [value]="toleranciaEspera + ' minutos'" readonly />
-        </label>
+  <app-header-aluno></app-header-aluno>
+
+  <section class="agendar-page">
+
+    <div class="agendar-card">
+
+      <!-- CALENDÁRIO -->
+      <div class="calendar-area">
+
+        <div class="top-link">
+
+          <button class="back-btn" type="button" (click)="router.navigate(['/aluno/perfil-instrutor'])">
+            ‹
+          </button>
+
+          <span>Home</span>
+
+        </div>
+
+        <h1>Agendar</h1>
+
+        <span class="year">
+          {{ dataSelecionada?.getFullYear() || '2026' }}
+        </span>
+
+        <app-calendario-agendamento [disponibilidades]="disponibilidadesAgenda" [dataSelecionada]="dataSelecionada"
+          (dataSelecionadaChange)="aoSelecionarData($event)">
+        </app-calendario-agendamento>
+
       </div>
 
-      <label class="full">
-        Local de Encontro
-        <input type="text" [value]="localEncontro" readonly />
-      </label>
+      <!-- FORMULÁRIO -->
+      <div class="form-area">
 
-      <h3>Horário</h3>
-      <div class="info-grid">
-        <label>
-          Início
-          <select [(ngModel)]="horarioInicio" (ngModelChange)="aoAlterarHorario()">
-            <option value="">Selecione</option>
+        <!-- INFORMAÇÕES -->
+        <div class="section">
 
-            <option *ngFor="let h of horariosDisponiveis" [value]="h.inicio">
-              {{ h.inicio }} - termina {{ h.fimUmaAula }}
-            </option>
-          </select>
-        </label>
+          <h3>Informações</h3>
 
-        <label>
-          Quantidade de aulas
-            <select [(ngModel)]="quantidadeAulas" (ngModelChange)="aoAlterarHorario()">
-              <option [ngValue]="1">1 aula</option>
-              <option [ngValue]="2" [disabled]="!podeDuasAulasSelecionado()">2 aulas</option>
-            </select>
-        </label>
+          <div class="info-grid">
+
+            <label>
+              Duração das aulas
+
+              <input type="text" [value]="duracaoAula + ' minutos'" readonly />
+            </label>
+
+            <label>
+              Tolerância a atrasos
+
+              <input type="text" [value]="toleranciaEspera + ' minutos'" readonly />
+            </label>
+
+          </div>
+
+        </div>
+
+        <!-- LOCAL -->
+        <div class="section">
+
+          <h3>Local de Encontro</h3>
+
+          <label class="full">
+
+            <input type="text" [value]="localEncontro" readonly />
+
+          </label>
+
+        </div>
+
+        <!-- HORÁRIO -->
+        <div class="section">
+
+          <h3>Horário</h3>
+
+          <div class="info-grid">
+
+            <label>
+              Início
+
+              <select [(ngModel)]="horarioInicio" (ngModelChange)="aoAlterarHorario()">
+                <option value="">
+                  Selecione
+                </option>
+
+                <option *ngFor="let h of horariosDisponiveis" [value]="h.inicio">
+                  {{ h.inicio }}
+                </option>
+
+              </select>
+
+            </label>
+
+            <label>
+              Fim
+
+              <input type="text" [value]="horarioFim || '--:--'" readonly />
+
+            </label>
+
+          </div>
+
+          <div class="info-grid">
+
+            <label>
+              Quantidade de aulas
+
+              <select [(ngModel)]="quantidadeAulas" (ngModelChange)="aoAlterarHorario()">
+                <option [ngValue]="1">
+                  1 aula
+                </option>
+
+                <option [ngValue]="2" [disabled]="!podeDuasAulasSelecionado()">
+                  2 aulas
+                </option>
+
+              </select>
+
+            </label>
+
+          </div>
+
+        </div>
+
+        <!-- VEÍCULO -->
+        <div class="section">
+
+          <h3>Veículo</h3>
+
+          <div class="check-list">
+
+            <label>
+
+              <input type="checkbox" checked disabled />
+
+              <span>
+                Veículo do Instrutor
+
+                <small>
+                  ({{ veiculoTexto }})
+                </small>
+              </span>
+
+            </label>
+
+          </div>
+
+        </div>
+
+        <!-- ALERTA -->
+        <div class="message" *ngIf="mensagem">
+          {{ mensagem }}
+        </div>
+
+        <!-- VALOR -->
+        <div class="valor-box">
+
+          <h3>Valor</h3>
+
+          <div>
+            <span>Valor da aula/hora</span>
+
+            <strong>
+              {{ valorAula | currency:'BRL' }}
+            </strong>
+          </div>
+
+          <div>
+            <span>Taxa</span>
+
+            <strong>
+              {{ taxa | currency:'BRL' }}
+            </strong>
+          </div>
+
+          <div class="total">
+            <span>Total</span>
+
+            <strong>
+              {{ (valorAula * quantidadeAulas + taxa) | currency:'BRL' }}
+            </strong>
+          </div>
+
+        </div>
+
+        <!-- AÇÕES -->
+        <div class="actions">
+
+          <button class="cancel" type="button" (click)="router.navigate(['/aluno/perfil-instrutor'])">
+            Cancelar
+          </button>
+
+          <button class="submit" type="button" [disabled]="!dataSelecionadaFormatada || !horarioInicio || !horarioFim"
+            (click)="agendarAula()">
+            Agendar aula
+          </button>
+
+        </div>
+
       </div>
 
-      <label class="full">
-        Fim
-        <input type="text" [value]="horarioFim || '--:--'" readonly />
-      </label>
-
-      <h3>Veículo</h3>
-      <div class="check-list">
-        <label>
-          <input type="checkbox" checked disabled />
-          <span>Veículo do Instrutor <small>({{ veiculoTexto }})</small></span>
-        </label>
-      </div>
-
-      <div class="message" *ngIf="mensagem">{{ mensagem }}</div>
-
-      <div class="valor-box">
-        <h3>Valor</h3>
-        <div><span>Valor da aula/hora</span> <strong>{{ valorAula | currency:'BRL' }}</strong></div>
-        <div><span>Taxa</span> <strong>{{ taxa | currency:'BRL' }}</strong></div>
-        <div class="total"><span>Total</span> <strong>{{ (valorAula*quantidadeAulas + taxa) | currency:'BRL' }}</strong></div>
-      </div>
-
-      <div class="actions">
-        <button class="cancel" type="button" (click)="router.navigate(['/aluno/perfil-instrutor'])">Cancelar</button>
-        <button
-          class="submit"
-          type="button"
-          [disabled]="!dataSelecionadaFormatada || !horarioInicio || !horarioFim"
-          (click)="agendarAula()"
-        >
-          Agendar aula
-        </button>
-      </div>
     </div>
-  </div>
-</section>
+
+  </section>
+
+</div>

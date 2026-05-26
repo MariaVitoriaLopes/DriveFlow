@@ -2,10 +2,7 @@
 
   <div formArrayName="documentos" class="documentos">
 
-    <div
-      *ngFor="let doc of documentos.controls; let i = index"
-      [formGroupName]="i"
-    >
+    <div *ngFor="let doc of documentos.controls; let i = index" [formGroupName]="i">
 
       <!-- CNH -->
       <div class="accordion" *ngIf="doc.get('tipo')?.value === 'CNH'">
@@ -20,20 +17,12 @@
             <!-- FOTO FRENTE -->
             <div class="upload-container">
               <label>Foto Frente</label>
-              <img
-                *ngIf="doc.get('frente')?.value"
-                [src]="doc.get('frente')?.value"
-                class="preview-img"
-              >
+              <img *ngIf="doc.get('frente')?.value" [src]="doc.get('frente')?.value" class="preview-img">
             </div>
             <!-- FOTO VERSO -->
             <div class="upload-container">
               <label>Foto Verso</label>
-              <img
-                *ngIf="doc.get('verso')?.value"
-                [src]="doc.get('verso')?.value"
-                class="preview-img"
-              >
+              <img *ngIf="doc.get('verso')?.value" [src]="doc.get('verso')?.value" class="preview-img">
             </div>
           </div>
 
@@ -63,10 +52,7 @@
       </div>
 
       <!-- CERTIFICADO -->
-      <div
-        class="accordion"
-        *ngIf="doc.get('tipo')?.value === 'CERTIFICADO'"
-      >
+      <div class="accordion" *ngIf="doc.get('tipo')?.value === 'CERTIFICADO'">
 
         <div class="header" (click)="toggleAccordion('CERTIFICADO')">
           Credencial/Certificado de Instrutor de Trânsito
@@ -86,11 +72,7 @@
 
             <label>Foto Frente</label>
 
-            <img
-              *ngIf="doc.get('frente')?.value"
-              [src]="doc.get('frente')?.value"
-              class="preview-img"
-            >
+            <img *ngIf="doc.get('frente')?.value" [src]="doc.get('frente')?.value" class="preview-img">
 
           </div>
 
@@ -99,11 +81,7 @@
 
             <label>Foto Verso</label>
 
-            <img
-              *ngIf="doc.get('verso')?.value"
-              [src]="doc.get('verso')?.value"
-              class="preview-img"
-            >
+            <img *ngIf="doc.get('verso')?.value" [src]="doc.get('verso')?.value" class="preview-img">
 
           </div>
 
@@ -120,3 +98,13 @@
   </button>
 
 </form>
+
+<div class="modal-overlay" *ngIf="modalAberto" (click)="fecharModal()">
+  <div class="modal" [class.erro]="modalErro" (click)="$event.stopPropagation()">
+    <h2>{{ modalTitulo }}</h2>
+    <p>{{ modalMensagem }}</p>
+    <button type="button" (click)="fecharModal()">
+      Fechar
+    </button>
+  </div>
+</div>

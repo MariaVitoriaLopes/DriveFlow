@@ -49,3 +49,14 @@
     <button type="submit">Salvar alterações</button>
   </div>
 </form>
+
+
+<div class="modal-overlay" *ngIf="modalAberto" (click)="fecharModal()">
+  <div class="modal" [class.erro]="modalErro" (click)="$event.stopPropagation()">
+    <h2>{{ modalTitulo }}</h2>
+    <p>{{ modalMensagem }}</p>
+    <button type="button" (click)="fecharModal()">
+      Fechar
+    </button>
+  </div>
+</div>

@@ -24,6 +24,24 @@ export class FormDocumentos implements OnChanges {
     });
   }
 
+  modalAberto = false;
+  modalTitulo = '';
+  modalMensagem = '';
+  modalErro = false;
+
+  abrirModal(titulo: string,mensagem: string,erro = false): void {
+
+    this.modalTitulo = titulo;
+    this.modalMensagem = mensagem;
+    this.modalErro = erro;
+
+    this.modalAberto = true;
+  }
+
+  fecharModal(): void {
+    this.modalAberto = false;
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (
       changes['instrutor'] ||

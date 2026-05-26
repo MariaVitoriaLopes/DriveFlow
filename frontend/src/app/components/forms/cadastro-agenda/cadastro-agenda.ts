@@ -50,6 +50,24 @@ export class CadastroAgenda implements OnInit {
     { nome: 'Domingo', valor: 'DOMINGO' }
   ];
 
+  modalAberto = false;
+  modalTitulo = '';
+  modalMensagem = '';
+  modalErro = false;
+
+  abrirModal(titulo: string,mensagem: string,erro = false): void {
+
+    this.modalTitulo = titulo;
+    this.modalMensagem = mensagem;
+    this.modalErro = erro;
+
+    this.modalAberto = true;
+  }
+
+  fecharModal(): void {
+    this.modalAberto = false;
+  }
+
   ngOnInit(): void {
     this.agendaForm = this.fb.group({
       duracaoAula: [50, Validators.required],
@@ -197,7 +215,8 @@ salvarAlteracoes(): void {
   const usuarioId = localStorage.getItem('usuarioId') || localStorage.getItem('userId');
   if (!usuarioId) {
     this.salvando = false;
-    alert('Usuário não encontrado. Faça login novamente.');
+    // alert('Usuário não encontrado. Faça login novamente.');
+    this.abrirModal("Erro", "Usuário não encontrado. Faça login novamente.");
     return;
   }
 
@@ -214,13 +233,15 @@ salvarAlteracoes(): void {
     .subscribe({
       next: () => {
         this.salvando = false;
-        alert('Agenda salva com sucesso!');
+        // alert('Agenda salva com sucesso!');
+        this.abrirModal("Sucesso","Agenda salva com sucesso!");
         this.router.navigate(['/instrutor/agenda']);
       },
       error: (erro) => {
         this.salvando = false;
         console.error('Erro ao salvar agenda:', erro);
-        alert('Erro ao salvar agenda.');
+        // alert('Erro ao salvar agenda.');
+        this.abrirModal("Erro", "Erro ao salvar agenda.");
       }
     });
 }

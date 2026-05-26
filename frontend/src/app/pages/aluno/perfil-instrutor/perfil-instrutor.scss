@@ -1,86 +1,643 @@
-.page {
-  display: flex;
-  gap: 2rem;
-  padding: 1rem;
+:host {
+  --bg-page: #f5f5f7;
+  --bg-card: #ffffff;
+
+  --primary: #6d22e8;
+  --primary-hover: #5b1bd0;
+
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+
+  --border: #d7d7df;
+
+  --radius-xl: 22px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+
+  --shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+
+  background: var(--bg-page);
+
+  overflow-x: hidden;
 }
+
+/* LAYOUT */
+
+.layout {
+  display: flex;
+  align-items: flex-start;
+
+  width: 100%;
+  min-height: 100vh;
+}
+
+app-header-aluno {
+  width: 250px;
+  min-width: 250px;
+
+  height: 100vh;
+
+  position: sticky;
+  top: 0;
+
+  align-self: flex-start;
+}
+
+.page {
+  flex: 1;
+
+  padding: 24px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+
+  align-items: start;
+}
+
+/* CARD PRINCIPAL */
 
 .main-card {
-  flex: 2;
+  background: var(--bg-card);
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+
+  padding: 22px;
+
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  gap: 22px;
+
+  box-shadow: var(--shadow);
+
+  min-width: 0;
 }
 
-/* Galeria */
+/* GALERIA */
+
 .gallery {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 14px;
+
+  align-items: stretch;
+}
+
+/* IMAGEM PRINCIPAL */
+
+.gallery-main {
+  width: 100%;
+  min-width: 0;
+}
+
+.gallery-main img,
+.gallery-main .thumb-empty {
+  width: 100%;
+  height: 240px;
+
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+
+  background: #e5e7eb;
+
+  overflow: hidden;
+
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  img {
-    width: 100px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-main img {
+  display: block;
+  object-fit: cover;
+}
+
+/* GRID LATERAL */
+
+.gallery-side {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+
+  gap: 14px;
+}
+
+/* THUMB */
+
+.thumb {
+  width: 100%;
+  height: 113px;
+
+  border-radius: 14px;
+  border: 1px solid var(--border);
+
+  background: #e5e7eb;
+
+  overflow: hidden;
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.thumb:hover {
+  transform: translateY(-2px);
+
+  border-color: #c7c7d1;
+
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+/* PLACEHOLDER */
+
+.thumb-empty {
+  width: 100%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ececf1 0%,
+      #e3e5eb 100%
+    );
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 900px) {
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery-main img,
+  .gallery-main .thumb-empty {
+    height: 220px;
+  }
+
+  .gallery-side {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: unset;
+  }
+
+  .thumb {
+    height: 90px;
   }
 }
 
-/* Perfil */
+@media (max-width: 640px) {
+  .gallery {
+    gap: 12px;
+  }
+
+  .gallery-main img,
+  .gallery-main .thumb-empty {
+    height: 190px;
+  }
+
+  .gallery-side {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .thumb {
+    height: 88px;
+  }
+}
+
+/* PERFIL */
+
 .profile {
   display: flex;
-  gap: 1rem;
-  .avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    overflow: hidden;
-    img { width: 100%; height: 100%; object-fit: cover; }
-    span { display: block; width: 80px; height: 80px; text-align: center; line-height: 80px; font-size: 24px; color: #aaa; }
-  }
-  .profile-info {
-    h3 { margin: 0; font-size: 1.2rem; font-weight: bold; }
-    p { margin-top: 0.25rem; color: #555; }
-  }
+  align-items: center;
 }
 
-/* Veículo */
+.profile-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  min-width: 0;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+
+  min-width: 64px;
+
+  border-radius: 50%;
+  overflow: hidden;
+
+  border: 1px solid var(--border);
+
+  background: #ececf2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.avatar span {
+  font-size: 20px;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  min-width: 0;
+}
+
+.profile-info h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  margin: 0;
+
+  font-size: 22px;
+  font-weight: 700;
+
+  color: var(--text-primary);
+}
+
+.profile-info h2 span {
+  font-size: 12px;
+  font-weight: 600;
+
+  color: var(--primary);
+}
+
+.profile-info p {
+  margin: 0;
+
+  font-size: 14px;
+  line-height: 1.5;
+
+  color: var(--text-secondary);
+
+  word-break: break-word;
+}
+
+/* SEÇÕES */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.section h3 {
+  margin: 0;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  color: var(--text-primary);
+}
+
+/* VEÍCULO */
+
 .vehicle-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  input { width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc; background: #f9f9f9; }
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
-/* Recursos extras */
-.extras-grid {
+.vehicle-grid div {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  button {
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    background: #f5f5f5;
-    &.active { background: #7b2cff; color: #fff; border-color: #7b2cff; }
+  flex-direction: column;
+  gap: 6px;
+
+  min-width: 0;
+}
+
+.vehicle-grid label {
+  font-size: 13px;
+  font-weight: 600;
+
+  color: var(--text-primary);
+}
+
+.vehicle-grid input {
+  width: 100%;
+  height: 42px;
+
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+
+  background: #fafafa;
+
+  padding: 0 12px;
+
+  font-size: 14px;
+  color: var(--text-primary);
+
+  outline: none;
+}
+
+/* RECURSOS */
+
+.extras-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.extra-item {
+  min-height: 46px;
+
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+
+  background: #fafafa;
+
+  padding: 12px 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: var(--text-primary);
+}
+
+.extra-item.active {
+  background: #f3e8ff;
+  border-color: #c084fc;
+
+  color: var(--primary);
+}
+
+.extra-item small {
+  font-size: 14px;
+}
+
+/* MENU DIREITO */
+
+.schedule-card {
+  position: sticky;
+  top: 0;
+
+  width: 100%;
+
+  background: var(--bg-card);
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  box-shadow: var(--shadow);
+
+  align-self: start;
+}
+
+.schedule-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.schedule-section h3 {
+  margin: 0;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  color: var(--text-primary);
+}
+
+.location-text,
+.mapa-vazio {
+  margin: 0;
+
+  font-size: 14px;
+  line-height: 1.5;
+
+  color: var(--text-secondary);
+}
+
+.schedule-card iframe {
+  width: 100%;
+  height: 180px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+
+  background: #f3f4f6;
+}
+
+/* HORÁRIO */
+
+.hours-title {
+  margin: 0;
+
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.hours {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+
+  gap: 10px;
+  align-items: center;
+}
+
+.hours span {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.hours input {
+  width: 100%;
+  height: 42px;
+
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+
+  background: #fafafa;
+
+  text-align: center;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: var(--text-primary);
+
+  outline: none;
+}
+
+/* BOTÃO */
+
+.schedule-btn {
+  width: 100%;
+  height: 46px;
+
+  border: none;
+  border-radius: var(--radius-md);
+
+  background: var(--primary);
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.schedule-btn:hover {
+  background: var(--primary-hover);
+}
+
+/* LOADING */
+
+.loading {
+  min-height: 60vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading p {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 1200px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  app-header-aluno {
+    width: 100%;
+    min-width: 100%;
+
+    height: auto;
+
+    position: relative;
+  }
+
+  .page {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-card {
+    position: relative;
+    top: 0;
   }
 }
 
-/* Agendamento */
-.schedule-card {
-  flex: 1;
-  background: #fff;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.05);
-  .map { width: 100%; height: 200px; border-radius: 8px; border: none; margin-bottom: 1rem; }
-  .calendar { margin-bottom: 1rem; }
-  .hours { display: flex; gap: 0.5rem; margin-bottom: 1rem; input { width: 60px; } }
-  .schedule-btn { width: 100%; padding: 0.75rem; background: #7b2cff; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+@media (max-width: 900px) {
+  .page {
+    padding: 18px;
+  }
+
+  .main-card,
+  .schedule-card {
+    padding: 18px;
+  }
+
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery-main img,
+  .gallery-main .thumb-empty {
+    height: 210px;
+  }
+
+  .gallery-side {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .vehicle-grid,
+  .extras-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-/* Loading */
-.loading { text-align: center; padding: 2rem; color: #555; }
+@media (max-width: 640px) {
+  .page {
+    padding: 14px;
+  }
+
+  .main-card,
+  .schedule-card {
+    padding: 16px;
+
+    border-radius: 18px;
+  }
+
+  .profile-left {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-info h2 {
+    font-size: 20px;
+  }
+
+  .gallery-main img,
+  .gallery-main .thumb-empty {
+    height: 190px;
+  }
+
+  .gallery-side {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hours {
+    grid-template-columns: 1fr;
+  }
+
+  .hours span {
+    display: none;
+  }
+}

@@ -1,72 +1,219 @@
-<app-header-aluno></app-header-aluno>
+<div class="layout">
 
-<div class="page" *ngIf="instrutor; else carregando">
+  <app-header-aluno></app-header-aluno>
 
-  <section class="main-card">
+  <div class="page" *ngIf="instrutor; else carregando">
 
-    <!-- Galeria de fotos do veículo -->
-    <div class="gallery">
-      <ng-container *ngFor="let foto of instrutor.fotosVeiculo">
-        <img [src]="foto" alt="Foto do veículo">
-      </ng-container>
-    </div>
+    <!-- CONTEÚDO -->
+    <section class="main-card">
 
-    <!-- Perfil do instrutor -->
-    <div class="profile">
-      <div class="avatar">
-        <img *ngIf="instrutor.fotoPerfilUrl" [src]="instrutor.fotoPerfilUrl" alt="Foto do instrutor">
-        <span *ngIf="!instrutor.fotoPerfilUrl">♡</span>
+      <!-- GALERIA -->
+      <div class="gallery">
+
+        <!-- FOTO PRINCIPAL -->
+        <div class="gallery-main">
+
+          <img *ngIf="instrutor.fotosVeiculo?.[0]; else semFotoPrincipal" [src]="instrutor.fotosVeiculo[0]"
+            alt="Foto principal do veículo">
+
+          <ng-template #semFotoPrincipal>
+            <div class="thumb-empty"></div>
+          </ng-template>
+
+        </div>
+
+        <!-- GRID LATERAL -->
+        <div class="gallery-side">
+
+          <!-- CARD 1 -->
+          <div class="thumb">
+
+            <img *ngIf="instrutor.fotosVeiculo?.[1]" [src]="instrutor.fotosVeiculo[1]" alt="Foto do veículo">
+
+            <div *ngIf="!instrutor.fotosVeiculo?.[1]" class="thumb-empty"></div>
+
+          </div>
+
+          <!-- CARD 2 -->
+          <div class="thumb">
+
+            <img *ngIf="instrutor.fotosVeiculo?.[2]" [src]="instrutor.fotosVeiculo[2]" alt="Foto do veículo">
+
+            <div *ngIf="!instrutor.fotosVeiculo?.[2]" class="thumb-empty"></div>
+
+          </div>
+
+          <!-- CARD 3 -->
+          <div class="thumb">
+
+            <img *ngIf="instrutor.fotosVeiculo?.[3]" [src]="instrutor.fotosVeiculo[3]" alt="Foto do veículo">
+
+            <div *ngIf="!instrutor.fotosVeiculo?.[3]" class="thumb-empty"></div>
+
+          </div>
+
+          <!-- CARD 4 -->
+          <div class="thumb">
+
+            <img *ngIf="instrutor.fotosVeiculo?.[4]" [src]="instrutor.fotosVeiculo[4]" alt="Foto do veículo">
+
+            <div *ngIf="!instrutor.fotosVeiculo?.[4]" class="thumb-empty"></div>
+
+          </div>
+
+        </div>
+
       </div>
-      <div class="profile-info">
-        <h3>{{ instrutor.nome }} <span *ngIf="instrutor.verificado">✦ Verificado</span></h3>
-        <p>{{ instrutor.bio }}</p>
+
+      <!-- PERFIL -->
+      <div class="profile">
+
+        <div class="profile-left">
+
+          <div class="avatar">
+
+            <img *ngIf="instrutor.fotoPerfilUrl" [src]="instrutor.fotoPerfilUrl" alt="Foto do instrutor">
+
+            <span *ngIf="!instrutor.fotoPerfilUrl">
+              👤
+            </span>
+
+          </div>
+
+          <div class="profile-info">
+
+            <h2>
+              {{ instrutor.nome }}
+
+              <span *ngIf="instrutor.verificado">
+                ✦ Verificado
+              </span>
+            </h2>
+
+            <p>{{ instrutor.bio }}</p>
+
+          </div>
+
+        </div>
+
       </div>
-    </div>
 
-    <!-- Informações do veículo -->
-    <h3>Veículo</h3>
-    <div class="vehicle-grid">
-      <div><label>Categoria</label><input [value]="instrutor.categoriaVeiculo" readonly></div>
-      <div><label>Câmbio</label><input [value]="instrutor.cambio" readonly></div>
-      <div><label>Cor</label><input [value]="instrutor.cor" readonly></div>
-      <div><label>Ano</label><input [value]="instrutor.ano" readonly></div>
-    </div>
+      <!-- VEÍCULO -->
+      <div class="section">
 
-    <!-- Recursos extras -->
-    <h3>Recursos extras</h3>
-    <div class="extras-grid">
-      <button *ngFor="let r of instrutor.recursos" class="active">{{ r }} ✓</button>
-    </div>
+        <h3>Veículo</h3>
 
-  </section>
+        <div class="vehicle-grid">
 
-  <!-- Agendamento -->
-  <aside class="schedule-card">
-    <h3>Localização</h3>
-<iframe 
-  *ngIf="mapaUrlSeguro" 
-  [src]="mapaUrlSeguro" 
-  width="100%" 
-  height="450" 
-  frameborder="0" 
-  style="border:0" 
-  allowfullscreen>
-</iframe>
+          <div>
+            <label>Categoria</label>
+            <input [value]="instrutor.categoriaVeiculo" readonly>
+          </div>
 
-<p *ngIf="!mapaUrlSeguro">Mapa não disponível para este local.</p>
+          <div>
+            <label>Câmbio</label>
+            <input [value]="instrutor.cambio" readonly>
+          </div>
 
-    <h3>Agenda</h3>
-    <div class="calendar">
-      <app-calendar></app-calendar>
-    </div>
+          <div>
+            <label>Cor</label>
+            <input [value]="instrutor.cor" readonly>
+          </div>
 
-    <p><strong>Horário:</strong> 08:00 até 12:00</p>
-    <div class="hours"><input value="08:00" readonly><span>até</span><input value="12:00" readonly></div>
+          <div>
+            <label>Ano</label>
+            <input [value]="instrutor.ano" readonly>
+          </div>
 
-    <button class="schedule-btn" (click)="agendarAula()">Agendar aula</button>
-  </aside>
+        </div>
+
+      </div>
+
+      <!-- RECURSOS -->
+      <div class="section">
+
+        <h3>Recursos extras</h3>
+
+        <div class="extras-grid">
+
+          <div *ngFor="let r of instrutor.recursos" class="extra-item active">
+            <span>{{ r }}</span>
+            <small>✓</small>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- MENU DIREITO -->
+    <aside class="schedule-card">
+
+      <!-- LOCALIZAÇÃO -->
+      <div class="schedule-section">
+
+        <h3>Localização</h3>
+
+        <p class="location-text">
+          {{ instrutor.localidade || instrutor.bairroCidade }}
+        </p>
+
+        <iframe *ngIf="mapaUrlSeguro" [src]="mapaUrlSeguro" loading="lazy" allowfullscreen>
+        </iframe>
+
+        <p *ngIf="!mapaUrlSeguro" class="mapa-vazio">
+          Mapa não disponível para este local.
+        </p>
+
+      </div>
+
+      <!-- CALENDÁRIO -->
+      <div class="schedule-section">
+
+        <h3>Agenda</h3>
+
+        <div class="calendar-wrapper">
+          <app-calendar></app-calendar>
+        </div>
+
+      </div>
+
+      <!-- HORÁRIO -->
+      <div class="schedule-section">
+
+        <p class="hours-title">
+          <strong>Horário:</strong>
+          08:00 até 12:00
+        </p>
+
+        <div class="hours">
+
+          <input value="08:00" readonly>
+
+          <span>até</span>
+
+          <input value="12:00" readonly>
+
+        </div>
+
+      </div>
+
+      <!-- BOTÃO -->
+      <button class="schedule-btn" (click)="agendarAula()">
+        Agendar aula
+      </button>
+
+    </aside>
+
+  </div>
+
 </div>
 
 <ng-template #carregando>
-  <div class="loading"><p>{{ mensagemCarregamento }}</p></div>
+
+  <div class="loading">
+    <p>{{ mensagemCarregamento }}</p>
+  </div>
+
 </ng-template>

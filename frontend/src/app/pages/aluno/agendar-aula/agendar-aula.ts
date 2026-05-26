@@ -4,11 +4,12 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CalendarioAgendamento } from '../../../components/layout/calendario-agendamento/calendario-agendamento';
+import { HeaderAluno } from '../../../components/layout/header-aluno/header-aluno';
 
 @Component({
   selector: 'app-agendar-aula',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FormsModule, CalendarioAgendamento],
+  imports: [CommonModule, HttpClientModule, FormsModule, CalendarioAgendamento, HeaderAluno],
   templateUrl: './agendar-aula.html',
   styleUrl: './agendar-aula.scss',
 })

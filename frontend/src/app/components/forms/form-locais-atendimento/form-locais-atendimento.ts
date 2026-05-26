@@ -39,6 +39,28 @@ export class FormLocaisAtendimento implements OnInit, OnChanges {
 
   constructor(private fb: FormBuilder, private http: HttpClient) {}
 
+  modalAberto = false;
+  modalTitulo = '';
+  modalMensagem = '';
+  modalErro = false;
+
+  abrirModal(
+    titulo: string,
+    mensagem: string,
+    erro = false
+  ): void {
+
+    this.modalTitulo = titulo;
+    this.modalMensagem = mensagem;
+    this.modalErro = erro;
+
+    this.modalAberto = true;
+  }
+
+  fecharModal(): void {
+    this.modalAberto = false;
+}
+
   ngOnInit(): void {
     this.formLocais = this.fb.group({
       enderecos: this.fb.array([])
@@ -135,11 +157,18 @@ export class FormLocaisAtendimento implements OnInit, OnChanges {
           this.enderecos.push(this.criarEndereco({...endereco, titulo: `Endereço ${i + 1}`}));
           this.modoEdicao[i] = false;
         });
-        alert('Endereço deletado com sucesso!');
+        this.abrirModal(
+          'Sucesso',
+          'Endereço deletado com sucesso!'
+        );
       },
       error: (err) => {
         console.error('Erro ao deletar endereço:', err);
-        alert('Erro ao deletar endereço.');
+        this.abrirModal(
+          'Erro',
+          'Erro ao deletar endereço.',
+          true
+        );
       }
     });
   }
@@ -150,12 +179,20 @@ export class FormLocaisAtendimento implements OnInit, OnChanges {
 
   salvarAlteracoes(): void {
     if (!this.usuarioId) {
-      alert('ID do usuário não encontrado.');
+      this.abrirModal(
+        'Erro',
+        'Erro ao deletar endereço.',
+        true
+      );
       return;
     }
 
     if (this.formLocais.invalid) {
-      alert('Preencha os campos obrigatórios.');
+      this.abrirModal(
+        'Erro',
+        'Preencha os campos obrigatórios.',
+        true
+      );
       return;
     }
 
@@ -181,11 +218,18 @@ export class FormLocaisAtendimento implements OnInit, OnChanges {
           this.modoEdicao[index] = false;
         });
         this.enderecoTemporarioIndex = null;
-        alert('Alterações salvas com sucesso!');
+        this.abrirModal(
+          'Sucesso',
+          'Alterações salvas com sucesso!'
+        );
       },
       error: (err) => {
         console.error('Erro ao salvar locais:', err);
-        alert('Erro ao salvar locais de atendimento.');
+        this.abrirModal(
+          'Erro',
+          'Erro ao carregar locais de atendimento.',
+          true
+        );
       }
     });
   }

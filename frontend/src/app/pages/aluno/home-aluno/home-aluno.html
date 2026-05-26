@@ -44,10 +44,10 @@
       </div>
     </div>
 
-  </div>
-  <div class="overlay-filtro" *ngIf="exibeModalFiltro" (click)="toggleModalFiltro()"></div>
-  <div *ngIf="exibeModalFiltro" class="modal-filtro">
-    <app-filtro></app-filtro>
-    <button class="fechar-modal" (click)="toggleModalFiltro()">✕</button>
+    <div class="overlay-filtro" *ngIf="exibeModalFiltro" (click)="toggleModalFiltro()"></div>
+    <div *ngIf="exibeModalFiltro" class="modal-filtro">
+      <app-filtro></app-filtro>
+      <button class="fechar-modal" (click)="toggleModalFiltro()">✕</button>
+    </div>
   </div>
 </div>

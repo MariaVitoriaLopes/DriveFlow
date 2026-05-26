@@ -1,0 +1,205 @@
+:host {
+  width: 100%;
+  display: block;
+}
+
+.calendar-area {
+  width: 100%;
+  max-width: 420px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* TOPO */
+
+.top-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.back-btn {
+  width: 36px;
+  height: 36px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #6d22e8;
+  color: #fff;
+
+  font-size: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #5b1bd0;
+}
+
+.top-link span {
+  font-size: 14px;
+  color: #374151;
+}
+
+/* TÍTULOS */
+
+.calendar-area h1 {
+  margin: 0;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  color: #111827;
+}
+
+.year {
+  margin-top: -10px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: #6d22e8;
+}
+
+/* HEADER */
+
+.calendar-header {
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+}
+
+.calendar-header strong {
+  text-align: center;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  color: #111827;
+}
+
+.calendar-header button {
+  width: 40px;
+  height: 40px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #f3f4f6;
+  color: #111827;
+
+  font-size: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.calendar-header button:hover {
+  background: #ebe5ff;
+}
+
+/* SEMANA */
+
+.week-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+
+  gap: 8px;
+}
+
+.week-days span {
+  text-align: center;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: #6b7280;
+}
+
+/* DIAS */
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+
+  gap: 10px;
+}
+
+.calendar-days button {
+  width: 42px;
+  height: 42px;
+
+  margin: 0 auto;
+
+  border: none;
+  border-radius: 14px;
+
+  background: transparent;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: #111827;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.calendar-days button:hover:not(:disabled) {
+  background: #f3e8ff;
+  color: #6d22e8;
+}
+
+.calendar-days button.selected {
+  background: #6d22e8;
+  color: #fff;
+}
+
+.calendar-days button.blocked,
+.calendar-days button:disabled {
+  color: #c4c7cf;
+  cursor: not-allowed;
+}
+
+.calendar-days button.blocked:hover,
+.calendar-days button:disabled:hover {
+  background: transparent;
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 640px) {
+  .calendar-area {
+    max-width: 100%;
+  }
+
+  .calendar-days button {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 12px;
+  }
+
+  .calendar-header strong {
+    font-size: 18px;
+  }
+
+  .calendar-area h1 {
+    font-size: 18px;
+  }
+}

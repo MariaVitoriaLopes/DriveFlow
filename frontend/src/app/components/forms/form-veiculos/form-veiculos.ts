@@ -46,7 +46,25 @@ export class FormVeiculos implements OnInit, OnChanges {
 
   fotosPreview: string[] = ['', '', '', ''];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) { }
+
+  modalAberto = false;
+  modalTitulo = '';
+  modalMensagem = '';
+  modalErro = false;
+
+  abrirModal(titulo: string,mensagem: string,erro = false): void {
+
+    this.modalTitulo = titulo;
+    this.modalMensagem = mensagem;
+    this.modalErro = erro;
+
+    this.modalAberto = true;
+  }
+
+  fecharModal(): void {
+    this.modalAberto = false;
+  }
 
   ngOnInit(): void {
     this.veiculoForm = this.fb.group({
@@ -120,7 +138,7 @@ export class FormVeiculos implements OnInit, OnChanges {
     if (!file) return;
 
     if (index < 0 || index > 3) {
-      alert('Você só pode escolher até 4 fotos.');
+      this.abrirModal("Erro", "Você só pode escolher até 4 fotos.")
       return;
     }
 
