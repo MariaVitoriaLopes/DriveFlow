@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-header-aluno',
@@ -11,6 +11,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class HeaderAluno {
   menuAberto = false;
+  private router = inject(Router);
 
   toggleMenu() {
     this.menuAberto = !this.menuAberto;
@@ -21,4 +22,13 @@ export class HeaderAluno {
       this.menuAberto = false;
     }
   }
+
+encerrarSessao() {
+  localStorage.clear();
+  sessionStorage.clear();
+
+  alert('Sua sessão foi encerrada!');
+
+  this.router.navigate(['/login']);
+}
 }

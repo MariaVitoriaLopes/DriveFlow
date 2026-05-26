@@ -159,11 +159,16 @@ export class AgendarAula implements OnInit, OnChanges {
 buscarHorariosDisponiveis(): void {
   if (!this.dataSelecionadaFormatada) return;
 
-  const instrutorId = this.instrutor?.instrutorId || this.instrutorId;
+  const usuarioIdAgenda = this.instrutor?.usuarioId;
+
+  if (!usuarioIdAgenda) {
+    this.mensagem = 'usuarioId do instrutor não encontrado.';
+    return;
+  }
 
   this.http
     .get<any>(
-      `${this.apiUrl}/aulas/disponiveis?instrutorId=${instrutorId}&data=${this.dataSelecionadaFormatada}`
+      `${this.apiUrl}/aulas/disponiveis?instrutorId=${usuarioIdAgenda}&data=${this.dataSelecionadaFormatada}`
     )
     .subscribe({
       next: (res) => {
