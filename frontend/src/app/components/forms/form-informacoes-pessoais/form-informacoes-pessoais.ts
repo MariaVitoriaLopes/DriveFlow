@@ -1,230 +1,237 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, ElementRef, ViewChild, inject, OnInit } from '@angular/core';
+import {FormBuilder,ReactiveFormsModule,Validators} from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-form-informacoes-pessoais',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './form-informacoes-pessoais.html',
-  styleUrls: ['./form-informacoes-pessoais.scss'],
+  styleUrl: './form-informacoes-pessoais.scss',
 })
 export class FormInformacoesPessoais implements OnInit {
-  form: FormGroup;
-
-  selectedFile: File | null = null;
-  photoPreview: string | ArrayBuffer | null = null;
-
-  usuarioId = '';
-  perfil: 'ALUNO' | 'INSTRUTOR' = 'ALUNO';
 
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
 
-  constructor() {
-    this.form = this.fb.group({
-      nome: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      senha: [''],
-      documento: ['', Validators.required],
-      dataNascimento: [''],
-      cep: [''],
-      logradouro: [''],
-      numero: [''],
-      complemento: [''],
-      bairro: [''],
-      cidade: [''],
-      uf: ['']
-    });
-  }
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
+  perfil = 'ALUNO';
+
+  photoPreview: string | null = null;
+
+  modalAberto = false;
+  modalTitulo = '';
+  modalMensagem = '';
+  modalErro = false;
+
+  form = this.fb.group({
+    nome: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email]],
+    senha: [''],
+    documento: ['', [Validators.required]],
+    dataNascimento: ['', [Validators.required]],
+
+    cep: ['', [Validators.required]],
+    logradouro: ['', [Validators.required]],
+    numero: ['', [Validators.required]],
+    complemento: [''],
+    bairro: ['', [Validators.required]],
+    cidade: ['', [Validators.required]],
+    uf: ['', [Validators.required]],
+  });
 
   ngOnInit(): void {
-    this.carregarUsuarioLogado();
-    this.carregarUsuario();
 
-    this.form.get('cep')?.valueChanges.subscribe((cep) => {
-      const cepLimpo = (cep || '').replace(/\D/g, '');
+    // Exemplo de carregamento do usuário
+    // Você pode substituir pela sua API real
 
-      if (cepLimpo.length === 8) {
-        this.buscarEnderecoPorCep(cepLimpo);
-      }
-    });
+    const usuario = localStorage.getItem('usuario');
+
+    if (usuario) {
+
+      const dadosUsuario = JSON.parse(usuario);
+
+      this.perfil = dadosUsuario.perfil || 'ALUNO';
+
+      this.form.patchValue({
+        nome: dadosUsuario.nome || '',
+        email: dadosUsuario.email || '',
+        documento: dadosUsuario.cpf || '',
+      });
+    }
   }
 
-  carregarUsuarioLogado(): void {
-    const usuarioStorage = localStorage.getItem('usuario');
-    const usuarioIdStorage = localStorage.getItem('usuarioId');
+  abrirModal(
+    titulo: string,
+    mensagem: string,
+    erro = false
+  ): void {
 
-    if (!usuarioStorage) return;
+    this.modalTitulo = titulo;
+    this.modalMensagem = mensagem;
+    this.modalErro = erro;
 
-    const usuario = JSON.parse(usuarioStorage);
-
-    this.usuarioId =
-      usuarioIdStorage ||
-      usuario.id ||
-      usuario?.usuario?.id ||
-      '';
-
-    this.perfil = usuario.perfil || usuario?.usuario?.perfil || 'ALUNO';
+    this.modalAberto = true;
   }
 
-  carregarUsuario(): void {
-    if (!this.usuarioId) {
-      console.error('ID do usuário não encontrado.');
+  fecharModal(): void {
+    this.modalAberto = false;
+  }
+
+  onFileSelected(event: Event): void {
+
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0) {
       return;
     }
 
-    if (this.perfil === 'INSTRUTOR') {
-      this.http
-        .get<any>(`http://localhost:8081/api/instrutores/configuracoes/${this.usuarioId}`)
-        .subscribe({
-          next: (data) => {
-            const usuario = data.usuario || data;
+    const file = input.files[0];
 
-            this.preencherFormulario(usuario);
-          },
-          error: (err) => {
-            console.error('Erro ao carregar dados do instrutor:', err);
-          }
-        });
+    const tiposPermitidos = [
+      'image/png',
+      'image/jpeg',
+      'image/jpg'
+    ];
+
+    if (!tiposPermitidos.includes(file.type)) {
+
+      this.abrirModal(
+        'Formato inválido',
+        'Envie apenas imagens PNG, JPG ou JPEG.',
+        true
+      );
 
       return;
     }
-
-    this.http.get<any[]>('http://localhost:8081/api/usuarios').subscribe({
-      next: (usuarios) => {
-        const aluno = usuarios.find((u) => u.id === this.usuarioId);
-
-        if (!aluno) {
-          console.error('Aluno não encontrado em /api/usuarios.');
-          return;
-        }
-
-        this.preencherFormulario(aluno);
-      },
-      error: (err) => {
-        console.error('Erro ao carregar dados do aluno:', err);
-      }
-    });
-  }
-
-  preencherFormulario(usuario: any): void {
-    this.form.patchValue({
-      nome: usuario.nome || '',
-      email: usuario.email || '',
-      senha: '',
-      documento: usuario.cpf || usuario.cnh || '',
-      dataNascimento: usuario.dataNascimento || '',
-      cep: usuario.cep || '',
-      logradouro: usuario.logradouro || '',
-      numero: usuario.numero || '',
-      complemento: usuario.complemento || '',
-      bairro: usuario.bairro || '',
-      cidade: usuario.cidade || '',
-      uf: usuario.uf || ''
-    });
-
-    this.photoPreview = usuario.foto || null;
-  }
-
-  buscarEnderecoPorCep(cep: string): void {
-    this.http.get<any>(`https://viacep.com.br/ws/${cep}/json/`).subscribe({
-      next: (data) => {
-        if (!data.erro) {
-          this.form.patchValue({
-            logradouro: data.logradouro,
-            bairro: data.bairro,
-            cidade: data.localidade,
-            uf: data.uf
-          });
-        }
-      },
-      error: (err) => console.error('Erro ao buscar CEP:', err)
-    });
-  }
-
-  onFileSelected(event: any): void {
-    const file = event?.target?.files?.[0];
-
-    if (!file) return;
-
-    this.selectedFile = file;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
-      this.photoPreview = e.target?.result ?? null;
+
+    reader.onload = () => {
+      this.photoPreview = reader.result as string;
     };
 
     reader.readAsDataURL(file);
   }
 
   removePhoto(): void {
-    this.selectedFile = null;
+
     this.photoPreview = null;
+
+    if (this.fileInput) {
+      this.fileInput.nativeElement.value = '';
+    }
   }
 
   resetSenha(): void {
-    this.form.patchValue({ senha: '' });
+
+    this.abrirModal(
+      'Redefinição de senha',
+      'Um link de redefinição de senha será enviado para seu e-mail.'
+    );
   }
 
-  onDocumentoInput(event: any): void {
-    const valorRaw = event?.target?.value ?? '';
-    let valor = valorRaw.replace(/\D/g, '');
+  onDocumentoInput(event: Event): void {
+
+    const input = event.target as HTMLInputElement;
+
+    let valor = input.value.replace(/\D/g, '');
 
     if (valor.length > 11) {
       valor = valor.slice(0, 11);
     }
 
-    this.form.get('documento')?.setValue(valor, { emitEvent: false });
+    if (this.perfil !== 'INSTRUTOR') {
+
+      if (valor.length > 9) {
+
+        valor = valor.replace(
+          /(\d{3})(\d{3})(\d{3})(\d{1,2})/,
+          '$1.$2.$3-$4'
+        );
+
+      } else if (valor.length > 6) {
+
+        valor = valor.replace(
+          /(\d{3})(\d{3})(\d{1,3})/,
+          '$1.$2.$3'
+        );
+
+      } else if (valor.length > 3) {
+
+        valor = valor.replace(
+          /(\d{3})(\d{1,3})/,
+          '$1.$2'
+        );
+      }
+    }
+
+    this.form.get('documento')?.setValue(valor, {
+      emitEvent: false
+    });
   }
 
   descartar(): void {
-    this.selectedFile = null;
-    this.carregarUsuario();
+
+    this.form.reset();
+
+    this.photoPreview = null;
+
+    this.abrirModal(
+      'Alterações descartadas',
+      'Todas as alterações foram removidas.'
+    );
   }
 
   onSubmit(): void {
+
     if (this.form.invalid) {
+
       this.form.markAllAsTouched();
-      return;
-    }
 
-    const dados = {
-      nome: this.form.value.nome,
-      email: this.form.value.email,
-      cpf: this.form.value.documento,
-      dataNascimento: this.form.value.dataNascimento,
-      cep: this.form.value.cep,
-      logradouro: this.form.value.logradouro,
-      numero: this.form.value.numero,
-      complemento: this.form.value.complemento,
-      bairro: this.form.value.bairro,
-      cidade: this.form.value.cidade,
-      uf: this.form.value.uf
-    };
-
-    if (this.perfil === 'INSTRUTOR') {
-      this.http
-        .put(`http://localhost:8081/api/usuarios/${this.usuarioId}/dados-pessoais`, dados)
-        .subscribe({
-          next: () => alert('Dados do instrutor atualizados com sucesso!'),
-          error: (err) => {
-            console.error('Erro ao atualizar instrutor:', err);
-            alert('Erro ao atualizar dados do instrutor.');
-          }
-        });
+      this.abrirModal(
+        'Erro ao salvar',
+        'Preencha todos os campos corretamente.',
+        true
+      );
 
       return;
     }
 
-    this.http
-      .put(`http://localhost:8081/api/usuarios/${this.usuarioId}/dados-pessoais`, dados)
+    const dados = this.form.getRawValue();
+
+    // Exemplo de requisição
+    // Troque pela sua URL real
+
+    this.http.put(
+      'http://localhost:8081/api/usuarios',
+      dados
+    )
+
       .subscribe({
-        next: () => alert('Dados do aluno atualizados com sucesso!'),
-        error: (err) => {
-          console.error('Erro ao atualizar aluno:', err);
-          alert('Erro ao atualizar dados do aluno.');
+
+        next: () => {
+
+          this.abrirModal(
+            'Alterações salvas',
+            'Seus dados foram atualizados com sucesso.'
+          );
+        },
+
+        error: (erro) => {
+
+          console.error(
+            'Erro ao salvar:',
+            erro
+          );
+
+          this.abrirModal(
+            'Erro ao salvar',
+            'Não foi possível atualizar seus dados.',
+            true
+          );
         }
       });
   }

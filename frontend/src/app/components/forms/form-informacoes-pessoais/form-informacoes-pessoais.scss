@@ -526,3 +526,87 @@
     }
 
 }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+
+  padding: 16px;
+}
+
+.modal {
+  width: 100%;
+  max-width: 420px;
+
+  background: #fff;
+
+  border-radius: 18px;
+
+  padding: 24px;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.15);
+
+  animation: modalEntrada 0.2s ease;
+}
+
+.modal h2 {
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: #111827;
+}
+
+.modal p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #4b5563;
+
+  margin-bottom: 20px;
+}
+
+.modal button {
+  width: 100%;
+
+  border: none;
+
+  background: #6d22e8;
+  color: white;
+
+  padding: 12px;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  font-weight: 600;
+
+  transition: 0.2s;
+}
+
+.modal button:hover {
+  background: #5b1bd0;
+}
+
+.modal.erro h2 {
+  color: #dc2626;
+}
+
+@keyframes modalEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

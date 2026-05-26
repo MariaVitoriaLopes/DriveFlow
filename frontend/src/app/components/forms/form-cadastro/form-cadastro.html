@@ -13,15 +13,15 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
   <label>Nome:</label>
-  <input type="text" formControlName="nome" placeholder="Seu nome completo ...">
+  <input type="text" formControlName="nome" placeholder="Seu nome completo ..." required>
 
   <label>{{ isInstrutor ? 'CNH' : 'CPF' }}:</label>
 <input type="text" formControlName="cpf" maxlength="14"
        (input)="onCpfCnhInput($event)"
-       placeholder="Insira somente os números {{ isInstrutor ? 'da sua CNH' : 'do seu CPF' }}">
+       placeholder="Insira somente os números {{ isInstrutor ? 'da sua CNH' : 'do seu CPF' }}" required>
 
   <label>E-mail:</label>
-  <input type="email" formControlName="email" placeholder="nome@email.com">
+  <input type="email" formControlName="email" placeholder="nome@email.com" required>
 
   <label>Senha:</label>
   <div class="input-icon">
@@ -30,6 +30,7 @@
       [type]="mostrarSenha ? 'text' : 'password'"
       formControlName="senha"
       placeholder="Escolha uma senha segura"
+      required
     >
     <span class="icon" (click)="toggleSenha()">
       {{ mostrarSenha ? '🙈' : '👁️' }}
@@ -51,17 +52,24 @@
       [type]="mostrarRepetirSenha ? 'text' : 'password'"
       formControlName="confirmarSenha"
       placeholder="Insira a mesma senha"
+      required
     >
     <span class="icon" (click)="toggleRepetirSenha()">
       {{ mostrarRepetirSenha ? '🙈' : '👁️' }}
     </span>
   </div>
-
+  
   <div class="termos">
-    <input type="checkbox" formControlName="termos">
+    <input type="checkbox" formControlName="termos" required>
     <span>Concordo com os termos</span>
   </div>
+  <span class="requisitos" *ngIf="mensagemErro">
+    {{ mensagemErro }}
+  </span>
 
+  <span class="requisitos ok" *ngIf="mensagemSucesso">
+    {{ mensagemSucesso }}
+  </span>
   <button type="submit" class="btn-criar" [ngClass]="{ 'btn-instrutor': isInstrutor }" [disabled]="form.invalid">
     Criar conta como {{ isInstrutor ? 'INSTRUTOR' : 'ALUNO' }}
   </button>

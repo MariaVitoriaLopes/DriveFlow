@@ -1,11 +1,11 @@
 <form [formGroup]="form" (ngSubmit)="onLogin()">
 
   <label>E-mail</label>
-  <input type="email" formControlName="email" placeholder="nome@email.com">
+  <input type="email" formControlName="email" placeholder="nome@email.com" required>
 
   <label>Senha</label>
   <div class="input-icon">
-    <input [type]="mostrarSenha ? 'text' : 'password'" formControlName="senha" placeholder="Escolha uma senha segura">
+    <input [type]="mostrarSenha ? 'text' : 'password'" formControlName="senha" placeholder="Insira sua senha" required>
 
     <button type="button" class="icon" (click)="toggleSenha()">
       {{ mostrarSenha ? '🙈' : '👁️' }}

@@ -1,11 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  inject
+} from '@angular/core';
+
 import {
   AbstractControl,
   FormBuilder,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -17,31 +25,44 @@ import { Router } from '@angular/router';
   styleUrl: './form-cadastro.scss',
 })
 export class FormCadastro implements OnInit {
+
   @Input() isInstrutor: boolean = false;
 
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   mostrarSenha = false;
   mostrarRepetirSenha = false;
 
+  mensagemErro = '';
+  mensagemSucesso = '';
+
   form = this.fb.group(
     {
       nome: ['', [Validators.required, Validators.minLength(3)]],
+
       email: ['', [Validators.required, Validators.email]],
+
       cpf: ['', [Validators.required]],
+
       senha: [
         '',
         [
           Validators.required,
           Validators.minLength(8),
-          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s]+$/)
+          Validators.pattern(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s]+$/
+          )
         ]
       ],
+
       confirmarSenha: ['', [Validators.required]],
+
       termos: [false, [Validators.requiredTrue]]
     },
+
     { validators: this.senhasIguais }
   );
 
@@ -59,7 +80,9 @@ export class FormCadastro implements OnInit {
     const senha = form.get('senha')?.value;
     const confirmarSenha = form.get('confirmarSenha')?.value;
 
-    return senha === confirmarSenha ? null : { senhasDiferentes: true };
+    return senha === confirmarSenha
+      ? null
+      : { senhasDiferentes: true };
   }
 
   onTipoChange(event: any) {
@@ -68,29 +91,64 @@ export class FormCadastro implements OnInit {
   }
 
   onCpfCnhInput(event: any) {
-    let valor: string = event?.target?.value?.replace(/\D/g, '') || '';
+
+    let valor: string =
+      event?.target?.value?.replace(/\D/g, '') || '';
 
     if (this.isInstrutor) {
-      if (valor.length > 11) valor = valor.slice(0, 11);
+
+      if (valor.length > 11) {
+        valor = valor.slice(0, 11);
+      }
+
     } else {
-      if (valor.length > 11) valor = valor.slice(0, 11);
+
+      if (valor.length > 11) {
+        valor = valor.slice(0, 11);
+      }
 
       if (valor.length > 9) {
-        valor = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+
+        valor = valor.replace(
+          /(\d{3})(\d{3})(\d{3})(\d{1,2})/,
+          '$1.$2.$3-$4'
+        );
+
       } else if (valor.length > 6) {
-        valor = valor.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+
+        valor = valor.replace(
+          /(\d{3})(\d{3})(\d{1,3})/,
+          '$1.$2.$3'
+        );
+
       } else if (valor.length > 3) {
-        valor = valor.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+
+        valor = valor.replace(
+          /(\d{3})(\d{1,3})/,
+          '$1.$2'
+        );
       }
     }
 
-    this.form.get('cpf')?.setValue(valor, { emitEvent: false });
+    this.form.get('cpf')?.setValue(valor, {
+      emitEvent: false
+    });
   }
 
   onSubmit() {
+
+    this.mensagemErro = '';
+    this.mensagemSucesso = '';
+
     if (this.form.invalid) {
-      alert('Preencha todos os campos corretamente, aceite os termos e confirme a senha.');
+
+      this.mensagemErro =
+        'Preencha todos os campos corretamente, aceite os termos e confirme a senha.';
+
       this.form.markAllAsTouched();
+
+      this.cdr.detectChanges();
+
       return;
     }
 
@@ -99,20 +157,46 @@ export class FormCadastro implements OnInit {
       email: this.form.value.email || '',
       senha: this.form.value.senha || '',
       cpf: this.form.value.cpf || '',
-      perfil: this.isInstrutor ? 'INSTRUTOR' : 'ALUNO',
+      perfil: this.isInstrutor
+        ? 'INSTRUTOR'
+        : 'ALUNO',
     };
 
-    this.http.post('http://localhost:8081/api/usuarios/cadastro', dadosParaEnviar)
+    this.http
+      .post(
+        'http://localhost:8081/api/usuarios/cadastro',
+        dadosParaEnviar
+      )
+
       .subscribe({
+
         next: () => {
-          alert('Cadastro realizado com sucesso!');
+
+          this.mensagemSucesso =
+            'Cadastro realizado com sucesso!';
+
           this.form.reset();
+
           this.isInstrutor = false;
-          this.router.navigate(['/login']);
+
+          this.cdr.detectChanges();
+
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 1500);
         },
+
         error: (erro) => {
-          console.error('Erro na comunicação com o Backend:', erro);
-          alert('Erro ao cadastrar. Verifique se o backend está rodando na porta 8081.');
+
+          console.error(
+            'Erro na comunicação com o Backend:',
+            erro
+          );
+
+          this.mensagemErro =
+            'Erro ao cadastrar. Verifique os dados ou tente novamente mais tarde.';
+
+          this.cdr.detectChanges();
         }
       });
   }
@@ -121,9 +205,23 @@ export class FormCadastro implements OnInit {
     return this.form.get('senha');
   }
 
-  temMaiuscula() { return /[A-Z]/.test(this.searchSenha?.value || ''); }
-  temMinuscula() { return /[a-z]/.test(this.searchSenha?.value || ''); }
-  temNumero() { return /\d/.test(this.searchSenha?.value || ''); }
-  temEspecial() { return /[\W_]/.test(this.searchSenha?.value || ''); }
-  temTamanho() { return (this.searchSenha?.value || '').length >= 8; }
+  temMaiuscula() {
+    return /[A-Z]/.test(this.searchSenha?.value || '');
+  }
+
+  temMinuscula() {
+    return /[a-z]/.test(this.searchSenha?.value || '');
+  }
+
+  temNumero() {
+    return /\d/.test(this.searchSenha?.value || '');
+  }
+
+  temEspecial() {
+    return /[\W_]/.test(this.searchSenha?.value || '');
+  }
+
+  temTamanho() {
+    return (this.searchSenha?.value || '').length >= 8;
+  }
 }

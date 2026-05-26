@@ -35,7 +35,7 @@ export class FormLogin {
 
     if (this.form.invalid) {
       this.mensagemErro = 'Preencha os campos corretamente.';
-      this.cdr.detectChanges();
+      // this.cdr.detectChanges();
       return;
     }
 
