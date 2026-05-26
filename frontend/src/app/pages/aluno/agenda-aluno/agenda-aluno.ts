@@ -3,11 +3,12 @@ import { Component, OnInit, inject } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { CalendarioAgenda } from '../../../components/layout/calendario-agenda/calendario-agenda';
+import { HeaderAluno } from '../../../components/layout/header-aluno/header-aluno';
 
 @Component({
   selector: 'app-agenda-aluno',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, CalendarioAgenda],
+  imports: [CommonModule, HttpClientModule, CalendarioAgenda, HeaderAluno],
   templateUrl: './agenda-aluno.html',
   styleUrl: './agenda-aluno.scss'
 })

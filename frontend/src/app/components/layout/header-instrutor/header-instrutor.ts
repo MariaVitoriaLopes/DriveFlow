@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-header-instrutor',
@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 })
 export class HeaderInstrutor {
   menuAberto = false;
+    private router = inject(Router);
 
   toggleMenu() {
     this.menuAberto = !this.menuAberto;
@@ -53,4 +54,14 @@ export class HeaderInstrutor {
       alert('Seu navegador não suporta compartilhamento. O link foi copiado!');
     }
   }
+
+  
+encerrarSessao() {
+  localStorage.clear();
+  sessionStorage.clear();
+
+  alert('Sua sessão foi encerrada!');
+
+  this.router.navigate(['/login']);
+}
 }

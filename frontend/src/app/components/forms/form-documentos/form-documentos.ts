@@ -60,6 +60,8 @@ export class FormDocumentos implements OnChanges {
   carregarDocumentos(): void {
     this.documentos.clear();
 
+    console.log('CNH RECEBIDA:', this.instrutor?.cnh);
+
     if (this.instrutor.cnh) {
       this.documentos.push(this.criarDocumentoForm('CNH', this.instrutor.cnh));
     } else {
