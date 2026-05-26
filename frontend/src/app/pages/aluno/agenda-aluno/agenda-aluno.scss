@@ -1,0 +1,147 @@
+.agenda-page {
+  min-height: 100vh;
+  background: #f7f7f9;
+  padding: 48px 32px;
+  font-family: Arial, sans-serif;
+
+  h1 {
+    font-size: 22px;
+    margin-bottom: 18px;
+  }
+}
+
+.agenda-grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 28px;
+  max-width: 1180px;
+}
+
+.calendar-card,
+.day-card {
+  background: #fff;
+  border: 1px solid #c8c8d2;
+  border-radius: 18px;
+  padding: 28px;
+}
+
+.day-card {
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  h2 {
+    font-size: 18px;
+  }
+
+  span {
+    width: 34px;
+    height: 34px;
+    background: #7614f7;
+    color: #fff;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+}
+
+.empty,
+.message {
+  font-size: 14px;
+  color: #666;
+}
+
+.aula-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.aula-item {
+  min-height: 56px;
+  display: grid;
+  grid-template-columns: 54px 42px 1fr 32px;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid #bdbdc8;
+  position: relative;
+}
+
+.hora {
+  font-size: 14px;
+
+  small {
+    display: block;
+    font-size: 11px;
+    color: #777;
+  }
+}
+
+.foto {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #ddd;
+  object-fit: cover;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+
+  strong {
+    font-size: 14px;
+  }
+
+  small {
+    font-size: 11px;
+    color: #666;
+  }
+}
+
+.menu-btn {
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.menu-opcoes {
+  position: absolute;
+  right: 0;
+  top: 45px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+  z-index: 5;
+  overflow: hidden;
+
+  button {
+    display: block;
+    width: 160px;
+    border: none;
+    background: #fff;
+    padding: 10px 12px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  button:hover {
+    background: #f1ecff;
+  }
+}
+
+@media (max-width: 900px) {
+  .agenda-grid {
+    grid-template-columns: 1fr;
+  }
+}

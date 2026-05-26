@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PerfilAgendamento } from './perfil-agendamento';
+import { CalendarioAgendamento } from './calendario-agendamento';
 
-describe('PerfilAgendamento', () => {
-  let component: PerfilAgendamento;
-  let fixture: ComponentFixture<PerfilAgendamento>;
+describe('CalendarioAgendamento', () => {
+  let component: CalendarioAgendamento;
+  let fixture: ComponentFixture<CalendarioAgendamento>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PerfilAgendamento],
+      imports: [CalendarioAgendamento],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(PerfilAgendamento);
+    fixture = TestBed.createComponent(CalendarioAgendamento);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

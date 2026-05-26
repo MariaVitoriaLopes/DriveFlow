@@ -15,7 +15,7 @@ import { CalendarComponent } from '../../../components/layout/calendario/calenda
 })
 export class PerfilInstrutor implements OnInit {
   instrutor: any;
-  mapaUrlSeguro!: SafeResourceUrl;
+  mapaUrlSeguro: SafeResourceUrl | null = null; // Inicialize como null
   mensagemCarregamento = 'Carregando dados do instrutor...';
 
   constructor(
@@ -42,28 +42,23 @@ export class PerfilInstrutor implements OnInit {
     this.carregarPerfilInstrutor(instrutorId);
   }
 
-  carregarPerfilInstrutor(instrutorId: string) {
+carregarPerfilInstrutor(instrutorId: string) {
     const url = `http://localhost:8081/api/instrutores/configuracoes/detalhes-aluno/${instrutorId}`;
+    
     this.http.get(url).subscribe({
       next: (data: any) => {
         this.instrutor = data;
 
-        // Fallback de descrição
-        if (!this.instrutor.bio) this.instrutor.bio = 'Sem descrição';
+        // ... seus fallbacks ...
 
-        // Fallback de recursos extras
-        if (!this.instrutor.recursos || !this.instrutor.recursos.length) {
-          this.instrutor.recursos = ['Ar-condicionado', 'ABS', 'Direção hidráulica'];
-        }
-
-        // Map safe
+        // CORREÇÃO: Construção segura da URL
         const endereco = this.instrutor.localidade || this.instrutor.bairroCidade;
         if (endereco) {
+          // Ajustado: concatenado corretamente o encodeURIComponent
           const urlMapa = `https://www.google.com/maps?q=${encodeURIComponent(endereco)}&output=embed`;
           this.mapaUrlSeguro = this.sanitizer.bypassSecurityTrustResourceUrl(urlMapa);
         }
 
-        // Atualiza a view
         this.cdr.detectChanges();
       },
       error: () => {
@@ -72,16 +67,19 @@ export class PerfilInstrutor implements OnInit {
     });
   }
 
-agendarAula() {
-  if (!this.instrutor) return;
+agendarAula(): void {
+  const id = this.instrutor?.instrutorId || this.instrutor?.id;
 
-  // Corrigido: usar this.instrutor
-  sessionStorage.setItem('instrutorIdSelecionado', this.instrutor.id);
+  if (!id) {
+    console.error('ID do instrutor não encontrado:', this.instrutor);
+    return;
+  }
 
-  // Salva também no localStorage se quiser
-  localStorage.setItem('instrutorIdSelecionado', this.instrutor.id);
+  sessionStorage.setItem('instrutorIdSelecionado', id);
+  localStorage.setItem('instrutorIdSelecionado', id);
 
-  // Redireciona para a página de agendamento
-  this.router.navigate(['/aluno/perfil-agendamento']);
+  this.router.navigate(['/aluno/agendamento'], {
+    state: { instrutorId: id }
+  });
 }
 }

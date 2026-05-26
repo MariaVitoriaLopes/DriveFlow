@@ -1,6 +1,7 @@
 package backend.controller;
 
 import backend.dto.DisponibilidadeDiaResponseDTO;
+import backend.dto.AulaAgendaDTO;
 import backend.model.Aula;
 import backend.service.AulaService;
 import lombok.RequiredArgsConstructor;
@@ -41,5 +42,15 @@ public class AulaController {
     @PutMapping("/{aulaId}/cancelar")
     public ResponseEntity<Aula> cancelar(@PathVariable String aulaId) {
         return ResponseEntity.ok(aulaService.cancelarAula(aulaId));
+    }
+
+    @GetMapping("/aluno/{alunoId}")
+    public ResponseEntity<List<AulaAgendaDTO>> listarAulasDoAluno(@PathVariable String alunoId) {
+        return ResponseEntity.ok(aulaService.listarAulasDoAluno(alunoId));
+    }
+
+    @GetMapping("/instrutor/{instrutorId}")
+    public ResponseEntity<List<AulaAgendaDTO>> listarAulasDoInstrutor(@PathVariable String instrutorId) {
+        return ResponseEntity.ok(aulaService.listarAulasDoInstrutor(instrutorId));
     }
 }

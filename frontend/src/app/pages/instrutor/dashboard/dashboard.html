@@ -31,19 +31,19 @@
         </article>
         <div class="stats-cards">
             <article class="card info-card">
-                <div class="circle">4</div>
-                <h3>Alunos hoje</h3>
-                <p>4 aulas foram marcadas para hoje</p>
+<div class="circle">{{ totalHoje }}</div>
+<h3>Alunos hoje</h3>
+<p>{{ totalHoje }} aulas foram marcadas para hoje</p>
             </article>
             <article class="card info-card">
-                <div class="circle">0</div>
-                <h3>Dias de folga</h3>
-                <p>Esta semana não possui dias livres</p>
+<div class="circle">{{ diasFolgaSemana }}</div>
+<h3>Dias de folga</h3>
+<p>Esta semana possui {{ diasFolgaSemana }} dias livres</p>
             </article>
             <article class="card info-card">
-                <div class="circle">41</div>
-                <h3>Alunos nesta semana</h3>
-                <p>41 aulas foram marcadas nesta semana</p>
+<div class="circle">{{ totalSemana }}</div>
+<h3>Alunos nesta semana</h3>
+<p>{{ totalSemana }} aulas foram marcadas nesta semana</p>
             </article>
             <article class="card info-card">
                 <div class="circle">4.9</div>
@@ -52,55 +52,84 @@
             </article>
         </div>
     </div>
-    <h2 class="section-title">Agenda</h2>
-    <div class="agenda-grid">
-        <app-calendar [selectedDate]="selectedDate" (dateSelected)="onDateSelected($event)"></app-calendar>
-        <article class="card today-card">
-            <div class="students">
-                <h3>Agenda de hoje</h3>
-                @for (lesson of todayLessons; track lesson.time) {
-                    <div class="lesson">
-                        <span class="time">{{ lesson.time }}</span>
-                        <div class="avatar"></div>
-                        <p class="name">{{ lesson.student }}</p>
-                        <button class="menu" type="button">⋮</button>
-                    </div>
-                }
-            </div>
-            <a class="view-all" href="#">Ver agenda completa</a>
-        </article>
+<h2 class="section-title">Agenda</h2>
 
-        <div class="right-area">
-            <article class="card availability">
-                <span>Disponibilidade para novas aulas</span>
+<div class="agenda-grid">
+  <app-calendario-agenda
+    [aulas]="aulas"
+    [dataSelecionada]="selectedDate"
+    (dataSelecionadaChange)="onDateSelected($event)">
+  </app-calendario-agenda>
 
-                <label class="switch">
-                    <input type="checkbox" checked />
-                    <span></span>
-                </label>
-            </article>
+  <article class="card today-card">
+    <div class="students">
+      <h3>{{ tituloAgenda }}</h3>
 
-            <article class="card student-card">
-                <div class="student-icons">
-                    <span>♔</span>
-                    <span>☏</span>
-                </div>
-                <div class="student-header">
-                    <div class="avatar big"></div>
-                    <div>
-                        <h3>Ana</h3>
-                        <small>Primeira aula</small>
-                    </div>
-                </div>
-                <div class="student-info">
-                    <p><strong>Horário:</strong> 08:00</p>
-                    <p><strong>Local:</strong> Av. Paulista, 1000, Bela Vista, São Paulo - SP</p>
-                </div>
-                <div class="buttons">
-                    <button class="cancel" type="button">Cancelar aula</button>
-                    <button class="start" type="button">Iniciar aula</button>
-                </div>
-            </article>
-        </div>
+      <p class="empty" *ngIf="todayLessons.length === 0">
+        Nenhuma aula agendada para este dia.
+      </p>
+
+      <div class="lesson" *ngFor="let lesson of todayLessons">
+        <span class="time">{{ lesson.horarioInicio }}</span>
+        <img class="avatar" [src]="getFotoAluno(lesson)" alt="Foto do aluno" />
+        <p class="name">{{ getNomeAluno(lesson) }}</p>
+        <button class="menu" type="button">⋮</button>
+      </div>
     </div>
+
+    <a class="view-all" routerLink="/instrutor/agenda">Ver agenda completa</a>
+  </article>
+
+  <div class="right-area">
+    <article class="card availability">
+      <span>Disponibilidade para novas aulas</span>
+
+      <label class="switch">
+        <input
+          type="checkbox"
+          [checked]="disponibilidadeNovasAulas"
+          (change)="alterarDisponibilidade()"
+        />
+        <span></span>
+      </label>
+    </article>
+
+    <article class="card student-card" *ngIf="primeiraAula; else semAula">
+      <div class="student-icons">
+        <span>♔</span>
+        <span>☏</span>
+      </div>
+
+      <div class="student-header">
+        <img class="avatar big" [src]="getFotoAluno(primeiraAula)" alt="Foto do aluno" />
+
+        <div>
+          <h3>{{ getNomeAluno(primeiraAula) }}</h3>
+          <small>Primeira aula</small>
+        </div>
+      </div>
+
+      <div class="student-info">
+        <p><strong>Horário:</strong> {{ primeiraAula.horarioInicio }}</p>
+        <p><strong>Local:</strong> {{ primeiraAula.localEncontro || 'Local não informado' }}</p>
+      </div>
+
+      <div class="buttons">
+        <button class="cancel" type="button" (click)="cancelarAula(primeiraAula)">
+          Cancelar aula
+        </button>
+
+        <button class="start" type="button" (click)="iniciarAula(primeiraAula)">
+          Iniciar aula
+        </button>
+      </div>
+    </article>
+
+    <ng-template #semAula>
+      <article class="card student-card">
+        <p>Nenhuma primeira aula para este dia.</p>
+      </article>
+    </ng-template>
+  </div>
+</div>
 </section>

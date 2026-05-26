@@ -1,225 +1,268 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HeaderInstrutor } from '../../../components/layout/header-instrutor/header-instrutor';
-import { CalendarComponent } from '../../../components/layout/calendario/calendario';
-
-interface Aula {
-  horario: string;
-  aluno?: string;
-}
+import { CalendarioAgenda } from '../../../components/layout/calendario-agenda/calendario-agenda';
 
 interface HorarioAgenda {
   dia: string;
+  diaBackend: string;
   inicio: string;
   fim: string;
   bloqueio: boolean;
 }
+
 @Component({
   selector: 'app-agenda',
-  imports: [HeaderInstrutor, RouterLink, CalendarComponent, HttpClientModule, CommonModule],
+  standalone: true,
+  imports: [CommonModule, HttpClientModule, RouterLink, HeaderInstrutor, CalendarioAgenda],
   templateUrl: './agenda.html',
   styleUrl: './agenda.scss',
 })
-export class Agenda {
+export class Agenda implements OnInit {
   private http = inject(HttpClient);
+  public router = inject(Router);
 
-  selectedDate = new Date();
+  apiUrl = 'http://localhost:8081/api';
 
-  onDateSelected(date: Date): void {
-    this.selectedDate = date;
-    console.log('Data selecionada:', date);
-  }
+  usuarioId = localStorage.getItem('usuarioId') || localStorage.getItem('userId') || '';
 
-  hoje = new Date();
+  agenda: any = null;
+  aulas: any[] = [];
+  aulasDoDia: any[] = [];
 
-  anoAtual = this.hoje.getFullYear();
-  mesAtualNumero = this.hoje.getMonth();
-  diaAtual = this.hoje.getDate();
-
-  mesAtual = this.hoje.toLocaleDateString('pt-BR', {
-    month: 'long'
-  });
-
-  diasCalendario: (number | null)[] = [];
+  dataSelecionada = new Date();
 
   disponibilidadeNovasAulas = true;
 
-  duracaoAula = 60;
-  intervaloAulas = 15;
+  duracaoAula = 0;
+  intervaloAulas = 0;
+  valorAula = 0;
+  toleranciaEspera = 0;
 
   horarios: HorarioAgenda[] = [];
   folgas: number[] = [];
 
-  aulasHoje: Aula[] = [];
-  diasComAula: number[] = [];
-
   resumoSemana = [
-    { dia: 'Dom', quantidade: 0 },
-    { dia: 'Seg', quantidade: 0 },
-    { dia: 'Ter', quantidade: 0 },
-    { dia: 'Qua', quantidade: 0 },
-    { dia: 'Qui', quantidade: 0 },
-    { dia: 'Sex', quantidade: 0 },
-    { dia: 'Sáb', quantidade: 0 },
+    { dia: 'Dom', diaBackend: 'DOMINGO', quantidade: 0 },
+    { dia: 'Seg', diaBackend: 'SEGUNDA', quantidade: 0 },
+    { dia: 'Ter', diaBackend: 'TERCA', quantidade: 0 },
+    { dia: 'Qua', diaBackend: 'QUARTA', quantidade: 0 },
+    { dia: 'Qui', diaBackend: 'QUINTA', quantidade: 0 },
+    { dia: 'Sex', diaBackend: 'SEXTA', quantidade: 0 },
+    { dia: 'Sáb', diaBackend: 'SABADO', quantidade: 0 },
   ];
 
-  usuarioId = '';
+  menuAbertoId: string | null = null;
+  mensagem = '';
 
   ngOnInit(): void {
-
-
-    this.usuarioId =
-      localStorage.getItem('usuarioId') ||
-      localStorage.getItem('userId') ||
-      '';
-
-    this.gerarCalendario();
-    this.carregarAgenda();
+    this.carregarTudo();
   }
 
-  carregarAgenda(): void {
+  carregarTudo(): void {
+    this.carregarConfigAgenda();
+    this.carregarAulas();
+  }
+
+  carregarConfigAgenda(): void {
     if (!this.usuarioId) {
-      console.warn('usuarioId não encontrado no localStorage');
+      this.mensagem = 'Instrutor não identificado.';
       return;
     }
 
-    this.http
-      .get<any>(`http://localhost:8081/api/instrutores/agenda/${this.usuarioId}`)
+    this.http.get<any>(`${this.apiUrl}/agenda-config/usuario/${this.usuarioId}`)
       .subscribe({
-        next: (agenda : any) => {
-          console.log('AGENDA RECEBIDA:', agenda);
-
+        next: (agenda) => {
           if (!agenda) return;
 
+          this.agenda = agenda;
+
           this.disponibilidadeNovasAulas = agenda.disponibilidadeNovasAulas ?? true;
-          this.duracaoAula = agenda.duracaoAula ?? 60;
-          this.intervaloAulas = agenda.intervaloAula ?? 15;
+          this.duracaoAula = Number(agenda.duracaoAula || 0);
+          this.intervaloAulas = Number(agenda.intervaloAula || 0);
+          this.valorAula = Number(agenda.valorAula || 0);
+          this.toleranciaEspera = Number(agenda.toleranciaEspera || 0);
 
           this.horarios = (agenda.disponibilidades || []).map((item: any) => ({
             dia: this.nomeDiaCurto(item.diaSemana),
+            diaBackend: item.diaSemana,
             inicio: item.horaInicio,
             fim: item.horaFim,
             bloqueio: item.bloqueado === true
           }));
 
-          this.aulasHoje = agenda.aulasHoje || [];
-          this.diasComAula = agenda.diasComAula || [];
-
-          this.gerarResumoSemana();
           this.gerarFolgas();
         },
-
-        error: (erro : any) => {
-          console.error('Erro ao carregar agenda:', erro);
+        error: (err) => {
+          console.error('Erro ao carregar configuração da agenda:', err);
+          this.mensagem = 'Erro ao carregar configuração da agenda.';
         }
       });
   }
 
-  alterarDisponibilidade(): void {
-    const novoValor = !this.disponibilidadeNovasAulas;
-    this.disponibilidadeNovasAulas = novoValor;
+  carregarAulas(): void {
+    if (!this.usuarioId) return;
 
-    this.http
-      .put(`http://localhost:8081/api/instrutores/agenda/${this.usuarioId}`, {
-        disponibilidadeNovasAulas: novoValor,
-        duracaoAula: this.duracaoAula,
-        intervaloAula: this.intervaloAulas,
-        disponibilidades: this.horarios.map(h => ({
-          diaSemana: this.nomeDiaBackend(h.dia),
-          horaInicio: h.inicio,
-          horaFim: h.fim,
-          bloqueado: h.bloqueio
-        }))
-      })
+    this.http.get<any[]>(`${this.apiUrl}/aulas/instrutor/${this.usuarioId}`)
       .subscribe({
-        error: (erro) => {
-          console.error('Erro ao alterar disponibilidade:', erro);
-          this.disponibilidadeNovasAulas = !novoValor;
+        next: (res) => {
+          this.aulas = res || [];
+          this.filtrarAulasDoDia();
+          this.gerarResumoSemana();
+        },
+        error: (err) => {
+          console.error('Erro ao carregar aulas:', err);
+          this.mensagem = 'Erro ao carregar aulas.';
+        }
+      });
+  }
+
+  selecionarData(data: Date): void {
+    this.dataSelecionada = data;
+    this.menuAbertoId = null;
+    this.filtrarAulasDoDia();
+  }
+
+  filtrarAulasDoDia(): void {
+    const data = this.formatarDataApi(this.dataSelecionada);
+
+    this.aulasDoDia = this.aulas
+      .filter(aula => aula.data === data && aula.status !== 'CANCELADA')
+      .sort((a, b) => String(a.horarioInicio).localeCompare(String(b.horarioInicio)));
+  }
+
+  get primeiraAulaDoDia(): any | null {
+    return this.aulasDoDia.length ? this.aulasDoDia[0] : null;
+  }
+
+  get tituloAgenda(): string {
+    const hoje = this.formatarDataApi(new Date());
+    const selecionada = this.formatarDataApi(this.dataSelecionada);
+
+    return hoje === selecionada
+      ? 'Agenda de hoje'
+      : `Agenda do dia ${this.dataSelecionada.toLocaleDateString('pt-BR')}`;
+  }
+
+  getNomeAluno(aula: any): string {
+    return aula.alunoNome || aula.nomeAluno || aula.aluno?.nome || 'Aluno';
+  }
+
+  getFotoAluno(aula: any): string {
+    return aula.alunoFotoUrl || aula.fotoAlunoUrl || aula.aluno?.fotoUrl || '/images/avatar-placeholder.png';
+  }
+
+  abrirMenu(aulaId: string): void {
+    this.menuAbertoId = this.menuAbertoId === aulaId ? null : aulaId;
+  }
+
+  cancelarAula(aula: any): void {
+    if (!confirm('Deseja cancelar esta aula?')) return;
+
+    this.http.put(`${this.apiUrl}/aulas/${aula.id}/cancelar`, {})
+      .subscribe({
+        next: () => {
+          alert('Aula cancelada com sucesso.');
+          this.menuAbertoId = null;
+          this.carregarAulas();
+        },
+        error: (err) => {
+          console.error('Erro ao cancelar aula:', err);
+          alert('Erro ao cancelar aula.');
+        }
+      });
+  }
+
+  denunciar(aula: any): void {
+    alert('Função de denúncia ainda será implementada.');
+    this.menuAbertoId = null;
+  }
+
+  iniciarAula(aula: any): void {
+    alert('Função de iniciar aula ainda será implementada.');
+  }
+
+  alterarDisponibilidade(): void {
+    this.disponibilidadeNovasAulas = !this.disponibilidadeNovasAulas;
+
+    const payload = {
+      ...this.agenda,
+      usuarioId: this.usuarioId,
+      disponibilidadeNovasAulas: this.disponibilidadeNovasAulas,
+      duracaoAula: this.duracaoAula,
+      valorAula: this.valorAula,
+      intervaloAula: this.intervaloAulas,
+      toleranciaEspera: this.toleranciaEspera,
+      disponibilidades: this.horarios.map(h => ({
+        diaSemana: h.diaBackend,
+        horaInicio: h.inicio,
+        horaFim: h.fim,
+        bloqueado: h.bloqueio
+      }))
+    };
+
+    this.http.post(`${this.apiUrl}/agenda-config/salvar`, payload)
+      .subscribe({
+        next: () => {
+          alert(
+            this.disponibilidadeNovasAulas
+              ? 'Agenda ativada para novas aulas.'
+              : 'Agenda bloqueada para novas aulas.'
+          );
+        },
+        error: (err) => {
+          console.error('Erro ao alterar disponibilidade:', err);
+          this.disponibilidadeNovasAulas = !this.disponibilidadeNovasAulas;
+          alert('Erro ao alterar disponibilidade.');
         }
       });
   }
 
   gerarResumoSemana(): void {
     this.resumoSemana = this.resumoSemana.map(item => {
-      const existeAgenda = this.horarios.some(h => h.dia === item.dia);
+      const quantidade = this.aulas.filter(aula => {
+        if (!aula.data || aula.status === 'CANCELADA') return false;
 
-      return {
-        ...item,
-        quantidade: existeAgenda ? 1 : 0
-      };
+        const data = this.criarDataLocal(aula.data);
+        return this.nomeDiaBackendPorData(data) === item.diaBackend;
+      }).length;
+
+      return { ...item, quantidade };
     });
   }
 
   gerarFolgas(): void {
-    const diasDisponiveis = this.horarios
+    const diasComAtendimento = this.horarios
       .filter(h => !h.bloqueio)
-      .map(h => h.dia);
+      .map(h => h.diaBackend);
+
+    const ano = this.dataSelecionada.getFullYear();
+    const mes = this.dataSelecionada.getMonth();
+    const totalDiasMes = new Date(ano, mes + 1, 0).getDate();
 
     this.folgas = [];
 
-    const totalDiasMes = new Date(
-      this.anoAtual,
-      this.mesAtualNumero + 1,
-      0
-    ).getDate();
-
     for (let dia = 1; dia <= totalDiasMes; dia++) {
-      const data = new Date(this.anoAtual, this.mesAtualNumero, dia);
-      const diaSemana = this.nomeDiaCurto(data.getDay());
+      const data = new Date(ano, mes, dia);
+      const diaBackend = this.nomeDiaBackendPorData(data);
 
-      if (!diasDisponiveis.includes(diaSemana)) {
+      if (!diasComAtendimento.includes(diaBackend)) {
         this.folgas.push(dia);
       }
     }
   }
 
-  gerarCalendario(): void {
-    const primeiroDiaMes = new Date(
-      this.anoAtual,
-      this.mesAtualNumero,
-      1
-    ).getDay();
-
-    const totalDiasMes = new Date(
-      this.anoAtual,
-      this.mesAtualNumero + 1,
-      0
-    ).getDate();
-
-    this.diasCalendario = [];
-
-    for (let i = 0; i < primeiroDiaMes; i++) {
-      this.diasCalendario.push(null);
-    }
-
-    for (let dia = 1; dia <= totalDiasMes; dia++) {
-      this.diasCalendario.push(dia);
-    }
-  }
-
-  temAula(dia: number | null): boolean {
-    if (!dia) return false;
-    return this.diasComAula.includes(dia);
-  }
-
   intensidadeBolinha(quantidade: number): string {
-    if (quantidade >= 6) return 'dark';
+    if (quantidade >= 5) return 'dark';
     if (quantidade >= 3) return 'strong';
     if (quantidade >= 1) return 'medium';
     return '';
   }
 
-  nomeDiaCurto(dia: number | string): string {
+  nomeDiaCurto(dia: string): string {
     const dias: any = {
-      0: 'Dom',
-      1: 'Seg',
-      2: 'Ter',
-      3: 'Qua',
-      4: 'Qui',
-      5: 'Sex',
-      6: 'Sáb',
       DOMINGO: 'Dom',
       SEGUNDA: 'Seg',
       TERCA: 'Ter',
@@ -231,20 +274,22 @@ export class Agenda {
       SÁBADO: 'Sáb'
     };
 
-    return dias[dia] || String(dia);
+    return dias[dia] || dia;
   }
 
-  nomeDiaBackend(dia: string): string {
-    const dias: any = {
-      Dom: 'DOMINGO',
-      Seg: 'SEGUNDA',
-      Ter: 'TERCA',
-      Qua: 'QUARTA',
-      Qui: 'QUINTA',
-      Sex: 'SEXTA',
-      Sáb: 'SABADO'
-    };
+  nomeDiaBackendPorData(data: Date): string {
+    return ['DOMINGO', 'SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO'][data.getDay()];
+  }
 
-    return dias[dia] || dia;
+  criarDataLocal(data: string): Date {
+    const [ano, mes, dia] = data.split('-').map(Number);
+    return new Date(ano, mes - 1, dia);
+  }
+
+  formatarDataApi(data: Date): string {
+    const ano = data.getFullYear();
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const dia = String(data.getDate()).padStart(2, '0');
+    return `${ano}-${mes}-${dia}`;
   }
 }

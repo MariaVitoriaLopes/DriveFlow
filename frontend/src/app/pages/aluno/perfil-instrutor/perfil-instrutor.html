@@ -43,7 +43,17 @@
   <!-- Agendamento -->
   <aside class="schedule-card">
     <h3>Localização</h3>
-    <iframe class="map" [src]="mapaUrlSeguro" loading="lazy"></iframe>
+<iframe 
+  *ngIf="mapaUrlSeguro" 
+  [src]="mapaUrlSeguro" 
+  width="100%" 
+  height="450" 
+  frameborder="0" 
+  style="border:0" 
+  allowfullscreen>
+</iframe>
+
+<p *ngIf="!mapaUrlSeguro">Mapa não disponível para este local.</p>
 
     <h3>Agenda</h3>
     <div class="calendar">

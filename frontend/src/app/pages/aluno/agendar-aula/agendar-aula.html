@@ -1,42 +1,11 @@
 <section class="agendar-page">
   <div class="agendar-card">
     <!-- CALENDÁRIO -->
-    <div class="calendar-area">
-      <div class="top-link">
-        <button type="button" class="back-btn" (click)="router.navigate(['/aluno'])">‹</button>
-        <span>Home</span>
-      </div>
-
-      <h1>Agendar</h1>
-      <p class="year">{{ anoAtual }}</p>
-
-      <div class="calendar-header">
-        <button type="button" (click)="mudarMes(-1)">‹</button>
-        <strong>{{ mesAtual }}</strong>
-        <button type="button" (click)="mudarMes(1)">›</button>
-      </div>
-
-      <div class="week-days">
-        <span>D</span>
-        <span>S</span>
-        <span>T</span>
-        <span>Q</span>
-        <span>Q</span>
-        <span>S</span>
-        <span>S</span>
-      </div>
-
-      <div class="calendar-days">
-        <button
-          *ngFor="let dia of diasCalendario"
-          [class.selected]="dataSelecionada && dia.data?.getTime() === dataSelecionada.getTime()"
-          [disabled]="dia.foraDoMes"
-          (click)="selecionarDia(dia)"
-        >
-          {{ dia.dia || '-' }}
-        </button>
-      </div>
-    </div>
+    <app-calendario-agendamento
+      [disponibilidades]="disponibilidadesAgenda"
+      [dataSelecionada]="dataSelecionada"
+      (dataSelecionadaChange)="aoSelecionarData($event)">
+    </app-calendario-agendamento>
 
     <!-- FORMULÁRIO DE AGENDAMENTO -->
     <div class="form-area">
@@ -63,20 +32,19 @@
           Início
           <select [(ngModel)]="horarioInicio" (ngModelChange)="aoAlterarHorario()">
             <option value="">Selecione</option>
+
             <option *ngFor="let h of horariosDisponiveis" [value]="h.inicio">
-              {{ h.inicio }}
+              {{ h.inicio }} - termina {{ h.fimUmaAula }}
             </option>
           </select>
         </label>
 
         <label>
           Quantidade de aulas
-          <select [(ngModel)]="quantidadeAulas" (ngModelChange)="aoAlterarHorario()">
-            <option [value]="1">1 aula</option>
-            <option [value]="2" [disabled]="!horariosDisponiveis.find(h => h.inicio === horarioInicio)?.podeDuasAula">
-              2 aulas
-            </option>
-          </select>
+            <select [(ngModel)]="quantidadeAulas" (ngModelChange)="aoAlterarHorario()">
+              <option [ngValue]="1">1 aula</option>
+              <option [ngValue]="2" [disabled]="!podeDuasAulasSelecionado()">2 aulas</option>
+            </select>
         </label>
       </div>
 
@@ -103,8 +71,15 @@
       </div>
 
       <div class="actions">
-        <button class="cancel" type="button" (click)="router.navigate(['/aluno'])">Cancelar</button>
-        <button class="submit" type="button" (click)="agendarAula()">Agendar aula</button>
+        <button class="cancel" type="button" (click)="router.navigate(['/aluno/perfil-instrutor'])">Cancelar</button>
+        <button
+          class="submit"
+          type="button"
+          [disabled]="!dataSelecionadaFormatada || !horarioInicio || !horarioFim"
+          (click)="agendarAula()"
+        >
+          Agendar aula
+        </button>
       </div>
     </div>
   </div>

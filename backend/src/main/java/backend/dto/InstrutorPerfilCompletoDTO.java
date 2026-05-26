@@ -6,10 +6,13 @@ import java.util.List;
 
 @Data
 public class InstrutorPerfilCompletoDTO {
+
+    private String usuarioId;
     private String instrutorId;
     private String nome;
     private String bio;
     private String fotoPerfilUrl;
+    private String localEncontro;
 
     // Dados do Veículo Principal
     private String veiculoId;

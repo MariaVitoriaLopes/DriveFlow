@@ -244,3 +244,14 @@ select:focus {
     grid-template-columns: 1fr;
   }
 }
+
+.calendar-days button.blocked {
+  color: #c2c2c2;
+  background: #f1f1f1;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.calendar-days button:disabled:hover {
+  background: #f1f1f1;
+}

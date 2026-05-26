@@ -3,222 +3,133 @@
 <section class="agenda-page">
   <h2>Agenda</h2>
 
-  <div class="content">
-    <section class="top">
-      <div>
-        <!-- <div class="year">{{ anoAtual }}</div> 
-
-      <div class="calendar-header">
-        <button>‹</button>
-
-        <strong>
-          {{ mesAtual }}
-        </strong>
-
-        <button>›</button>
-      </div>
-
-      <div class="week-days">
-        <span>D</span>
-        <span>S</span>
-        <span>T</span>
-        <span>Q</span>
-        <span>Q</span>
-        <span>S</span>
-        <span>S</span>
-      </div> -->
-      <app-calendar [selectedDate]="selectedDate" (dateSelected)="onDateSelected($event)" class="calendario-agenda"></app-calendar>
-      <!-- <div class="calendar-days">
-        @for (dia of diasCalendario; track $index) {
-
-          <div class="day">
-
-            @if (dia) {
-
-              <span [class.today]="dia === diaAtual">
-                {{ dia }}
-              </span>
-
-              @if (temAula(dia)) {
-                <small></small>
-                }
-                }
-          </div>
-          } 
-        </div>
-        -->
+  <div class="agenda-grid">
+    <div class="calendar-card">
+      <app-calendario-agenda
+        [aulas]="aulas"
+        [dataSelecionada]="dataSelecionada"
+        (dataSelecionadaChange)="selecionarData($event)">
+      </app-calendario-agenda>
     </div>
 
-    <!-- AGENDA DE HOJE -->
-    <div class="card today-card">
-
+    <aside class="card today-card">
       <div class="today-header">
-        <h3>Agenda de hoje</h3>
-
-        <div class="count">
-          {{ aulasHoje.length }}
-        </div>
+        <h3>{{ tituloAgenda }}</h3>
+        <div class="count">{{ aulasDoDia.length }}</div>
       </div>
+
+      <p class="message" *ngIf="mensagem">{{ mensagem }}</p>
+
+      <p class="empty" *ngIf="!mensagem && aulasDoDia.length === 0">
+        Nenhuma aula agendada para este dia.
+      </p>
 
       <div class="schedule-list">
+        <div class="schedule-item" *ngFor="let aula of aulasDoDia">
+          <span class="time">{{ aula.horarioInicio }}</span>
 
-        @for (aula of aulasHoje; track $index) {
+          <img class="avatar" [src]="getFotoAluno(aula)" alt="Foto do aluno" />
 
-          <div
-            class="schedule-item"
-            [class.with-student]="aula.aluno"
-          >
+          <p>{{ getNomeAluno(aula) }}</p>
 
-            <span>
-              {{ aula.horario }}
-            </span>
+          <button class="dots" type="button" (click)="abrirMenu(aula.id)">⋮</button>
 
-            @if (aula.aluno) {
-
-              <div class="avatar"></div>
-
-              <p>
-                {{ aula.aluno }}
-              </p>
-
-              <button>⋮</button>
-
-            }
-
+          <div class="menu-opcoes" *ngIf="menuAbertoId === aula.id">
+            <button type="button" (click)="cancelarAula(aula)">Cancelar aula</button>
+            <button type="button" (click)="denunciar(aula)">Denunciar aluno</button>
           </div>
-
-        }
-
+        </div>
       </div>
+    </aside>
 
-    </div>
-    </section>
-    <section class="bottom">
-      <div class="card student-card">
+    <div class="card student-card" *ngIf="primeiraAulaDoDia; else semPrimeiraAula">
       <div class="student-icons">
         <span>♔</span>
         <span>☏</span>
       </div>
 
       <div class="student-header">
-
-        <div class="avatar big"></div>
+        <img class="avatar big" [src]="getFotoAluno(primeiraAulaDoDia)" alt="Foto do aluno" />
 
         <div>
-          <h3>Ana</h3>
+          <h3>{{ getNomeAluno(primeiraAulaDoDia) }}</h3>
           <small>Primeira aula</small>
         </div>
-
       </div>
-      
-      <p><strong>Horário:</strong> 08:00</p>
-      
+
+      <p>
+        <strong>Horário:</strong>
+        {{ primeiraAulaDoDia.horarioInicio }}
+      </p>
+
       <p>
         <strong>Local de encontro:</strong>
-        Av. Paulista, 1000, Bela Vista, São Paulo - SP
+        {{ primeiraAulaDoDia.localEncontro || 'Local não informado' }}
       </p>
-      
-      <div class="actions">
 
-        <button class="cancel">
+      <div class="actions">
+        <button class="cancel" type="button" (click)="cancelarAula(primeiraAulaDoDia)">
           Cancelar aula
         </button>
 
-        <button class="start">
+        <button class="start" type="button" (click)="iniciarAula(primeiraAulaDoDia)">
           Iniciar aula
         </button>
-
       </div>
-
     </div>
-    
-    <div class="middle-column">
 
-      <!-- DISPONIBILIDADE -->
+    <ng-template #semPrimeiraAula>
+      <div class="card student-card empty-card">
+        <p>Nenhuma aula selecionada para este dia.</p>
+      </div>
+    </ng-template>
+
+    <div class="middle-column">
       <div class="card availability">
         <span>Disponibilidade para novas aulas</span>
-        
-        <label class="switch">
 
+        <label class="switch">
           <input
             type="checkbox"
             [checked]="disponibilidadeNovasAulas"
             (change)="alterarDisponibilidade()"
           />
-
           <span></span>
-
         </label>
-
       </div>
 
-      <!-- RESUMO -->
       <div class="card summary-card">
         <h3>Resumo da sua agenda</h3>
-        
+
         <div class="dots-week">
-
-          @for (item of resumoSemana; track item.dia) {
-
-            <div>
-
-              <span>
-                {{ item.dia }}
-              </span>
-
-              <small
-                [ngClass]="intensidadeBolinha(item.quantidade)"
-              ></small>
-
-            </div>
-
-          }
-
+          <div *ngFor="let item of resumoSemana">
+            <span>{{ item.dia }}</span>
+            <small [ngClass]="intensidadeBolinha(item.quantidade)"></small>
+          </div>
         </div>
 
         <div class="inputs">
-
           <label>
             Duração das aulas
-
-            <input
-              type="text"
-              [value]="duracaoAula + ' minutos'"
-              readonly
-            />
+            <input type="text" [value]="duracaoAula + ' minutos'" readonly />
           </label>
 
           <label>
             Intervalos entre aulas
-
-            <input
-              type="text"
-              [value]="intervaloAulas + ' minutos'"
-              readonly
-            />
+            <input type="text" [value]="intervaloAulas + ' minutos'" readonly />
           </label>
-
         </div>
 
-        <button
-          class="edit"
-          routerLink="/instrutor/cadastro-agenda"
-        >
+        <button class="edit" routerLink="/instrutor/cadastro-agenda">
           Editar agenda
         </button>
-
       </div>
-
     </div>
-    
-    <div class="card hours-card">
 
-      <h3>
-        Horários
-      </h3>
+    <div class="card hours-card">
+      <h3>Horários</h3>
 
       <div class="hours-table">
-
         <div class="table-head">
           <span>Dias</span>
           <span>Início</span>
@@ -226,50 +137,24 @@
           <span>Bloqueio</span>
         </div>
 
-        @for (item of horarios; track item.dia) {
-
-          <div class="table-row">
-            <div>
-              <span>{{ item.dia }}</span>
-            </div>
-            <div>
-              <span>{{ item.inicio }}</span>
-            </div>
-            <div>
-              <span>{{ item.fim }}</span>
-            </div>
-            <input type="checkbox" [checked]="item.bloqueio" />
-          </div>
-
-        }
-
+        <div class="table-row" *ngFor="let item of horarios">
+          <span>{{ item.dia }}</span>
+          <span>{{ item.inicio }}</span>
+          <span>{{ item.fim }}</span>
+          <input type="checkbox" [checked]="item.bloqueio" disabled />
+        </div>
       </div>
-
     </div>
 
-    <!-- <div class="card breaks-card">
+    <div class="card breaks-card">
       <h3>Folgas</h3>
 
       <div class="break-list">
-
-        @for (folga of folgas; track $index) {
-
-          <div class="break-item">
-
-            <strong>
-              {{ folga }}
-            </strong>
-
-            <span>
-              {{ mesAtual }}
-            </span>
-
-          </div>
-
-        }
-
+        <div class="break-item" *ngFor="let folga of folgas">
+          <strong>{{ folga }}</strong>
+          <span>{{ dataSelecionada.toLocaleDateString('pt-BR', { month: 'long' }) }}</span>
+        </div>
       </div>
-    </div> -->
-    </section>
+    </div>
   </div>
 </section>

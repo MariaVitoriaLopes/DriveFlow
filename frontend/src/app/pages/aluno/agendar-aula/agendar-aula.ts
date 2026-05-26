@@ -1,63 +1,57 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges, Input, inject } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { CalendarioAgendamento } from '../../../components/layout/calendario-agendamento/calendario-agendamento';
 
 @Component({
   selector: 'app-agendar-aula',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FormsModule],
+  imports: [CommonModule, HttpClientModule, FormsModule, CalendarioAgendamento],
   templateUrl: './agendar-aula.html',
   styleUrl: './agendar-aula.scss',
 })
-export class AgendarAula implements OnInit {
+export class AgendarAula implements OnInit, OnChanges {
   private http = inject(HttpClient);
   public router = inject(Router);
+
+  @Input() instrutorIdInput = '';
 
   apiUrl = 'http://localhost:8081/api';
 
   instrutorId = '';
-  alunoId = localStorage.getItem('usuarioId') || '';
+  alunoId = localStorage.getItem('usuarioId') || localStorage.getItem('userId') || '';
 
-  instrutor: any;
-  agenda: any;
-  aulasDoDia: any[] = [];
+  instrutor: any = null;
+  agenda: any = null;
 
-  hoje = new Date();
-  anoAtual = this.hoje.getFullYear();
-  mesAtualNumero = this.hoje.getMonth();
-  diaAtual = this.hoje.getDate();
+  veiculoId = '';
+  localEncontro = 'Local não informado';
+  veiculoTexto = 'Carregando veículo...';
 
-  mesAtual = '';
-  diasCalendario: { dia: number; data?: Date; foraDoMes?: boolean }[] = [];
-  dataSelecionada: Date | null = null;
-  dataSelecionadaFormatada = '';
-
-  duracaoAula = 60;
+  duracaoAula = 0;
   intervaloAula = 0;
   toleranciaEspera = 0;
   valorAula = 0;
-  taxa = 0.12;
+  taxa = 0;
 
-  localEncontro = 'Local não informado';
-  veiculoTexto = 'Veículo não informado';
+  dataSelecionada: Date | null = null;
+  dataSelecionadaFormatada = '';
 
   horariosDisponiveis: any[] = [];
   horarioInicio = '';
   horarioFim = '';
   quantidadeAulas = 1;
 
-  carregando = false;
   mensagem = '';
-
-  mapaUrl!: SafeResourceUrl;
 
   ngOnInit(): void {
     this.instrutorId =
+      this.instrutorIdInput ||
       history.state?.instrutorId ||
       sessionStorage.getItem('instrutorIdSelecionado') ||
+      localStorage.getItem('instrutorIdSelecionado') ||
       '';
 
     if (!this.instrutorId) {
@@ -65,130 +59,257 @@ export class AgendarAula implements OnInit {
       return;
     }
 
-    this.gerarCalendario();
-    this.carregarDadosInstrutor();
+    this.carregarInstrutor();
   }
 
-  carregarDadosInstrutor(): void {
-    this.carregando = true;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['instrutorIdInput']?.currentValue) {
+      this.instrutorId = changes['instrutorIdInput'].currentValue;
+      this.carregarInstrutor();
+    }
+  }
 
+  get disponibilidadesAgenda(): any[] {
+    return this.agenda?.disponibilidades || [];
+  }
+
+  carregarInstrutor(): void {
     this.http
-      .get<any>(`${this.apiUrl}/instrutores/configuracoes/${this.instrutorId}`)
+      .get<any>(`${this.apiUrl}/instrutores/configuracoes/detalhes-aluno/${this.instrutorId}`)
       .subscribe({
         next: (res) => {
+          console.log('INSTRUTOR RECEBIDO:', res);
+
           this.instrutor = res;
 
-          // Pega o endereço favorito
-          const local = res.locaisAtendimento?.find((l: any) => l.favorito) || res.locaisAtendimento?.[0];
-          this.localEncontro = local
-            ? `${local.logradouro || ''} - ${local.bairro || ''}, ${local.cidade || ''}`
-            : 'Local não informado';
+          this.veiculoId = res?.veiculoId || '';
+          this.valorAula = Number(res?.valorAula || 0);
+          this.duracaoAula = Number(res?.duracaoAula || 0);
+          this.intervaloAula = Number(res?.intervaloAula || 0);
+          this.toleranciaEspera = Number(res?.toleranciaAtraso || 0);
+          this.localEncontro = res?.localEncontro || 'Local não informado';
 
-          // Veículo principal
-          const veiculo = res.veiculos?.find((v: any) => v.principal) || res.veiculos?.[0];
-          this.veiculoTexto = veiculo
-            ? `${veiculo.marca} ${veiculo.modelo} ${veiculo.cor} ${veiculo.ano}`
-            : 'Veículo não informado';
+          this.veiculoTexto = [
+            res?.marca,
+            res?.modelo,
+            res?.cor,
+            res?.ano,
+            res?.cambio,
+            res?.categoriaVeiculo
+          ].filter(Boolean).join(' ') || 'Veículo não informado';
 
-          this.duracaoAula = res.duracaoAula;
-          this.intervaloAula = res.intervaloAula;
-          this.toleranciaEspera = res.toleranciaEspera;
-          this.valorAula = res.valorAula;
-
-          this.carregando = false;
-
-          this.gerarMapa(this.localEncontro);
+          this.carregarAgendaInstrutor();
         },
-        error: () => {
-          this.carregando = false;
+        error: (err) => {
+          console.error('Erro ao carregar instrutor:', err);
           this.mensagem = 'Erro ao carregar dados do instrutor.';
-        },
+        }
       });
   }
 
-  gerarCalendario(): void {
-    const primeiroDia = new Date(this.anoAtual, this.mesAtualNumero, 1);
-    const ultimoDia = new Date(this.anoAtual, this.mesAtualNumero + 1, 0);
-    const diaSemanaInicio = primeiroDia.getDay();
-    const totalDiasMes = ultimoDia.getDate();
+  carregarAgendaInstrutor(): void {
+    const usuarioIdAgenda = this.instrutor?.usuarioId;
 
-    this.mesAtual = primeiroDia.toLocaleDateString('pt-BR', { month: 'long' });
-    this.mesAtual = this.mesAtual.charAt(0).toUpperCase() + this.mesAtual.slice(1);
-
-    const dias: any[] = [];
-    for (let i = diaSemanaInicio - 1; i >= 0; i--) {
-      dias.push({ dia: null, foraDoMes: true });
+    if (!usuarioIdAgenda) {
+      this.mensagem = 'usuarioId do instrutor não veio do backend.';
+      return;
     }
-    for (let dia = 1; dia <= totalDiasMes; dia++) {
-      dias.push({ dia, data: new Date(this.anoAtual, this.mesAtualNumero, dia) });
-    }
-    while (dias.length % 7 !== 0) dias.push({ dia: null, foraDoMes: true });
-    this.diasCalendario = dias;
-  }
 
-  mudarMes(direcao: number): void {
-    this.mesAtualNumero += direcao;
-    if (this.mesAtualNumero < 0) {
-      this.mesAtualNumero = 11;
-      this.anoAtual--;
-    }
-    if (this.mesAtualNumero > 11) {
-      this.mesAtualNumero = 0;
-      this.anoAtual++;
-    }
-    this.gerarCalendario();
-  }
-
-  selecionarDia(item: any): void {
-    if (!item.data) return;
-    this.dataSelecionada = item.data;
-    this.dataSelecionadaFormatada = this.formatarDataApi(item.data);
-    this.buscarAulasDoDia();
-  }
-
-  buscarAulasDoDia(): void {
     this.http
-      .get<any[]>(`${this.apiUrl}/aulas/instrutor/${this.instrutorId}/dia?data=${this.dataSelecionadaFormatada}`)
-      .subscribe({ next: (res) => { this.aulasDoDia = res || []; this.gerarHorariosDisponiveis(); }, error: () => { this.aulasDoDia = []; this.gerarHorariosDisponiveis(); } });
+      .get<any>(`${this.apiUrl}/agenda-config/usuario/${usuarioIdAgenda}`)
+      .subscribe({
+        next: (agenda) => {
+          console.log('AGENDA RECEBIDA:', agenda);
+
+          if (!agenda) {
+            this.agenda = null;
+            this.mensagem = 'Agenda do instrutor não encontrada.';
+            return;
+          }
+
+          this.agenda = agenda;
+
+          this.duracaoAula = Number(agenda.duracaoAula ?? this.duracaoAula);
+          this.valorAula = Number(agenda.valorAula ?? this.valorAula);
+          this.intervaloAula = Number(agenda.intervaloAula ?? this.intervaloAula);
+          this.toleranciaEspera = Number(agenda.toleranciaEspera ?? this.toleranciaEspera);
+
+          this.mensagem = '';
+        },
+        error: (err) => {
+          console.error('Erro ao carregar agenda:', err);
+          this.agenda = null;
+          this.mensagem = 'Agenda do instrutor não encontrada.';
+        }
+      });
   }
 
-  gerarHorariosDisponiveis(): void {
-    // Aqui você precisa chamar /api/aulas/disponiveis ou gerar localmente a lista
-    this.http
-      .get<any[]>(`${this.apiUrl}/aulas/disponiveis?instrutorId=${this.instrutorId}&data=${this.dataSelecionadaFormatada}`)
-      .subscribe({ next: (res) => { this.horariosDisponiveis = res || []; }, error: () => { this.horariosDisponiveis = []; } });
+  aoSelecionarData(data: Date): void {
+    this.dataSelecionada = data;
+    this.dataSelecionadaFormatada = this.formatarDataApi(data);
+
+    this.horarioInicio = '';
+    this.horarioFim = '';
+    this.quantidadeAulas = 1;
+
+    this.buscarHorariosDisponiveis();
+  }
+
+buscarHorariosDisponiveis(): void {
+  if (!this.dataSelecionadaFormatada) return;
+
+  const instrutorId = this.instrutor?.instrutorId || this.instrutorId;
+
+  this.http
+    .get<any>(
+      `${this.apiUrl}/aulas/disponiveis?instrutorId=${instrutorId}&data=${this.dataSelecionadaFormatada}`
+    )
+    .subscribe({
+      next: (res) => {
+        console.log('HORÁRIOS DISPONÍVEIS:', res);
+
+        this.horariosDisponiveis = (res?.horarios || []).filter((h: any) => h.podeUmaAula);
+
+        this.horarioInicio = '';
+        this.horarioFim = '';
+        this.quantidadeAulas = 1;
+
+        if (!this.horariosDisponiveis.length) {
+          this.mensagem = 'Não há horários disponíveis para essa data.';
+          return;
+        }
+
+        this.mensagem = '';
+      },
+      error: (err) => {
+        console.error('Erro ao buscar horários disponíveis:', err);
+        this.horariosDisponiveis = [];
+        this.mensagem = 'Erro ao buscar horários disponíveis.';
+      }
+    });
+}
+
+  gerarSlotsDoDia(horaInicio: string, horaFim: string): any[] {
+    if (!horaInicio || !horaFim || !this.duracaoAula) return [];
+
+    const inicioMin = this.horaParaMinutos(horaInicio);
+    const fimMin = this.horaParaMinutos(horaFim);
+
+    const slots: any[] = [];
+    let atual = inicioMin;
+
+    while (atual + this.duracaoAula <= fimMin) {
+      const fimUmaAula = atual + this.duracaoAula;
+      const fimDuasAulas = atual + this.duracaoAula + this.intervaloAula + this.duracaoAula;
+
+      slots.push({
+        inicio: this.minutosParaHora(atual),
+        fimUmaAula: this.minutosParaHora(fimUmaAula),
+        fimDuasAulas: this.minutosParaHora(fimDuasAulas),
+        podeUmaAula: fimUmaAula <= fimMin,
+        podeDuasAulas: fimDuasAulas <= fimMin
+      });
+
+      atual = fimUmaAula + this.intervaloAula;
+    }
+
+    return slots;
   }
 
   aoAlterarHorario(): void {
     const horario = this.horariosDisponiveis.find(h => h.inicio === this.horarioInicio);
-    if (!horario) { this.horarioFim = ''; return; }
-    this.horarioFim = this.quantidadeAulas === 2 ? horario.fimDuasAulas : horario.fimUmaAula;
+
+    if (!horario) {
+      this.horarioFim = '';
+      return;
+    }
+
+    if (Number(this.quantidadeAulas) === 2 && !horario.podeDuasAulas) {
+      this.quantidadeAulas = 1;
+    }
+
+    this.horarioFim = Number(this.quantidadeAulas) === 2
+      ? horario.fimDuasAulas
+      : horario.fimUmaAula;
+  }
+
+  podeDuasAulasSelecionado(): boolean {
+    const horario = this.horariosDisponiveis.find(h => h.inicio === this.horarioInicio);
+    return !!horario?.podeDuasAulas;
   }
 
   agendarAula(): void {
-    if (!this.dataSelecionada || !this.horarioInicio) { this.mensagem = 'Selecione data e horário'; return; }
+    if (!this.alunoId) {
+      alert('Aluno não identificado. Faça login novamente.');
+      return;
+    }
+
+    if (!this.dataSelecionadaFormatada || !this.horarioInicio || !this.horarioFim) {
+      alert('Selecione uma data e um horário.');
+      return;
+    }
 
     const payload = {
-      instrutorId: this.instrutorId,
+      instrutorId: this.instrutor?.instrutorId || this.instrutorId,
       alunoId: this.alunoId,
       data: this.dataSelecionadaFormatada,
       horarioInicio: this.horarioInicio,
       horarioFim: this.horarioFim,
-      quantidadeAulas: this.quantidadeAulas,
-      duracaoAula: this.duracaoAula,
-      intervaloAula: this.intervaloAula,
-      valorAula: this.valorAula,
-      taxa: this.taxa,
-      total: this.valorAula * this.quantidadeAulas + this.taxa,
+      quantidadeAulas: Number(this.quantidadeAulas),
+      duracaoAula: Number(this.duracaoAula),
+      intervaloAula: Number(this.intervaloAula),
+      toleranciaAtraso: Number(this.toleranciaEspera),
+      valorAula: Number(this.valorAula),
+      taxa: Number(this.taxa || 0),
+      total: Number(this.valorAula) * Number(this.quantidadeAulas) + Number(this.taxa || 0),
       localEncontro: this.localEncontro,
-      veiculoId: this.instrutor.veiculo?.id,
-      status: 'AGENDADA',
+      veiculoId: this.veiculoId,
+      status: 'AGENDADA'
     };
 
+    console.log('PAYLOAD AGENDAMENTO:', payload);
+
     this.http.post(`${this.apiUrl}/aulas/agendar`, payload).subscribe({
-      next: () => this.router.navigate(['/aluno']),
-      error: () => this.mensagem = 'Erro ao agendar aula.',
+      next: () => {
+        alert('Aula agendada com sucesso!');
+        this.router.navigate(['/aluno/agenda']);
+      },
+      error: (err) => {
+        console.error('Erro ao agendar aula:', err);
+
+        const msg =
+          typeof err.error === 'string'
+            ? err.error
+            : err.error?.message || 'Não foi possível agendar a aula.';
+
+        alert(msg);
+        this.mensagem = msg;
+
+        this.buscarHorariosDisponiveis();
+      }
     });
+  }
+
+  nomeDiaSemana(data: Date): string {
+    return ['DOMINGO', 'SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO'][data.getDay()];
+  }
+
+  normalizarDia(valor: string): string {
+    return String(valor || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase();
+  }
+
+  horaParaMinutos(hora: string): number {
+    const [h, m] = hora.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  minutosParaHora(total: number): string {
+    const h = Math.floor(total / 60);
+    const m = total % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
   }
 
   formatarDataApi(data: Date): string {
@@ -196,10 +317,5 @@ export class AgendarAula implements OnInit {
     const mes = String(data.getMonth() + 1).padStart(2, '0');
     const dia = String(data.getDate()).padStart(2, '0');
     return `${ano}-${mes}-${dia}`;
-  }
-
-  gerarMapa(endereco: string): void {
-    const url = `https://www.google.com/maps?q=${encodeURIComponent(endereco)}&output=embed`;
-    this.mapaUrl = inject(DomSanitizer).bypassSecurityTrustResourceUrl(url);
   }
 }
